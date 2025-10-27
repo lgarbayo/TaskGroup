@@ -7,8 +7,7 @@
 Se trata de desarrollar una aplicación web denominada **TaskGroup** que implementa un sistema de **gestión colaborativa de tareas en proyectos compartidos**.  
 La idea es facilitar que, por ejemplo, un grupo de personas que trabaja de forma conjunta en una actividad (como un proyecto académico) pueda **crear un espacio común donde planificar tareas, asignarlas entre los miembros y controlar su progreso de forma clara y accesible**.
 
-Una aplicación conocida similar sería Trello, pero **TaskGroup está diseñada para ofrecer una solución más simple, ligera y centrada en la colaboración entre personas**,  
-sin necesidad de una estructura empresarial ni de funcionalidades avanzadas.
+Una aplicación conocida similar sería Trello, pero **TaskGroup está diseñada para ofrecer una solución más simple, ligera y centrada en la colaboración entre personas**, sin necesidad de una estructura empresarial ni de funcionalidades avanzadas.
 
 La aplicación permitirá **registrar usuarios**, y cada usuario podrá **crear un nuevo proyecto** (como por ejemplo *“Proyecto de TSWI”*) al que podrá **invitar a otros usuarios**.  
 Dentro de cada proyecto, cualquier miembro podrá **crear tareas**, asignarlas a otros usuarios (o a sí mismo), **marcarlas como resueltas**, y consultar un **resumen general** con el progreso del equipo.

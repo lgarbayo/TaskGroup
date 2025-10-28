@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskGroup · Resumen</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <span class="note">maria@ejemplo.com</span>
+      <span class="avatar" title="María">M</span>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card" style="overflow:hidden;">
+      <div class="tabs">
+        <a class="tab" href="project.html">Tareas</a>
+        <a class="tab active" href="project-summary.html">Resumen</a>
+        <a class="tab" href="project-members.html">Miembros</a>
+      </div>
+      <div class="pad">
+        <div class="row" style="justify-content: space-between;">
+          <div class="row">
+            <h1 class="title" style="margin:0;">Resumen del proyecto</h1>
+            <span class="badge muted">Proyecto de TSW</span>
+          </div>
+          <div class="row">
+            <a class="btn" href="project.html">Ver tareas</a>
+          </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 16px;">
+          <div class="card pad">
+            <div class="subtitle">Tareas totales</div>
+            <h2 class="title" style="font-size:1.6rem;">12</h2>
+          </div>
+          <div class="card pad">
+            <div class="subtitle">Pendientes</div>
+            <h2 class="title" style="font-size:1.6rem;">7</h2>
+          </div>
+          <div class="card pad">
+            <div class="subtitle">Resueltas</div>
+            <h2 class="title" style="font-size:1.6rem;">5</h2>
+          </div>
+          <div class="card pad">
+            <div class="subtitle">Progreso</div>
+            <h2 class="title" style="font-size:1.6rem;">42%</h2>
+            <div class="progress"><span style="width: 42%;"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© TaskGroup · Mockup UI</footer>
+</body>
+</html>
+

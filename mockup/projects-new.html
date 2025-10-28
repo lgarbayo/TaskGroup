@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskGroup · Nuevo proyecto</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <span class="note">maria@ejemplo.com</span>
+      <span class="avatar" title="María">M</span>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card pad" style="max-width:560px;margin:40px auto;">
+      <h1 class="title">Crear proyecto</h1>
+      <p class="subtitle">Ponle un nombre a tu nuevo proyecto.</p>
+
+      <form class="stack-md" action="projects.html" method="get">
+        <div class="form-row">
+          <div>
+            <label for="project-name">Nombre del proyecto</label>
+            <input id="project-name" name="name" type="text" placeholder="Proyecto de TSW" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Crear</button>
+          <a class="btn ghost" href="projects.html">Cancelar</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">© TaskGroup · Mockup UI</footer>
+</body>
+</html>
+

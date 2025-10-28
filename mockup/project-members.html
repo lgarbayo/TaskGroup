@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskGroup · Miembros</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <span class="note">maria@ejemplo.com</span>
+      <span class="avatar" title="María">M</span>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card" style="overflow:hidden;">
+      <div class="tabs">
+        <a class="tab" href="project.html">Tareas</a>
+        <a class="tab" href="project-summary.html">Resumen</a>
+        <a class="tab active" href="project-members.html">Miembros</a>
+      </div>
+      <div class="pad">
+        <div class="row" style="justify-content: space-between;">
+          <div class="row">
+            <h1 class="title" style="margin:0;">Miembros del proyecto</h1>
+            <span class="badge muted">Proyecto de TSW</span>
+          </div>
+          <div class="row">
+            <a class="btn" href="project.html">Ver tareas</a>
+          </div>
+        </div>
+
+        <div class="grid two" style="margin-top: 14px;">
+          <section class="card pad">
+            <h3 class="title" style="margin:0 0 8px;">Añadir un usuario</h3>
+            <p class="subtitle">Indica el email del usuario que quieres añadir.</p>
+            <form class="stack-md" action="project-members.html" method="get">
+              <div class="form-row">
+                <div>
+                  <label for="invite-email">Email del usuario</label>
+                  <input id="invite-email" type="email" placeholder="usuario@correo.com" />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn primary" type="submit">Añadir</button>
+                <a class="btn ghost" href="project.html">Volver</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="card pad">
+            <h3 class="title" style="margin:0 0 8px;">Miembros</h3>
+            <div class="stack-md">
+              <div class="row" style="justify-content: space-between;">
+                <div class="row">
+                  <span class="avatar">M</span>
+                  <div>
+                    <div><strong>María</strong></div>
+                    <div class="note">maria@ejemplo.com</div>
+                  </div>
+                </div>
+                <span class="badge muted">Propietaria</span>
+              </div>
+              <div class="row" style="justify-content: space-between;">
+                <div class="row">
+                  <span class="avatar">J</span>
+                  <div>
+                    <div><strong>Juan</strong></div>
+                    <div class="note">juan@ejemplo.com</div>
+                  </div>
+                </div>
+                <button class="btn danger" disabled>Quitar</button>
+              </div>
+              <div class="row" style="justify-content: space-between;">
+                <div class="row">
+                  <span class="avatar">L</span>
+                  <div>
+                    <div><strong>Laura</strong></div>
+                    <div class="note">laura@ejemplo.com</div>
+                  </div>
+                </div>
+                <button class="btn danger" disabled>Quitar</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© TaskGroup · Mockup UI</footer>
+</body>
+</html>
+

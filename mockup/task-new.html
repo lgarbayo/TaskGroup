@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskGroup · Nueva tarea</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <span class="note">maria@ejemplo.com</span>
+      <span class="avatar" title="María">M</span>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card pad" style="max-width:640px;margin:40px auto;">
+      <h1 class="title">Crear nueva tarea</h1>
+      <p class="subtitle">Define los detalles de la tarea.</p>
+
+      <form class="stack-md" action="project.html" method="get">
+        <div class="form-row">
+          <div>
+            <label for="assignee">Usuario asignado</label>
+            <select id="assignee" name="assignee">
+              <option>María (tú)</option>
+              <option>Juan</option>
+              <option>Laura</option>
+            </select>
+          </div>
+          <div>
+            <label for="task-name">Nombre de la tarea</label>
+            <input id="task-name" name="task-name" type="text" placeholder="Diseñar estructura de datos" />
+          </div>
+          <div>
+            <label for="status">Estado</label>
+            <select id="status" name="status">
+              <option selected>Pendiente</option>
+              <option>Resuelta</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Crear tarea</button>
+          <a class="btn ghost" href="project.html">Cancelar</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">© TaskGroup · Mockup UI</footer>
+</body>
+</html>
+

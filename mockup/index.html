@@ -11,36 +11,178 @@
     <div class="wrap">
       <div class="brand">TaskGroup</div>
       <div class="spacer"></div>
-      <a class="btn ghost" href="register.html">Crear cuenta</a>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
+      <a class="btn ghost" data-i18n="registerCta" href="register.html">Crear cuenta</a>
     </div>
   </header>
 
   <main class="container" role="main">
     <section class="card pad" style="max-width:520px;margin:40px auto;">
-      <h1 class="title">Accede a tu espacio</h1>
-      <p class="subtitle">Planifica tareas y colabora con tu equipo.</p>
+      <h1 class="title" data-i18n="loginTitle">Accede a tu espacio</h1>
+      <p class="subtitle" data-i18n="loginSubtitle">Planifica tareas y colabora con tu equipo.</p>
 
       <form class="stack-md" action="projects.html" method="get">
         <div class="form-row">
           <div>
-            <label for="email">Email o alias</label>
-            <input id="email" name="email" type="text" placeholder="tu@correo.com" />
+            <label for="email" data-i18n="emailLabel">Email o alias</label>
+            <input id="email" name="email" type="text" placeholder="tu@correo.com" data-i18n-placeholder="emailPlaceholder" />
           </div>
           <div>
-            <label for="password">Contraseña</label>
-            <input id="password" name="password" type="password" placeholder="••••••••" />
+            <label for="password" data-i18n="passwordLabel">Contraseña</label>
+            <input id="password" name="password" type="password" placeholder="••••••••" data-i18n-placeholder="passwordPlaceholder" />
           </div>
         </div>
         <div class="form-actions">
-          <button class="btn primary" type="submit">Entrar</button>
-          <a class="btn ghost" href="register.html">Crear cuenta</a>
+          <button class="btn primary" type="submit" data-i18n="signIn">Entrar</button>
+          <a class="btn ghost" data-i18n="registerCta" href="register.html">Crear cuenta</a>
         </div>
       </form>
-      <p class="note">¿Aún no tienes cuenta? Crea una en menos de un minuto.</p>
+      <p class="note" data-i18n="note">¿Aún no tienes cuenta? Crea una en menos de un minuto.</p>
     </section>
   </main>
 
-  <footer class="footer">© TaskGroup · Mockup UI</footer>
+  <footer class="footer" data-i18n="footer">© TaskGroup · Mockup UI</footer>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById('theme-toggle');
+      const languageSelect = document.getElementById('language-select');
+
+      const translations = {
+        es: {
+          pageTitle: 'TaskGroup · Acceder',
+          languageSelectLabel: 'Seleccionar idioma',
+          themeDark: 'Modo oscuro',
+          themeLight: 'Modo claro',
+          registerCta: 'Crear cuenta',
+          loginTitle: 'Accede a tu espacio',
+          loginSubtitle: 'Planifica tareas y colabora con tu equipo.',
+          emailLabel: 'Email o alias',
+          emailPlaceholder: 'tu@correo.com',
+          passwordLabel: 'Contraseña',
+          passwordPlaceholder: '••••••••',
+          signIn: 'Entrar',
+          note: '¿Aún no tienes cuenta? Crea una en menos de un minuto.',
+          footer: '© TaskGroup · Mockup UI'
+        },
+        en: {
+          pageTitle: 'TaskGroup · Sign in',
+          languageSelectLabel: 'Select language',
+          themeDark: 'Dark mode',
+          themeLight: 'Light mode',
+          registerCta: 'Create account',
+          loginTitle: 'Access your workspace',
+          loginSubtitle: 'Plan tasks and collaborate with your team.',
+          emailLabel: 'Email or alias',
+          emailPlaceholder: 'you@example.com',
+          passwordLabel: 'Password',
+          passwordPlaceholder: '••••••••',
+          signIn: 'Sign in',
+          note: 'No account yet? Create one in under a minute.',
+          footer: '© TaskGroup · Mockup UI'
+        },
+        gl: {
+          pageTitle: 'TaskGroup · Acceder',
+          languageSelectLabel: 'Selecciona idioma',
+          themeDark: 'Modo escuro',
+          themeLight: 'Modo claro',
+          registerCta: 'Crear conta',
+          loginTitle: 'Accede ao teu espazo',
+          loginSubtitle: 'Planifica tarefas e colabora co teu equipo.',
+          emailLabel: 'Correo ou alcume',
+          emailPlaceholder: 'ti@correo.com',
+          passwordLabel: 'Contrasinal',
+          passwordPlaceholder: '••••••••',
+          signIn: 'Entrar',
+          note: 'Aínda non tes conta? Créaa en menos dun minuto.',
+          footer: '© TaskGroup · Mockup UI'
+        }
+      };
+
+      const getDictionary = (lang) => translations[lang] || translations.es;
+      let currentLang = root.lang || 'es';
+
+      const updateThemeToggleLabel = () => {
+        if (!toggle) return;
+        const dict = getDictionary(currentLang);
+        const isDark = root.getAttribute('data-theme') === 'dark';
+        const label = isDark ? dict.themeLight : dict.themeDark;
+        toggle.textContent = label;
+        toggle.setAttribute('aria-label', label);
+      };
+
+      const applyTheme = (theme) => {
+        if (theme === 'dark') {
+          root.setAttribute('data-theme', 'dark');
+          if (toggle) toggle.setAttribute('aria-pressed', 'true');
+        } else {
+          root.removeAttribute('data-theme');
+          if (toggle) toggle.setAttribute('aria-pressed', 'false');
+        }
+        updateThemeToggleLabel();
+        localStorage.setItem('taskgroup-theme', theme);
+      };
+
+      const applyLanguage = (lang) => {
+        currentLang = lang;
+        const dict = getDictionary(lang);
+        root.lang = lang;
+
+        if (languageSelect) {
+          languageSelect.value = lang;
+          languageSelect.setAttribute('aria-label', dict.languageSelectLabel);
+          languageSelect.setAttribute('title', dict.languageSelectLabel);
+        }
+
+        document.title = dict.pageTitle;
+
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.dataset.i18n;
+          if (dict[key]) {
+            el.textContent = dict[key];
+          }
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+          const key = el.dataset.i18nPlaceholder;
+          if (dict[key]) {
+            el.setAttribute('placeholder', dict[key]);
+          }
+        });
+
+        updateThemeToggleLabel();
+        localStorage.setItem('taskgroup-language', lang);
+      };
+
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const storedTheme = localStorage.getItem('taskgroup-theme');
+      const storedLanguage = localStorage.getItem('taskgroup-language');
+
+      const initialLanguage = storedLanguage || root.lang || 'es';
+      applyLanguage(initialLanguage);
+
+      if (languageSelect) {
+        languageSelect.addEventListener('change', (event) => {
+          applyLanguage(event.target.value);
+        });
+      }
+
+      const initialTheme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
+      applyTheme(initialTheme);
+
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isDark = root.getAttribute('data-theme') === 'dark';
+          applyTheme(isDark ? 'light' : 'dark');
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
-

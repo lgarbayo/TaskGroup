@@ -40,19 +40,6 @@ Dentro de cada proyecto, cualquier miembro podrá **crear tareas**, asignarlas a
 ✅ **Funciones en verde (🟢)** → públicas: pueden hacerse sin login.  
 🔒 **Funciones en rojo (🔴)** → requieren autenticación previa.
 
----
-
-## 🎨 Mockup (HTML + CSS, sin JS)
-
-Se ha incluido un mockup navegable de la interfaz, únicamente con HTML y CSS, sin lógica de autenticación ni almacenamiento.
-
-- Página de acceso: `TaskGroup/mockup/index.html`
-- Registro: `TaskGroup/mockup/register.html`
-- Listado de proyectos (F3) y acceso a crear (F4): `TaskGroup/mockup/projects.html`, `TaskGroup/mockup/projects-new.html`
-- Vista de proyecto (F5) con tareas pendientes/resueltas y acciones (F7, F8, F9): `TaskGroup/mockup/project.html`
-- Resumen del proyecto (F10): `TaskGroup/mockup/project-summary.html`
-- Gestión de miembros (F6): `TaskGroup/mockup/project-members.html`
-- Formulario de nueva tarea (F7) y edición (F8): `TaskGroup/mockup/task-new.html`, `TaskGroup/mockup/task-edit.html`
 
 Estilos compartidos: `TaskGroup/mockup/assets/styles.css`.
 

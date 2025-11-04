@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="doc-title" content="titleProjectSummary" />
   <title>TaskGroup · Resumen</title>
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
@@ -11,6 +12,12 @@
     <div class="wrap">
       <div class="brand">TaskGroup</div>
       <div class="spacer"></div>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
       <span class="note">maria@ejemplo.com</span>
       <span class="avatar" title="María">M</span>
     </div>
@@ -18,37 +25,37 @@
 
   <main class="container" role="main">
     <section class="card" style="overflow:hidden;">
-      <div class="tabs">
-        <a class="tab" href="project.html">Tareas</a>
-        <a class="tab active" href="project-summary.html">Resumen</a>
-        <a class="tab" href="project-members.html">Miembros</a>
+      <div class="tabs" role="tablist">
+        <a class="tab" href="project.html" role="tab" aria-selected="false" data-i18n="tabTasks">Tareas</a>
+        <a class="tab" href="project-summary.html" role="tab" aria-selected="true" data-i18n="tabSummary">Resumen</a>
+        <a class="tab" href="project-members.html" role="tab" aria-selected="false" data-i18n="tabMembers">Miembros</a>
       </div>
       <div class="pad">
         <div class="row" style="justify-content: space-between;">
           <div class="row">
-            <h1 class="title" style="margin:0;">Resumen del proyecto</h1>
+            <h1 class="title" style="margin:0;" data-i18n="projectSummaryTitle">Resumen del proyecto</h1>
             <span class="badge muted">Proyecto de TSW</span>
           </div>
           <div class="row">
-            <a class="btn" href="project.html">Ver tareas</a>
+            <a class="btn" href="project.html" data-i18n="viewTasks">Ver tareas</a>
           </div>
         </div>
 
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 16px;">
           <div class="card pad">
-            <div class="subtitle">Tareas totales</div>
+            <div class="subtitle" data-i18n="totalTasks">Tareas totales</div>
             <h2 class="title" style="font-size:1.6rem;">12</h2>
           </div>
           <div class="card pad">
-            <div class="subtitle">Pendientes</div>
+            <div class="subtitle" data-i18n="pending">Pendientes</div>
             <h2 class="title" style="font-size:1.6rem;">7</h2>
           </div>
           <div class="card pad">
-            <div class="subtitle">Resueltas</div>
+            <div class="subtitle" data-i18n="resolved">Resueltas</div>
             <h2 class="title" style="font-size:1.6rem;">5</h2>
           </div>
           <div class="card pad">
-            <div class="subtitle">Progreso</div>
+            <div class="subtitle" data-i18n="progress">Progreso</div>
             <h2 class="title" style="font-size:1.6rem;">42%</h2>
             <div class="progress"><span style="width: 42%;"></span></div>
           </div>
@@ -57,7 +64,7 @@
     </section>
   </main>
 
-  <footer class="footer">© TaskGroup · Mockup UI</footer>
+  <footer class="footer" data-i18n="footer">© TaskGroup · Todos los derechos reservados</footer>
+  <script src="assets/app.js"></script>
 </body>
 </html>
-

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="doc-title" content="titleTaskEdit" />
+  <title>TaskGroup · Editar tarea</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
+      <span class="note">maria@ejemplo.com</span>
+      <span class="avatar" title="María">M</span>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card pad" style="max-width:640px;margin:40px auto;">
+      <h1 class="title" data-i18n="editTaskTitle">Editar tarea</h1>
+      <p class="subtitle" data-i18n="editTaskSubtitle">Actualiza el nombre, estado o asignación.</p>
+
+      <form class="stack-md" action="project.html" method="get">
+        <div class="form-row">
+          <div>
+            <label for="assignee" data-i18n="assigneeLabel">Usuario asignado</label>
+            <select id="assignee" name="assignee">
+              <option selected>María (tú)</option>
+              <option>Juan</option>
+              <option>Laura</option>
+            </select>
+          </div>
+          <div>
+            <label for="task-name" data-i18n="taskNameLabel">Nombre de la tarea</label>
+            <input id="task-name" name="task-name" type="text" value="Diseñar estructura de datos" />
+          </div>
+          <div>
+            <label for="status" data-i18n="statusLabel">Estado</label>
+            <select id="status" name="status">
+              <option data-i18n="pending">Pendiente</option>
+              <option selected data-i18n="resolved">Resuelta</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" data-i18n="saveChanges">Guardar cambios</button>
+          <a class="btn ghost" href="project.html" data-i18n="cancel">Cancelar</a>
+          <button class="btn danger" type="button" disabled data-i18n="deleteTask">Eliminar tarea</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer" data-i18n="footer">© TaskGroup · Todos los derechos reservados</footer>
+  <script src="assets/app.js"></script>
+</body>
+</html>

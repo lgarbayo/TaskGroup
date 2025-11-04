@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="doc-title" content="titleProject" />
   <title>TaskGroup · Proyecto</title>
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
@@ -11,6 +12,12 @@
     <div class="wrap">
       <div class="brand">TaskGroup</div>
       <div class="spacer"></div>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
       <span class="note">maria@ejemplo.com</span>
       <span class="avatar" title="María">M</span>
     </div>
@@ -18,10 +25,10 @@
 
   <main class="container" role="main">
     <section class="card" style="overflow:hidden;">
-      <div class="tabs">
-        <a class="tab active" href="project.html">Tareas</a>
-        <a class="tab" href="project-summary.html">Resumen</a>
-        <a class="tab" href="project-members.html">Miembros</a>
+      <div class="tabs" role="tablist">
+        <a class="tab" href="project.html" role="tab" aria-selected="true" data-i18n="tabTasks">Tareas</a>
+        <a class="tab" href="project-summary.html" role="tab" aria-selected="false" data-i18n="tabSummary">Resumen</a>
+        <a class="tab" href="project-members.html" role="tab" aria-selected="false" data-i18n="tabMembers">Miembros</a>
       </div>
       <div class="pad">
         <div class="row" style="justify-content: space-between;">
@@ -30,9 +37,9 @@
             <span class="badge muted">3 miembros</span>
           </div>
           <div class="row">
-            <a class="btn" href="task-new.html">Nueva tarea</a>
-            <a class="btn ghost" href="project-members.html">Añadir miembro</a>
-            <button class="btn danger" disabled>Eliminar proyecto</button>
+            <a class="btn" href="task-new.html" data-i18n="newTask">Nueva tarea</a>
+            <a class="btn ghost" href="project-members.html" data-i18n="addMember">Añadir miembro</a>
+            <button class="btn danger" disabled data-i18n="deleteProject">Eliminar proyecto</button>
           </div>
         </div>
 
@@ -95,7 +102,7 @@
     </section>
   </main>
 
-  <footer class="footer">© TaskGroup · Mockup UI</footer>
+  <footer class="footer" data-i18n="footer">© TaskGroup · Todos los derechos reservados</footer>
+  <script src="assets/app.js"></script>
 </body>
 </html>
-

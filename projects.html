@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="doc-title" content="titleProjects" />
   <title>TaskGroup · Mis proyectos</title>
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
@@ -11,6 +12,12 @@
     <div class="wrap">
       <div class="brand">TaskGroup</div>
       <div class="spacer"></div>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
       <span class="note">maria@ejemplo.com</span>
       <span class="avatar" title="María">M</span>
     </div>
@@ -19,12 +26,12 @@
   <main class="container" role="main">
     <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
       <div>
-        <h1 class="title" style="margin:0;">Mis proyectos</h1>
-        <p class="subtitle" style="margin:4px 0 0;">Listado de proyectos donde participas.</p>
+        <h1 class="title" style="margin:0;" data-i18n="projectsTitle">Mis proyectos</h1>
+        <p class="subtitle" style="margin:4px 0 0;" data-i18n="projectsSubtitle">Listado de proyectos donde participas.</p>
       </div>
       <div class="row">
-        <a class="btn" href="projects-new.html">Nuevo proyecto</a>
-        <a class="btn ghost" href="index.html">Salir</a>
+        <a class="btn" href="projects-new.html" data-i18n="newProject">Nuevo proyecto</a>
+        <a class="btn ghost" href="index.html" data-i18n="logout">Salir</a>
       </div>
     </div>
 
@@ -41,8 +48,8 @@
         </div>
         <div class="progress"><span style="width: 60%"></span></div>
         <div class="row project-actions">
-          <a class="btn primary" href="project.html">Abrir</a>
-          <button class="btn danger" disabled>Eliminar</button>
+          <a class="btn primary" href="project.html" data-i18n="open">Abrir</a>
+          <button class="btn danger" disabled data-i18n="delete">Eliminar</button>
         </div>
       </article>
 
@@ -57,8 +64,8 @@
         </div>
         <div class="progress"><span style="width: 25%"></span></div>
         <div class="row project-actions">
-          <a class="btn primary" href="project.html">Abrir</a>
-          <button class="btn danger" disabled>Eliminar</button>
+          <a class="btn primary" href="project.html" data-i18n="open">Abrir</a>
+          <button class="btn danger" disabled data-i18n="delete">Eliminar</button>
         </div>
       </article>
 
@@ -72,14 +79,14 @@
         </div>
         <div class="progress"><span style="width: 90%"></span></div>
         <div class="row project-actions">
-          <a class="btn primary" href="project.html">Abrir</a>
-          <button class="btn danger" disabled>Eliminar</button>
+          <a class="btn primary" href="project.html" data-i18n="open">Abrir</a>
+          <button class="btn danger" disabled data-i18n="delete">Eliminar</button>
         </div>
       </article>
     </section>
   </main>
 
-  <footer class="footer">© TaskGroup · Mockup UI</footer>
+  <footer class="footer" data-i18n="footer">© TaskGroup · Todos los derechos reservados</footer>
+  <script src="assets/app.js"></script>
 </body>
 </html>
-

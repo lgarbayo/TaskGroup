@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="doc-title" content="titleLogin" />
+  <title>TaskGroup · Acceder</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
+      <a class="btn ghost" data-i18n="registerCta" href="register.html">Crear cuenta</a>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card pad" style="max-width:520px;margin:40px auto;">
+      <h1 class="title" data-i18n="loginTitle">Accede a tu espacio</h1>
+      <p class="subtitle" data-i18n="loginSubtitle">Planifica tareas y colabora con tu equipo.</p>
+
+      <form class="stack-md" action="projects.html" method="get">
+        <div class="form-row">
+          <div>
+            <label for="email" data-i18n="emailLabel">Email o alias</label>
+            <input id="email" name="email" type="email" required autocomplete="email" placeholder="tu@correo.com" data-i18n-placeholder="emailPlaceholder" />
+          </div>
+          <div class="input-group">
+            <label for="password" data-i18n="passwordLabel">Contraseña</label>
+            <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" data-i18n-placeholder="passwordPlaceholder" />
+            <button type="button" class="btn-icon" aria-label="Mostrar contraseña" data-i18n-aria-label="showPassword" data-toggle="password" data-target="#password">👁️</button>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" data-i18n="signIn">Entrar</button>
+          <a class="btn ghost" data-i18n="registerCta" href="register.html">Crear cuenta</a>
+        </div>
+      </form>
+      <p class="note" data-i18n="note">¿Aún no tienes cuenta? Crea una en menos de un minuto.</p>
+    </section>
+  </main>
+
+  <footer class="footer" data-i18n="footer">© TaskGroup · Todos los derechos reservados</footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

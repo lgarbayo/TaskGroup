@@ -62,6 +62,8 @@ textarea:focus-visible,
 .brand { font-weight: 700; color: var(--primary); letter-spacing: 0.2px; }
 .spacer { flex: 1 1 auto; }
 .avatar { width: 28px; height: 28px; border-radius: 50%; background: #1f2937; display: inline-flex; align-items: center; justify-content: center; color: #93c5fd; font-weight: 600; font-size: 0.9rem; }
+.avatar { background-size: cover; background-position: center; background-repeat: no-repeat; }
+.avatar.has-image { color: transparent; }
 
 .container { max-width: 1080px; margin: 24px auto; padding: 0 20px; }
 

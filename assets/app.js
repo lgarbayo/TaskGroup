@@ -4,6 +4,54 @@
   const toggle = document.getElementById('theme-toggle');
   const languageSelect = document.getElementById('language-select');
 
+  // Usuario demo en localStorage
+  const DEFAULT_USER = {
+    name: 'María',
+    email: 'maria@ejemplo.com',
+    prefs: { timeFormat: '24h', emailNotifications: true }
+  };
+  const readUser = () => {
+    try {
+      const raw = localStorage.getItem('taskgroup-user');
+      if (!raw) return { ...DEFAULT_USER };
+      const parsed = JSON.parse(raw);
+      return { ...DEFAULT_USER, ...parsed, prefs: { ...DEFAULT_USER.prefs, ...(parsed.prefs || {}) } };
+    } catch (_) { return { ...DEFAULT_USER }; }
+  };
+  const writeUser = (partial) => {
+    const current = readUser();
+    const merged = { ...current, ...partial };
+    if (partial && partial.prefs) merged.prefs = { ...current.prefs, ...partial.prefs };
+    try { localStorage.setItem('taskgroup-user', JSON.stringify(merged)); } catch (_) {}
+    return merged;
+  };
+  const updateUserUI = () => {
+    const u = readUser();
+    document.querySelectorAll('[data-user-text="name"]').forEach(el => el.textContent = u.name || '');
+    document.querySelectorAll('[data-user-avatar]').forEach(el => {
+      const hasImg = !!u.avatarDataUrl;
+      if (hasImg) {
+        el.style.backgroundImage = 'url(' + u.avatarDataUrl + ')';
+        el.classList.add('has-image');
+        el.textContent = '';
+      } else {
+        el.style.backgroundImage = '';
+        el.classList.remove('has-image');
+        const ch = (u.name || u.email || 'U').trim().charAt(0).toUpperCase();
+        el.textContent = ch;
+      }
+      el.setAttribute('title', u.name || u.email || '');
+    });
+    // Prefs inputs on profile page
+    const nameI = document.getElementById('profile-name'); if (nameI) nameI.value = u.name || '';
+    const emailI = document.getElementById('profile-email'); if (emailI) emailI.value = u.email || '';
+    const tfVal = (u.prefs && u.prefs.timeFormat) || '24h';
+    const tf = document.querySelector('input[name="timeformat"][value="' + tfVal + '"]'); if (tf) tf.checked = true;
+    const en = document.getElementById('email-notifs'); if (en) en.checked = !!(u.prefs && u.prefs.emailNotifications);
+    const prefLang = document.getElementById('pref-language'); if (prefLang) prefLang.value = root.lang || 'es';
+    const prefTheme = document.getElementById('pref-theme'); if (prefTheme) prefTheme.value = (root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+  };
+
   const translations = {
     es: {
       pageTitle: 'TaskGroup · Acceder',
@@ -71,7 +119,30 @@
       passwordPlaceholder: '••••••••',
       signIn: 'Entrar',
       note: '¿Aún no tienes cuenta? Crea una en menos de un minuto.',
-      footer: '© TaskGroup · Todos los derechos reservados'
+      footer: '© TaskGroup · Todos los derechos reservados',
+      // User profile
+      titleUser: 'TaskGroup · Perfil',
+      userProfileTitle: 'Tu perfil',
+      userProfileSubtitle: 'Gestiona los datos de tu perfil.',
+      profileNameLabel: 'Nombre',
+      profileNamePlaceholder: 'Tu nombre',
+      profileEmailLabel: 'Email',
+      profileEmailPlaceholder: 'tu@correo.com',
+      profileLink: 'Perfil',
+      userSaved: 'Perfil guardado',
+      preferencesTitle: 'Preferencias',
+      appearanceTitle: 'Apariencia',
+      languageLabel: 'Idioma',
+      themeLabel: 'Tema',
+      themeLightOpt: 'Claro',
+      themeDarkOpt: 'Oscuro',
+      timeFormatLabel: 'Formato de hora',
+      timeFormat12: '12 horas',
+      timeFormat24: '24 horas',
+      notificationsTitle: 'Notificaciones',
+      emailNotificationsLabel: 'Recibir notificaciones por email',
+      clearData: 'Borrar datos locales',
+      clearDataDone: 'Datos locales borrados'
     },
     en: {
       pageTitle: 'TaskGroup · Sign in',
@@ -139,7 +210,30 @@
       passwordPlaceholder: '••••••••',
       signIn: 'Sign in',
       note: 'No account yet? Create one in under a minute.',
-      footer: '© TaskGroup · All rights reserved'
+      footer: '© TaskGroup · All rights reserved',
+      // User profile
+      titleUser: 'TaskGroup · Profile',
+      userProfileTitle: 'Your profile',
+      userProfileSubtitle: 'Manage your profile details.',
+      profileNameLabel: 'Name',
+      profileNamePlaceholder: 'Your name',
+      profileEmailLabel: 'Email',
+      profileEmailPlaceholder: 'you@example.com',
+      profileLink: 'Profile',
+      userSaved: 'Profile saved',
+      preferencesTitle: 'Preferences',
+      appearanceTitle: 'Appearance',
+      languageLabel: 'Language',
+      themeLabel: 'Theme',
+      themeLightOpt: 'Light',
+      themeDarkOpt: 'Dark',
+      timeFormatLabel: 'Time format',
+      timeFormat12: '12-hour',
+      timeFormat24: '24-hour',
+      notificationsTitle: 'Notifications',
+      emailNotificationsLabel: 'Receive email notifications',
+      clearData: 'Clear local data',
+      clearDataDone: 'Local data cleared'
     },
     gl: {
       pageTitle: 'TaskGroup · Acceder',
@@ -207,7 +301,30 @@
       passwordPlaceholder: '••••••••',
       signIn: 'Entrar',
       note: 'Aínda non tes conta? Créaa en menos dun minuto.',
-      footer: '© TaskGroup · Todos os dereitos reservados'
+      footer: '© TaskGroup · Todos os dereitos reservados',
+      // User profile
+      titleUser: 'TaskGroup · Perfil',
+      userProfileTitle: 'O teu perfil',
+      userProfileSubtitle: 'Xestiona os datos do teu perfil.',
+      profileNameLabel: 'Nome',
+      profileNamePlaceholder: 'O teu nome',
+      profileEmailLabel: 'Correo',
+      profileEmailPlaceholder: 'ti@correo.com',
+      profileLink: 'Perfil',
+      userSaved: 'Perfil gardado',
+      preferencesTitle: 'Preferencias',
+      appearanceTitle: 'Aparencia',
+      languageLabel: 'Idioma',
+      themeLabel: 'Tema',
+      themeLightOpt: 'Claro',
+      themeDarkOpt: 'Escuro',
+      timeFormatLabel: 'Formato horario',
+      timeFormat12: '12 horas',
+      timeFormat24: '24 horas',
+      notificationsTitle: 'Notificacións',
+      emailNotificationsLabel: 'Recibir notificacións por correo',
+      clearData: 'Borrar datos locais',
+      clearDataDone: 'Datos locais borrados'
     }
   };
 
@@ -282,6 +399,7 @@
 
     updateThemeToggleLabel();
     updatePasswordToggleLabels();
+    updateUserUI();
     try { localStorage.setItem('taskgroup-language', lang); } catch (_) {}
   };
 
@@ -324,5 +442,61 @@
     // inicializar label
     updatePasswordToggleLabels();
   });
+  // Avatar file upload (user.html)
+  const avatarFile = document.getElementById('avatar-file');
+  if (avatarFile) {
+    avatarFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { writeUser({ avatarDataUrl: reader.result }); updateUserUI(); };
+      reader.readAsDataURL(file);
+    });
+  }
+  const avatarRemove = document.getElementById('avatar-remove');
+  if (avatarRemove) avatarRemove.addEventListener('click', () => { writeUser({ avatarDataUrl: null }); updateUserUI(); });
+
+  // Guardar perfil (user.html)
+  if (document.getElementById('profile-name') && document.getElementById('profile-email')) {
+    const status = document.getElementById('profile-status');
+    const form = document.querySelector('form#profile-form') || document.querySelector('.card form.stack-md');
+    const onSave = (e) => {
+      if (e) e.preventDefault();
+      const name = (document.getElementById('profile-name')||{}).value || '';
+      const email = (document.getElementById('profile-email')||{}).value || '';
+      writeUser({ name, email });
+      updateUserUI();
+      const dict = getDictionary(currentLang);
+      if (status) { status.textContent = dict.userSaved; status.setAttribute('role','status'); status.setAttribute('aria-live','polite'); }
+    };
+    if (form) form.addEventListener('submit', onSave);
+  }
+
+  // Preferencias (user.html)
+  const prefLang = document.getElementById('pref-language');
+  if (prefLang) prefLang.addEventListener('change', (e) => applyLanguage(e.target.value));
+  const prefTheme = document.getElementById('pref-theme');
+  if (prefTheme) prefTheme.addEventListener('change', (e) => applyTheme(e.target.value));
+  const tfRadios = document.querySelectorAll('input[name="timeformat"]');
+  if (tfRadios.length) tfRadios.forEach(r => r.addEventListener('change', (e) => writeUser({ prefs: { timeFormat: e.target.value } })));
+  const emailNotif = document.getElementById('email-notifs');
+  if (emailNotif) emailNotif.addEventListener('change', (e) => writeUser({ prefs: { emailNotifications: !!e.target.checked } }));
+
+  // Borrar datos locales (user.html)
+  const clearBtn = document.getElementById('clear-data');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    try {
+      localStorage.removeItem('taskgroup-user');
+      localStorage.removeItem('taskgroup-language');
+      localStorage.removeItem('taskgroup-theme');
+      const dict = getDictionary(currentLang);
+      const status = document.getElementById('profile-status');
+      if (status) status.textContent = dict.clearDataDone;
+      updateUserUI();
+    } catch (_) {}
+  });
+
+  // Inicializa UI de usuario al cargar
+  updateUserUI();
 })();
  

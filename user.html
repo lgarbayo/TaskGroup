@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="doc-title" content="titleUser" />
+  <title>TaskGroup · Perfil</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <div class="brand">TaskGroup</div>
+      <div class="spacer"></div>
+      <select id="language-select" class="select-inline" aria-label="Seleccionar idioma">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="gl">Galego</option>
+      </select>
+      <button class="btn ghost" id="theme-toggle" type="button" aria-pressed="false">Modo oscuro</button>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card pad" style="max-width:640px;margin:40px auto;">
+      <h1 class="title" data-i18n="userProfileTitle">Tu perfil</h1>
+      <p class="subtitle" data-i18n="userProfileSubtitle">Gestiona los datos de tu perfil.</p>
+      <div class="note" id="profile-status" aria-live="polite"></div>
+
+      <form id="profile-form" class="stack-md" action="projects.html" method="get">
+        <div class="form-row">
+          <div>
+            <label for="profile-name" data-i18n="profileNameLabel">Nombre</label>
+            <input id="profile-name" name="name" type="text" placeholder="Tu nombre" data-i18n-placeholder="profileNamePlaceholder" />
+          </div>
+          <div>
+            <label for="profile-email" data-i18n="profileEmailLabel">Email</label>
+            <input id="profile-email" name="email" type="email" placeholder="tu@correo.com" data-i18n-placeholder="profileEmailPlaceholder" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label data-i18n="avatarLabel">Avatar</label>
+            <div class="row">
+              <span class="avatar" id="avatar-preview" data-user-avatar></span>
+              <input type="file" id="avatar-file" accept="image/*" />
+              <button type="button" class="btn ghost" id="avatar-remove" data-i18n="removeAvatar">Quitar avatar</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" data-i18n="saveChanges">Guardar cambios</button>
+          <a class="btn ghost" href="projects.html" data-i18n="back">Volver</a>
+        </div>
+      </form>
+    </section>
+
+    <section class="card pad" style="max-width:640px;margin:16px auto;">
+      <h2 class="title" data-i18n="preferencesTitle">Preferencias</h2>
+      <div class="form-row">
+        <div>
+          <label for="pref-language" data-i18n="languageLabel">Idioma</label>
+          <select id="pref-language">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="gl">Galego</option>
+          </select>
+        </div>
+        <div>
+          <label for="pref-theme" data-i18n="themeLabel">Tema</label>
+          <select id="pref-theme">
+            <option value="light" data-i18n="themeLightOpt">Claro</option>
+            <option value="dark" data-i18n="themeDarkOpt">Oscuro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label data-i18n="timeFormatLabel">Formato de hora</label>
+          <div class="row">
+            <label class="row"><input type="radio" name="timeformat" value="12h" /> <span data-i18n="timeFormat12">12 horas</span></label>
+            <label class="row"><input type="radio" name="timeformat" value="24h" /> <span data-i18n="timeFormat24">24 horas</span></label>
+          </div>
+        </div>
+        <div>
+          <label class="row"><input type="checkbox" id="email-notifs" /> <span data-i18n="emailNotificationsLabel">Recibir notificaciones por email</span></label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn danger" type="button" id="clear-data" data-i18n="clearData">Borrar datos locales</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" data-i18n="footer">© TaskGroup · Todos los derechos reservados</footer>
+  <script src="assets/app.js"></script>
+</body>
+</html>

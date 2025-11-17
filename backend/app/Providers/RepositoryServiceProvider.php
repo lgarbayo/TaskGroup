@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Providers;
+
+use App\Business\Project\Port\MilestoneRepository;
+use App\Business\Project\Port\ProjectRepository;
+use App\Business\Project\Port\TaskRepository;
+use App\Persistence\Project\Adapter\EloquentMilestoneRepository;
+use App\Persistence\Project\Adapter\EloquentProjectRepository;
+use App\Persistence\Project\Adapter\EloquentTaskRepository;
+use Illuminate\Support\ServiceProvider;
+
+class RepositoryServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->bind(ProjectRepository::class, EloquentProjectRepository::class);
+        $this->app->bind(TaskRepository::class, EloquentTaskRepository::class);
+        $this->app->bind(MilestoneRepository::class, EloquentMilestoneRepository::class);
+    }
+}

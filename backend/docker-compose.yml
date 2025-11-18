@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: manager_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: manager
+      POSTGRES_USER: luis.gf
+      POSTGRES_PASSWORD: provisional
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - manager_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"luis.gf\" -d manager"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: manager_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: ${APP_KEY}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: manager
+      DB_USERNAME: luis.gf
+      DB_PASSWORD: provisional
+    ports:
+      - "8081:8082"
+    volumes:
+      - .:/var/www/html
+    command: >
+      sh -c "
+        php artisan config:clear &&
+        php artisan migrate --force &&
+        php artisan serve --host=0.0.0.0 --port=8082
+      "
+    networks:
+      - manager_network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  manager_network:
+    driver: bridge

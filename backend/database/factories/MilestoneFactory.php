@@ -6,9 +6,6 @@ use App\Persistence\Project\Entity\Project;
 use App\Persistence\Project\Entity\Milestone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<\App\Persistence\Project\Entity\Milestone>
- */
 class MilestoneFactory extends Factory
 {
     protected $model = Milestone::class;

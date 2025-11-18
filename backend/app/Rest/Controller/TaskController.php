@@ -5,7 +5,7 @@ namespace App\Rest\Controller;
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Task\UpsertTaskRequest;
 use App\Rest\Response\TaskResource;
-use App\Business\Project\Facade\ProjectFacade;
+use App\Business\Facade\ProjectFacade;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 

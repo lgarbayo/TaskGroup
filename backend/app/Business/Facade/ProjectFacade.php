@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Business\Project\Facade;
+namespace App\Business\Facade;
 
 use App\Business\Project\Model\ProjectModel;
 use App\Business\Project\Model\TaskModel;

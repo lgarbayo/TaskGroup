@@ -10,8 +10,8 @@ use App\Persistence\Project\Adapter\EloquentProjectRepository;
 use App\Persistence\Project\Adapter\EloquentTaskRepository;
 use App\Business\User\Port\UserRepository;
 use App\Persistence\User\Adapter\EloquentUserRepository;
-use App\Business\Project\Facade\ProjectFacade;
-use App\Business\Project\Facade\ProjectFacadeImpl;
+use App\Business\Facade\ProjectFacade;
+use App\Business\Facade\ProjectFacadeImpl;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider

@@ -1,6 +1,20 @@
 version: "3.9"
 
 services:
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8082:80"
+    depends_on:
+      - postgres
+    networks:
+      - manager_network
+
   postgres:
     image: postgres:15-alpine
     container_name: postgres_db

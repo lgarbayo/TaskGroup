@@ -5,7 +5,7 @@ namespace App\Rest\Controller;
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Milestone\UpsertMilestoneRequest;
 use App\Rest\Response\MilestoneResource;
-use App\Business\Project\Facade\ProjectFacade;
+use App\Business\Facade\ProjectFacade;
 use Illuminate\Http\Request;
 
 class MilestoneController extends Controller

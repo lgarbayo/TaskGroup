@@ -27,9 +27,6 @@ class UserService
         return $this->users->findByEmail($email);
     }
 
-    /**
-     * Sólo para auth (Sanctum requiere Authenticatable).
-     */
     public function findEntityByEmail(string $email): ?User
     {
         return $this->users->findEntityByEmail($email);

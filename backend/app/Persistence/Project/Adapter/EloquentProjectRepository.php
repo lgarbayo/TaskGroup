@@ -16,7 +16,6 @@ class EloquentProjectRepository implements ProjectRepository
             ->withCount('tasks')
             ->where('owner_id', $userId)
             ->orWhereHas('members', fn (Builder $members) => $members->where('user_id', $userId))
-            ->distinct()
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn ($project) => ProjectMapper::toModel($project))

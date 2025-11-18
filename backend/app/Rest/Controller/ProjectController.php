@@ -5,7 +5,7 @@ namespace App\Rest\Controller;
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Project\UpsertProjectRequest;
 use App\Rest\Response\ProjectResource;
-use App\Business\Project\Facade\ProjectFacade;
+use App\Business\Facade\ProjectFacade;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller

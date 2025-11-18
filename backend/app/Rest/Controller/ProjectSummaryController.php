@@ -16,15 +16,15 @@ class ProjectSummaryController extends Controller
 
     public function show(Request $request, string $projectId)
     {
-        $project = $this->projects->findForUser($projectId, $request->user()->id);
+        $project = $this->projects->findForUser($projectId, $request->user()->id, withRelations: true);
 
-        $total = $project->tasks()->count();
-        $done = $project->tasks()->where('status', 'done')->count();
+        $tasks = $project->tasks ?? [];
+        $total = count($tasks);
+        $done = collect($tasks)->filter(fn ($t) => $t->status === 'done')->count();
         $pending = $total - $done;
         $progress = $total > 0 ? round(($done / $total) * 100, 2) : 0;
 
-        $milestones = $project->milestones;
-        $tasks = $project->tasks;
+        $milestones = $project->milestones ?? [];
 
         return new ProjectSummaryResource([
             'project' => $project,

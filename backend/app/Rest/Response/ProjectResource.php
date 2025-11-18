@@ -16,36 +16,21 @@ class ProjectResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'startDate' => [
-                'year' => $this->start_year,
-                'month' => $this->start_month,
-                'week' => $this->start_week,
+                'year' => $this->startYear,
+                'month' => $this->startMonth,
+                'week' => $this->startWeek,
             ],
             'endDate' => [
-                'year' => $this->end_year,
-                'month' => $this->end_month,
-                'week' => $this->end_week,
+                'year' => $this->endYear,
+                'month' => $this->endMonth,
+                'week' => $this->endWeek,
             ],
-            'additionalFields' => $this->additional_fields ?? [],
-            'owner' => $this->when(isset($this->owner), function () {
-                return [
-                    'id' => $this->owner->id,
-                    'alias' => $this->owner->alias,
-                    'email' => $this->owner->email,
-                ];
-            }),
-            'members' => $this->whenLoaded('members', fn () => $this->members->map(function ($member) {
-                return [
-                    'id' => $member->id,
-                    'alias' => $member->alias,
-                    'email' => $member->email,
-                    'role' => $member->pivot->role ?? 'member',
-                ];
-            })->values()),
-            'tasks' => $this->whenLoaded('tasks', fn () => TaskResource::collection($this->tasks)),
-            'milestones' => $this->whenLoaded('milestones', fn () => MilestoneResource::collection($this->milestones)),
-            'tasks_count' => $this->when(isset($this->tasks_count), $this->tasks_count),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'additionalFields' => $this->additionalFields ?? [],
+            'ownerId' => $this->ownerId,
+            'members' => $this->members,
+            'tasks' => TaskResource::collection($this->tasks),
+            'milestones' => MilestoneResource::collection($this->milestones),
+            'tasks_count' => $this->tasks ? count($this->tasks) : null,
         ];
     }
 }

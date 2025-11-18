@@ -3,7 +3,7 @@
 namespace App\Business\Project\Service;
 
 use App\Business\Project\Port\ProjectRepository;
-use App\Persistence\Project\Entity\Project;
+use App\Business\Project\Model\ProjectModel;
 
 class ProjectService
 {
@@ -16,25 +16,23 @@ class ProjectService
         return $this->projects->listForUser($userId);
     }
 
-    public function create(int $ownerId, array $data): Project
+    public function create(int $ownerId, array $data): ProjectModel
     {
-        $payload = array_merge($data, ['owner_id' => $ownerId]);
-
-        return $this->projects->create($payload);
+        return $this->projects->create($ownerId, $data);
     }
 
-    public function findForUser(string $uuid, int $userId, bool $ownerOnly = false): Project
+    public function findForUser(string $uuid, int $userId, bool $ownerOnly = false, bool $withRelations = false): ProjectModel
     {
-        return $this->projects->findForUser($uuid, $userId, $ownerOnly);
+        return $this->projects->findForUser($uuid, $userId, $ownerOnly, $withRelations);
     }
 
-    public function update(Project $project, array $data): Project
+    public function update(string $projectUuid, int $userId, array $data): ProjectModel
     {
-        return $this->projects->update($project, $data);
+        return $this->projects->update($projectUuid, $userId, $data);
     }
 
-    public function delete(Project $project): void
+    public function delete(string $projectUuid, int $userId): void
     {
-        $this->projects->delete($project);
+        $this->projects->delete($projectUuid, $userId);
     }
 }

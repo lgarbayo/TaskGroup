@@ -3,8 +3,7 @@
 namespace App\Business\Project\Service;
 
 use App\Business\Project\Port\MilestoneRepository;
-use App\Persistence\Project\Entity\Milestone;
-use App\Persistence\Project\Entity\Project;
+use App\Business\Project\Model\MilestoneModel;
 
 class MilestoneService
 {
@@ -12,23 +11,28 @@ class MilestoneService
     {
     }
 
-    public function list(Project $project): iterable
+    public function list(string $projectUuid, int $userId): iterable
     {
-        return $this->milestones->list($project);
+        return $this->milestones->list($projectUuid, $userId);
     }
 
-    public function create(Project $project, array $data): Milestone
+    public function create(string $projectUuid, int $userId, array $data): MilestoneModel
     {
-        return $this->milestones->create($project, $data);
+        return $this->milestones->create($projectUuid, $userId, $data);
     }
 
-    public function update(Milestone $milestone, array $data): Milestone
+    public function find(string $projectUuid, string $milestoneUuid, int $userId): MilestoneModel
     {
-        return $this->milestones->update($milestone, $data);
+        return $this->milestones->find($projectUuid, $milestoneUuid, $userId);
     }
 
-    public function delete(Milestone $milestone): void
+    public function update(string $projectUuid, string $milestoneUuid, int $userId, array $data): MilestoneModel
     {
-        $this->milestones->delete($milestone);
+        return $this->milestones->update($projectUuid, $milestoneUuid, $userId, $data);
+    }
+
+    public function delete(string $projectUuid, string $milestoneUuid, int $userId): void
+    {
+        $this->milestones->delete($projectUuid, $milestoneUuid, $userId);
     }
 }

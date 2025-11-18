@@ -2,16 +2,17 @@
 
 namespace App\Business\Project\Port;
 
-use App\Persistence\Project\Entity\Milestone;
-use App\Persistence\Project\Entity\Project;
+use App\Business\Project\Model\MilestoneModel;
 
 interface MilestoneRepository
 {
-    public function list(Project $project): iterable;
+    public function list(string $projectUuid, int $userId): iterable;
 
-    public function create(Project $project, array $data): Milestone;
+    public function create(string $projectUuid, int $userId, array $data): MilestoneModel;
 
-    public function update(Milestone $milestone, array $data): Milestone;
+    public function find(string $projectUuid, string $milestoneUuid, int $userId): MilestoneModel;
 
-    public function delete(Milestone $milestone): void;
+    public function update(string $projectUuid, string $milestoneUuid, int $userId, array $data): MilestoneModel;
+
+    public function delete(string $projectUuid, string $milestoneUuid, int $userId): void;
 }

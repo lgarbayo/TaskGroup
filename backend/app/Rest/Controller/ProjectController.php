@@ -44,24 +44,16 @@ class ProjectController extends Controller
 
     public function show(Request $request, string $project)
     {
-        $project = $this->projects->findForUser($project, $request->user()->id)
-            ->load([
-                'owner',
-                'members',
-                'tasks.assignee',
-                'milestones',
-            ])
-            ->loadCount('tasks');
+        $projectModel = $this->projects->findForUser($project, $request->user()->id, withRelations: true);
 
-        return new ProjectResource($project);
+        return new ProjectResource($projectModel);
     }
 
     public function update(UpsertProjectRequest $request, string $project)
     {
-        $project = $this->projects->findForUser($project, $request->user()->id, ownerOnly: true);
         $data = $request->validated();
 
-        $updated = $this->projects->update($project, [
+        $updated = $this->projects->update($project, $request->user()->id, [
             'title' => $data['title'],
             'description' => $data['description'] ?? null,
             'start_year' => $data['start_date']['year'],
@@ -73,13 +65,12 @@ class ProjectController extends Controller
             'additional_fields' => $data['additional_fields'] ?? null,
         ]);
 
-        return new ProjectResource($updated->loadCount('tasks'));
+        return new ProjectResource($updated);
     }
 
     public function destroy(Request $request, string $project)
     {
-        $project = $this->projects->findForUser($project, $request->user()->id, ownerOnly: true);
-        $this->projects->delete($project);
+        $this->projects->delete($project, $request->user()->id);
 
         return response()->noContent();
     }

@@ -3,8 +3,7 @@
 namespace App\Business\Project\Service;
 
 use App\Business\Project\Port\TaskRepository;
-use App\Persistence\Project\Entity\Project;
-use App\Persistence\Project\Entity\Task;
+use App\Business\Project\Model\TaskModel;
 
 class TaskService
 {
@@ -12,23 +11,28 @@ class TaskService
     {
     }
 
-    public function list(Project $project): iterable
+    public function list(string $projectUuid, int $userId): iterable
     {
-        return $this->tasks->list($project);
+        return $this->tasks->list($projectUuid, $userId);
     }
 
-    public function create(Project $project, array $data): Task
+    public function create(string $projectUuid, int $userId, array $data): TaskModel
     {
-        return $this->tasks->create($project, $data);
+        return $this->tasks->create($projectUuid, $userId, $data);
     }
 
-    public function update(Task $task, array $data): Task
+    public function find(string $projectUuid, string $taskUuid, int $userId): TaskModel
     {
-        return $this->tasks->update($task, $data);
+        return $this->tasks->find($projectUuid, $taskUuid, $userId);
     }
 
-    public function delete(Task $task): void
+    public function update(string $projectUuid, string $taskUuid, int $userId, array $data): TaskModel
     {
-        $this->tasks->delete($task);
+        return $this->tasks->update($projectUuid, $taskUuid, $userId, $data);
+    }
+
+    public function delete(string $projectUuid, string $taskUuid, int $userId): void
+    {
+        $this->tasks->delete($projectUuid, $taskUuid, $userId);
     }
 }

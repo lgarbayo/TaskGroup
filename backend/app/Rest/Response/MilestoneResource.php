@@ -11,16 +11,14 @@ class MilestoneResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'projectUuid' => $this->project->uuid,
+            'projectUuid' => $this->projectUuid,
             'title' => $this->title,
             'description' => $this->description,
             'date' => [
-                'year' => $this->date_year,
-                'month' => $this->date_month,
-                'week' => $this->date_week,
+                'year' => $this->dateYear,
+                'month' => $this->dateMonth,
+                'week' => $this->dateWeek,
             ],
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

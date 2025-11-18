@@ -2,8 +2,10 @@
 
 namespace App\Persistence\Project\Adapter;
 
+use App\Business\Project\Model\ProjectModel;
 use App\Business\Project\Port\ProjectRepository;
 use App\Persistence\Project\Entity\Project;
+use App\Persistence\Project\Mapper\ProjectMapper;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentProjectRepository implements ProjectRepository
@@ -16,21 +18,20 @@ class EloquentProjectRepository implements ProjectRepository
             ->orWhereHas('members', fn (Builder $members) => $members->where('user_id', $userId))
             ->distinct()
             ->orderBy('updated_at', 'desc')
-            ->get();
+            ->get()
+            ->map(fn ($project) => ProjectMapper::toModel($project))
+            ->all();
     }
 
-    public function create(array $data): Project
+    public function create(int $ownerId, array $data): ProjectModel
     {
-        $project = Project::create($data);
-        // attach owner as member if provided
-        if (isset($data['owner_id'])) {
-            $project->members()->attach($data['owner_id'], ['role' => 'owner']);
-        }
+        $project = Project::create(array_merge($data, ['owner_id' => $ownerId]));
+        $project->members()->attach($ownerId, ['role' => 'owner']);
 
-        return $project;
+        return ProjectMapper::toModel($project);
     }
 
-    public function findForUser(string $uuid, int $userId, bool $ownerOnly = false): Project
+    public function findForUser(string $uuid, int $userId, bool $ownerOnly = false, bool $withRelations = false): ProjectModel
     {
         $query = Project::query()->where('uuid', $uuid);
 
@@ -44,18 +45,34 @@ class EloquentProjectRepository implements ProjectRepository
             });
         }
 
-        return $query->firstOrFail();
+        $project = $query->firstOrFail();
+
+        if ($withRelations) {
+            $project->load(['owner', 'members', 'tasks.assignee', 'milestones']);
+        }
+
+        return ProjectMapper::toModel($project, withRelations: $withRelations);
     }
 
-    public function update(Project $project, array $data): Project
+    public function update(string $projectUuid, int $userId, array $data): ProjectModel
     {
+        $project = $this->loadOwnedProject($projectUuid, $userId);
         $project->update($data);
 
-        return $project->fresh();
+        return ProjectMapper::toModel($project->fresh());
     }
 
-    public function delete(Project $project): void
+    public function delete(string $projectUuid, int $userId): void
     {
+        $project = $this->loadOwnedProject($projectUuid, $userId);
         $project->delete();
+    }
+
+    private function loadOwnedProject(string $uuid, int $userId): Project
+    {
+        return Project::query()
+            ->where('uuid', $uuid)
+            ->where('owner_id', $userId)
+            ->firstOrFail();
     }
 }

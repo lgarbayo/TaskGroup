@@ -7,7 +7,6 @@ use App\Rest\Command\Milestone\UpsertMilestoneRequest;
 use App\Rest\Response\MilestoneResource;
 use App\Business\Project\Service\ProjectService;
 use App\Business\Project\Service\MilestoneService;
-use App\Persistence\Project\Entity\Milestone;
 use Illuminate\Http\Request;
 
 class MilestoneController extends Controller
@@ -19,18 +18,18 @@ class MilestoneController extends Controller
 
     public function index(Request $request, string $projectUuid)
     {
-        $project = $this->projects->findForUser($projectUuid, $request->user()->id);
-        $milestones = $this->milestones->list($project);
+        $this->projects->findForUser($projectUuid, $request->user()->id);
+        $milestones = $this->milestones->list($projectUuid, $request->user()->id);
 
         return MilestoneResource::collection($milestones);
     }
 
     public function store(UpsertMilestoneRequest $request, string $projectUuid)
     {
-        $project = $this->projects->findForUser($projectUuid, $request->user()->id);
+        $this->projects->findForUser($projectUuid, $request->user()->id);
         $data = $request->validated();
 
-        $milestone = $this->milestones->create($project, [
+        $milestone = $this->milestones->create($projectUuid, $request->user()->id, [
             'title' => $data['title'],
             'description' => $data['description'] ?? null,
             'date_year' => $data['date']['year'],
@@ -41,28 +40,21 @@ class MilestoneController extends Controller
         return (new MilestoneResource($milestone))->response()->setStatusCode(201);
     }
 
-    public function show(Request $request, string $projectUuid, Milestone $milestone)
+    public function show(Request $request, string $projectUuid, string $milestone)
     {
         $this->projects->findForUser($projectUuid, $request->user()->id);
+        $milestoneModel = $this->milestones->find($projectUuid, $milestone, $request->user()->id);
 
-        if ($milestone->project->uuid !== $projectUuid) {
-            abort(404);
-        }
-
-        return new MilestoneResource($milestone);
+        return new MilestoneResource($milestoneModel);
     }
 
-    public function update(UpsertMilestoneRequest $request, string $projectUuid, Milestone $milestone)
+    public function update(UpsertMilestoneRequest $request, string $projectUuid, string $milestone)
     {
         $this->projects->findForUser($projectUuid, $request->user()->id);
-
-        if ($milestone->project->uuid !== $projectUuid) {
-            abort(404);
-        }
 
         $data = $request->validated();
 
-        $updated = $this->milestones->update($milestone, [
+        $updated = $this->milestones->update($projectUuid, $milestone, $request->user()->id, [
             'title' => $data['title'],
             'description' => $data['description'] ?? null,
             'date_year' => $data['date']['year'],
@@ -73,15 +65,10 @@ class MilestoneController extends Controller
         return new MilestoneResource($updated);
     }
 
-    public function destroy(Request $request, string $projectUuid, Milestone $milestone)
+    public function destroy(Request $request, string $projectUuid, string $milestone)
     {
         $this->projects->findForUser($projectUuid, $request->user()->id);
-
-        if ($milestone->project->uuid !== $projectUuid) {
-            abort(404);
-        }
-
-        $this->milestones->delete($milestone);
+        $this->milestones->delete($projectUuid, $milestone, $request->user()->id);
 
         return response()->noContent();
     }

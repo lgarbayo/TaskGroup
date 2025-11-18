@@ -2,16 +2,17 @@
 
 namespace App\Business\Project\Port;
 
-use App\Persistence\Project\Entity\Project;
-use App\Persistence\Project\Entity\Task;
+use App\Business\Project\Model\TaskModel;
 
 interface TaskRepository
 {
-    public function list(Project $project): iterable;
+    public function list(string $projectUuid, int $userId): iterable;
 
-    public function create(Project $project, array $data): Task;
+    public function create(string $projectUuid, int $userId, array $data): TaskModel;
 
-    public function update(Task $task, array $data): Task;
+    public function find(string $projectUuid, string $taskUuid, int $userId): TaskModel;
 
-    public function delete(Task $task): void;
+    public function update(string $projectUuid, string $taskUuid, int $userId, array $data): TaskModel;
+
+    public function delete(string $projectUuid, string $taskUuid, int $userId): void;
 }

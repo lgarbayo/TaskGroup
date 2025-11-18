@@ -11,25 +11,17 @@ class TaskResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'projectUuid' => $this->project->uuid,
+            'projectUuid' => $this->projectUuid,
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status,
-            'durationWeeks' => $this->duration_weeks,
+            'durationWeeks' => $this->durationWeeks,
             'startDate' => [
-                'year' => $this->start_year,
-                'month' => $this->start_month,
-                'week' => $this->start_week,
+                'year' => $this->startYear,
+                'month' => $this->startMonth,
+                'week' => $this->startWeek,
             ],
-            'assignee' => $this->when($this->assignee, function () {
-                return [
-                    'id' => $this->assignee->id,
-                    'alias' => $this->assignee->alias,
-                    'email' => $this->assignee->email,
-                ];
-            }),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'assignee' => $this->assignee,
         ];
     }
 }

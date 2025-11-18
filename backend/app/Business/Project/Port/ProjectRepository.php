@@ -2,17 +2,17 @@
 
 namespace App\Business\Project\Port;
 
-use App\Persistence\Project\Entity\Project;
+use App\Business\Project\Model\ProjectModel;
 
 interface ProjectRepository
 {
     public function listForUser(int $userId): iterable;
 
-    public function create(array $data): Project;
+    public function create(int $ownerId, array $data): ProjectModel;
 
-    public function findForUser(string $uuid, int $userId, bool $ownerOnly = false): Project;
+    public function findForUser(string $uuid, int $userId, bool $ownerOnly = false, bool $withRelations = false): ProjectModel;
 
-    public function update(Project $project, array $data): Project;
+    public function update(string $projectUuid, int $userId, array $data): ProjectModel;
 
-    public function delete(Project $project): void;
+    public function delete(string $projectUuid, int $userId): void;
 }

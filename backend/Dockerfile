@@ -1,25 +1,31 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
-# Install system dependencies and PHP extensions
+# Install extensions
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev libonig-dev libxml2-dev \
+    libpq-dev libzip-dev libonig-dev libxml2-dev git unzip \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip \
     && rm -rf /var/lib/apt/lists/*
+
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
+
+WORKDIR /var/www/html
+
+# Copy app files
+COPY . /var/www/html
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
-
-# Copy application files
-COPY . /var/www/html
-
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set proper permissions for storage and bootstrap cache
+# Apache DocumentRoot to public
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf
+
+# Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 8082
+EXPOSE 80
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8082"]
+CMD ["apache2-foreground"]

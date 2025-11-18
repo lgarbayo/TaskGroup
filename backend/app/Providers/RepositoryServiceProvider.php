@@ -8,6 +8,10 @@ use App\Business\Project\Port\TaskRepository;
 use App\Persistence\Project\Adapter\EloquentMilestoneRepository;
 use App\Persistence\Project\Adapter\EloquentProjectRepository;
 use App\Persistence\Project\Adapter\EloquentTaskRepository;
+use App\Business\User\Port\UserRepository;
+use App\Persistence\User\Adapter\EloquentUserRepository;
+use App\Business\Project\Facade\ProjectFacade;
+use App\Business\Project\Facade\ProjectFacadeImpl;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -17,5 +21,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ProjectRepository::class, EloquentProjectRepository::class);
         $this->app->bind(TaskRepository::class, EloquentTaskRepository::class);
         $this->app->bind(MilestoneRepository::class, EloquentMilestoneRepository::class);
+        $this->app->bind(UserRepository::class, EloquentUserRepository::class);
+        $this->app->bind(ProjectFacade::class, ProjectFacadeImpl::class);
     }
 }

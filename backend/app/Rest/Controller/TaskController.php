@@ -5,22 +5,21 @@ namespace App\Rest\Controller;
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Task\UpsertTaskRequest;
 use App\Rest\Response\TaskResource;
-use App\Business\Project\Service\TaskService;
-use App\Business\Project\Service\ProjectService;
+use App\Business\Project\Facade\ProjectFacade;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class TaskController extends Controller
 {
 
-    public function __construct(private ProjectService $projects, private TaskService $tasks)
+    public function __construct(private ProjectFacade $facade)
     {
     }
 
     public function index(Request $request, string $project)
     {
-        $this->projects->findForUser($project, $request->user()->id);
-        $tasks = $this->tasks->list($project, $request->user()->id);
+        $this->facade->getProject($project, $request->user()->id);
+        $tasks = $this->facade->listTasks($project, $request->user()->id);
 
         return TaskResource::collection($tasks);
     }
@@ -28,13 +27,13 @@ class TaskController extends Controller
     public function store(UpsertTaskRequest $request, string $project)
     {
         $user = $request->user();
-        $projectModel = $this->projects->findForUser($project, $user->id, withRelations: true);
+        $projectModel = $this->facade->getProject($project, $user->id, withRelations: true);
         $data = $request->validated();
 
         $assigneeId = $data['assignee_id'] ?? $user->id;
         $this->ensureUserBelongsToProject($projectModel, $assigneeId);
 
-        $task = $this->tasks->create($project, $user->id, [
+        $task = $this->facade->createTask($project, $user->id, [
             'title' => $data['title'],
             'description' => $data['description'] ?? null,
             'start_year' => $data['start_date']['year'],
@@ -50,8 +49,8 @@ class TaskController extends Controller
 
     public function show(Request $request, string $project, string $task)
     {
-        $this->projects->findForUser($project, $request->user()->id);
-        $taskModel = $this->tasks->find($project, $task, $request->user()->id);
+        $this->facade->getProject($project, $request->user()->id);
+        $taskModel = $this->facade->getTask($project, $task, $request->user()->id);
 
         return new TaskResource($taskModel);
     }
@@ -59,17 +58,17 @@ class TaskController extends Controller
     public function update(UpsertTaskRequest $request, string $project, string $task)
     {
         $user = $request->user();
-        $projectModel = $this->projects->findForUser($project, $user->id, withRelations: true);
+        $projectModel = $this->facade->getProject($project, $user->id, withRelations: true);
 
         $data = $request->validated();
-        $taskModel = $this->tasks->find($project, $task, $user->id);
+        $taskModel = $this->facade->getTask($project, $task, $user->id);
         $assigneeId = $data['assignee_id'] ?? ($taskModel->assignee['id'] ?? null);
 
         if ($assigneeId) {
             $this->ensureUserBelongsToProject($projectModel, $assigneeId);
         }
 
-        $updated = $this->tasks->update($project, $task, $user->id, [
+        $updated = $this->facade->updateTask($project, $task, $user->id, [
             'title' => $data['title'],
             'description' => $data['description'] ?? null,
             'start_year' => $data['start_date']['year'],
@@ -86,8 +85,8 @@ class TaskController extends Controller
     public function destroy(Request $request, string $project, string $task)
     {
         $user = $request->user();
-        $this->projects->findForUser($project, $user->id);
-        $this->tasks->delete($project, $task, $user->id);
+        $this->facade->getProject($project, $user->id);
+        $this->facade->deleteTask($project, $task, $user->id);
 
         return response()->noContent();
     }

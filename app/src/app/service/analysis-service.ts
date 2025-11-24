@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ProjectAnalysis } from '../model/analysis.model';
 
 @Injectable({
@@ -11,6 +12,8 @@ export class AnalysisService {
   private http = inject(HttpClient);
 
   getProjectAnalysis(projectUuid: string): Observable<ProjectAnalysis> {
-    return this.http.get<ProjectAnalysis>(`${this.projectUrl}/${projectUuid}/analysis`);
+    return this.http
+      .get<{ data: ProjectAnalysis }>(`${this.projectUrl}/${projectUuid}/analysis`)
+      .pipe(map((response) => response.data));
   }
 }

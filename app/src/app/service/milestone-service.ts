@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Milestone, UpsertMilestoneCommand, UpsertMilestoneCommandForm } from '../model/milestone.model';
 import { CoreService } from './core-service';
 
@@ -15,15 +16,21 @@ export class MilestoneService {
   private coreService = inject(CoreService);
 
   list(projectUuid: string): Observable<Array<Milestone>> {
-    return this.http.get<Array<Milestone>>(`${this.projectUrl}/${projectUuid}/milestone`);
+    return this.http
+      .get<{ data: Array<Milestone> }>(`${this.projectUrl}/${projectUuid}/milestone`)
+      .pipe(map((response) => response.data ?? []));
   }
 
   get(projectUuid: string, milestoneUuid: string): Observable<Milestone> {
-    return this.http.get<Milestone>(`${this.projectUrl}/${projectUuid}/milestone/${milestoneUuid}`);
+    return this.http
+      .get<{ data: Milestone }>(`${this.projectUrl}/${projectUuid}/milestone/${milestoneUuid}`)
+      .pipe(map((response) => response.data));
   }
 
   create(projectUuid: string, command: UpsertMilestoneCommand): Observable<Milestone> {
-    return this.http.post<Milestone>(`${this.projectUrl}/${projectUuid}/milestone`, command);
+    return this.http
+      .post<{ data: Milestone }>(`${this.projectUrl}/${projectUuid}/milestone`, command)
+      .pipe(map((response) => response.data));
   }
 
   update(
@@ -31,10 +38,12 @@ export class MilestoneService {
     milestoneUuid: string,
     command: UpsertMilestoneCommand
   ): Observable<Milestone> {
-    return this.http.put<Milestone>(
-      `${this.projectUrl}/${projectUuid}/milestone/${milestoneUuid}`,
-      command
-    );
+    return this.http
+      .put<{ data: Milestone }>(
+        `${this.projectUrl}/${projectUuid}/milestone/${milestoneUuid}`,
+        command
+      )
+      .pipe(map((response) => response.data));
   }
 
   delete(projectUuid: string, milestoneUuid: string): Observable<void> {

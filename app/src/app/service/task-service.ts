@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Task, UpsertTaskCommand, UpsertTaskCommandForm } from '../model/task.model';
 import { CoreService } from './core-service';
@@ -15,19 +16,27 @@ export class TaskService {
   private coreService = inject(CoreService);
 
   list(projectUuid: string): Observable<Array<Task>> {
-    return this.http.get<Array<Task>>(`${this.projectUrl}/${projectUuid}/tasks`);
+    return this.http
+      .get<{ data: Array<Task> }>(`${this.projectUrl}/${projectUuid}/tasks`)
+      .pipe(map((response) => response.data ?? []));
   }
 
   get(projectUuid: string, taskUuid: string): Observable<Task> {
-    return this.http.get<Task>(`${this.projectUrl}/${projectUuid}/tasks/${taskUuid}`);
+    return this.http
+      .get<{ data: Task }>(`${this.projectUrl}/${projectUuid}/tasks/${taskUuid}`)
+      .pipe(map((response) => response.data));
   }
 
   create(projectUuid: string, command: UpsertTaskCommand): Observable<Task> {
-    return this.http.post<Task>(`${this.projectUrl}/${projectUuid}/tasks`, this.mapToApiPayload(command));
+    return this.http
+      .post<{ data: Task }>(`${this.projectUrl}/${projectUuid}/tasks`, this.mapToApiPayload(command))
+      .pipe(map((response) => response.data));
   }
 
   update(projectUuid: string, taskUuid: string, command: UpsertTaskCommand): Observable<Task> {
-    return this.http.put<Task>(`${this.projectUrl}/${projectUuid}/tasks/${taskUuid}`, this.mapToApiPayload(command));
+    return this.http
+      .put<{ data: Task }>(`${this.projectUrl}/${projectUuid}/tasks/${taskUuid}`, this.mapToApiPayload(command))
+      .pipe(map((response) => response.data));
   }
 
   delete(projectUuid: string, taskUuid: string): Observable<void> {

@@ -3,6 +3,7 @@ import { FormControl, NonNullableFormBuilder, Validators } from '@angular/forms'
 import { Project, UpsertProjectCommand, UpsertProjectCommandForm } from '../model/project.model';
 import { CoreService } from './core-service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -15,19 +16,27 @@ export class ProjectService {
   private http = inject(HttpClient);
 
   list(): Observable<Array<Project>> {
-    return this.http.get<Array<Project>>(this.resourceUrl);
+    return this.http
+      .get<{ data: Array<Project> }>(this.resourceUrl)
+      .pipe(map((response) => response.data ?? []));
   }
 
   get(projectUuid: string): Observable<Project> {
-    return this.http.get<Project>(`${this.resourceUrl}/${projectUuid}`);
+    return this.http
+      .get<{ data: Project }>(`${this.resourceUrl}/${projectUuid}`)
+      .pipe(map((response) => response.data));
   }
 
   createProject(command: UpsertProjectCommand): Observable<Project> {
-    return this.http.post<Project>(this.resourceUrl, this.mapToApiPayload(command));
+    return this.http
+      .post<{ data: Project }>(this.resourceUrl, this.mapToApiPayload(command))
+      .pipe(map((response) => response.data));
   }
 
   updateProject(projectUuid: string, command: UpsertProjectCommand): Observable<Project> {
-    return this.http.put<Project>(`${this.resourceUrl}/${projectUuid}`, this.mapToApiPayload(command));
+    return this.http
+      .put<{ data: Project }>(`${this.resourceUrl}/${projectUuid}`, this.mapToApiPayload(command))
+      .pipe(map((response) => response.data));
   }
 
   deleteProject(projectUuid: string): Observable<void> {

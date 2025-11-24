@@ -1,0 +1,33 @@
+.auth-card {
+  max-width: 480px;
+  margin: 2rem auto;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &.active {
+    background: var(--surface-strong);
+  }
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+input.invalid {
+  border-color: var(--danger);
+  background-color: color-mix(in srgb, var(--danger) 10%, transparent);
+}

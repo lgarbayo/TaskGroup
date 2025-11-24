@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div>
+    <label>Title</label>
+    <input formControlName="title" />
+  </div>
+
+  <div>
+    <label>Description</label>
+    <textarea rows="2" formControlName="description"></textarea>
+  </div>
+
+  <fieldset formGroupName="date">
+    <legend>Date</legend>
+    <label>Year</label>
+    <input type="number" formControlName="year" />
+    <label>Month</label>
+    <input type="number" min="0" max="11" formControlName="month" />
+    <label>Week</label>
+    <input type="number" min="0" max="3" formControlName="week" />
+  </fieldset>
+
+  <button type="submit">Save milestone</button>
+</form>

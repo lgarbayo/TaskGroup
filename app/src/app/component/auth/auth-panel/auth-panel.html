@@ -1,0 +1,98 @@
+<section class="auth-card card pad stack-md">
+  @if (!isAuthenticated()) {
+    <header class="stack-xs">
+      <p class="subtitle">Identifícate para continuar</p>
+      <h2 class="title">Bienvenido a TaskGroup</h2>
+    </header>
+
+    <div class="tab-bar">
+      <button
+        class="tab"
+        [class.active]="mode() === 'login'"
+        type="button"
+        (click)="switchMode('login')"
+      >
+        Iniciar sesión
+      </button>
+      <button
+        class="tab"
+        [class.active]="mode() === 'register'"
+        type="button"
+        (click)="switchMode('register')"
+      >
+        Crear cuenta
+      </button>
+    </div>
+
+    @if (mode() === 'login') {
+      <form class="stack-sm" (ngSubmit)="submitLogin()" [formGroup]="loginForm">
+        <label class="stack-xxs">
+          <span>Email</span>
+          <input type="email" formControlName="email" placeholder="persona@ejemplo.com" />
+        </label>
+        <label class="stack-xxs">
+          <span>Contraseña</span>
+          <input type="password" formControlName="password" placeholder="********" />
+        </label>
+        <button class="btn" type="submit" [disabled]="loading()">Entrar</button>
+      </form>
+    } @else {
+      <form class="stack-sm" (ngSubmit)="submitRegister()" [formGroup]="registerForm" novalidate>
+        <label class="stack-xxs">
+          <span>Alias</span>
+          <input
+            type="text"
+            formControlName="alias"
+            placeholder="usuario123"
+            [class.invalid]="inputInvalid('alias')"
+          />
+          @if (inputInvalid('alias')) {
+            <small class="error">El alias es obligatorio.</small>
+          }
+        </label>
+        <label class="stack-xxs">
+          <span>Nombre (opcional)</span>
+          <input type="text" formControlName="name" placeholder="Nombre completo" />
+        </label>
+        <label class="stack-xxs">
+          <span>Email</span>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="persona@ejemplo.com"
+            [class.invalid]="inputInvalid('email')"
+          />
+          @if (inputInvalid('email')) {
+            <small class="error">Introduce un email válido.</small>
+          }
+        </label>
+        <label class="stack-xxs">
+          <span>Contraseña</span>
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="********"
+            [class.invalid]="inputInvalid('password')"
+          />
+          @if (inputInvalid('password')) {
+            <small class="error">Mínimo 8 caracteres.</small>
+          }
+        </label>
+        <button class="btn" type="submit" [disabled]="loading()">Crear cuenta</button>
+      </form>
+    }
+
+    @if (errorMessage(); as error) {
+      <p class="error">{{ error }}</p>
+    }
+  } @else {
+    @if (user(); as currentUser) {
+      <div class="stack-sm">
+        <p class="subtitle">Sesión iniciada</p>
+        <h2 class="title">Hola, {{ currentUser.alias }}</h2>
+        <p class="muted">{{ currentUser.email }}</p>
+        <button class="btn ghost" type="button" (click)="logout()">Cerrar sesión</button>
+      </div>
+    }
+  }
+</section>

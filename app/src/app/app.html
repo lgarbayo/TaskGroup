@@ -1,0 +1,34 @@
+<header class="app-header">
+  <div class="wrap">
+    <button class="btn-icon" aria-label="Menú principal">
+      <span>☰</span>
+    </button>
+    <a class="brand" routerLink="/">TaskGroup</a>
+    <div class="spacer"></div>
+    <select class="select-inline" aria-label="Idioma">
+      <option>Español</option>
+      <option>English</option>
+    </select>
+    <button class="btn ghost" type="button" (click)="toggleTheme()">
+      {{ theme() === 'dark' ? 'Modo claro' : 'Modo oscuro' }}
+    </button>
+    @if (isAuthenticated() && user(); as currentUser) {
+      <span class="pill">Hola, {{ currentUser.alias }}</span>
+      <button class="btn danger" type="button" (click)="logout()">Cerrar sesión</button>
+    } @else {
+      <span class="pill muted">Sesión no iniciada</span>
+    }
+  </div>
+</header>
+
+<main class="container">
+  @if (isAuthenticated()) {
+    <router-outlet></router-outlet>
+  } @else {
+    <app-auth-panel></app-auth-panel>
+  }
+</main>
+
+<footer class="footer">
+  © TaskGroup · 2025
+</footer>

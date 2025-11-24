@@ -1,0 +1,28 @@
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div>
+    <label>Title</label>
+    <input formControlName="title" />
+  </div>
+
+  <div>
+    <label>Description</label>
+    <textarea rows="2" formControlName="description"></textarea>
+  </div>
+
+  <div>
+    <label>Duration (weeks)</label>
+    <input type="number" min="1" formControlName="durationWeeks" />
+  </div>
+
+  <fieldset formGroupName="startDate">
+    <legend>Start Date</legend>
+    <label>Year</label>
+    <input type="number" formControlName="year" />
+    <label>Month</label>
+    <input type="number" min="0" max="11" formControlName="month" />
+    <label>Week</label>
+    <input type="number" min="0" max="3" formControlName="week" />
+  </fieldset>
+
+  <button type="submit">Save task</button>
+</form>

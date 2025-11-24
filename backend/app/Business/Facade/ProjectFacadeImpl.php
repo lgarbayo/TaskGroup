@@ -2,6 +2,8 @@
 
 namespace App\Business\Facade;
 
+use App\Business\Analysis\Model\ProjectAnalysisModel;
+use App\Business\Analysis\Service\AnalysisService;
 use App\Business\Project\Model\MilestoneModel;
 use App\Business\Project\Model\ProjectModel;
 use App\Business\Project\Model\TaskModel;
@@ -15,6 +17,7 @@ class ProjectFacadeImpl implements ProjectFacade
         private ProjectService $projects,
         private TaskService $tasks,
         private MilestoneService $milestones,
+        private AnalysisService $analysis,
     ) {
     }
 
@@ -113,5 +116,10 @@ class ProjectFacadeImpl implements ProjectFacade
             'milestones' => $project->milestones ?? [],
             'tasks' => $tasks,
         ];
+    }
+
+    public function projectAnalysis(string $projectUuid, int $userId): ProjectAnalysisModel
+    {
+        return $this->analysis->projectAnalysis($projectUuid, $userId);
     }
 }

@@ -11,6 +11,6 @@ export class AnalysisService {
   private http = inject(HttpClient);
 
   getProjectAnalysis(projectUuid: string): Observable<ProjectAnalysis> {
-    return this.http.get<ProjectAnalysis>(`${this.projectUrl}/${projectUuid}/summary`);
+    return this.http.get<ProjectAnalysis>(`${this.projectUrl}/${projectUuid}/analysis`);
   }
 }

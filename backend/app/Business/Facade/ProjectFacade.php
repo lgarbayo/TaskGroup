@@ -2,6 +2,7 @@
 
 namespace App\Business\Facade;
 
+use App\Business\Analysis\Model\ProjectAnalysisModel;
 use App\Business\Project\Model\ProjectModel;
 use App\Business\Project\Model\TaskModel;
 use App\Business\Project\Model\MilestoneModel;
@@ -31,4 +32,7 @@ interface ProjectFacade
 
     /** summary */
     public function projectSummary(string $projectUuid, int $userId): array;
+
+    /** analysis */
+    public function projectAnalysis(string $projectUuid, int $userId): ProjectAnalysisModel;
 }

@@ -4,6 +4,7 @@ use App\Rest\Controller\AuthController;
 use App\Rest\Controller\ProjectController;
 use App\Rest\Controller\ProjectMemberController;
 use App\Rest\Controller\ProjectSummaryController;
+use App\Rest\Controller\AnalysisController;
 use App\Rest\Controller\TaskController;
 use App\Rest\Controller\MilestoneController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/projects/{project}/members', [ProjectMemberController::class, 'store']);
     Route::get('/projects/{project}/summary', [ProjectSummaryController::class, 'show']);
+    Route::get('/projects/{project}/analysis', [AnalysisController::class, 'show']);
 
     Route::get('/projects/{project}/tasks', [TaskController::class, 'index']);
     Route::post('/projects/{project}/tasks', [TaskController::class, 'store']);

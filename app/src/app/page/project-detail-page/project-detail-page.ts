@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { ProjectService } from '../../service/project-service';
@@ -14,6 +14,9 @@ import { ProjectAnalysis } from '../../model/analysis.model';
 import { ProjectForm } from "../../component/project/project-form/project-form";
 import { MilestoneForm } from "../../component/project/milestone-form/milestone-form";
 import { TaskForm } from "../../component/project/task-form/task-form";
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -21,12 +24,14 @@ import { TaskForm } from "../../component/project/task-form/task-form";
   imports: [
     DecimalPipe,
     KeyValuePipe,
+    ReactiveFormsModule,
     ProjectForm,
     MilestoneForm,
-    TaskForm
+    TaskForm,
+    TranslatePipe
 ],
   templateUrl: './project-detail-page.html',
-  styleUrl: './project-detail-page.scss',
+  styleUrl: './project-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectDetailPage {
@@ -35,6 +40,7 @@ export class ProjectDetailPage {
   private milestoneService = inject(MilestoneService);
   private taskService = inject(TaskService);
   private analysisService = inject(AnalysisService);
+  private nfb = inject(NonNullableFormBuilder);
 
   @ViewChild('milestoneCreator') milestoneForm?: MilestoneForm;
   @ViewChild('taskCreator') taskForm?: TaskForm;
@@ -49,6 +55,7 @@ export class ProjectDetailPage {
   milestones = signal<Array<Milestone>>([]);
   tasks = signal<Array<Task>>([]);
   analysis = signal<ProjectAnalysis | undefined>(undefined);
+  selectedTask = signal<Task | null>(null);
 
   projectLoading = signal(false);
   projectError = signal<string | null>(null);
@@ -58,6 +65,24 @@ export class ProjectDetailPage {
   taskError = signal<string | null>(null);
   analysisLoading = signal(false);
   analysisError = signal<string | null>(null);
+  memberLoading = signal(false);
+  memberError = signal<string | null>(null);
+  memberSuccess = signal<string | null>(null);
+
+  memberForm = this.nfb.group({
+    email: ['', [Validators.required, Validators.email]],
+  });
+
+  pendingTasks = computed(() => this.tasks().filter((task) => task.status !== 'done'));
+  doneTasks = computed(() => this.tasks().filter((task) => task.status === 'done'));
+  taskSummary = computed(() => {
+    const all = this.tasks();
+    const total = all.length;
+    const done = all.filter((task) => task.status === 'done').length;
+    const pending = total - done;
+    const progress = total > 0 ? Math.round((done / total) * 100) : 0;
+    return { total, done, pending, progress };
+  });
 
   constructor() {
     effect(() => {
@@ -81,7 +106,7 @@ export class ProjectDetailPage {
       },
       error: (error) => {
         console.error('Error updating project', error);
-        this.projectError.set('We couldn\'t update the project.');
+        this.projectError.set('projects.error.load');
       },
     });
   }
@@ -99,7 +124,7 @@ export class ProjectDetailPage {
       },
       error: (error) => {
         console.error('Error creating milestone', error);
-        this.milestoneError.set('We couldn\'t create the milestone.');
+        this.milestoneError.set('project.milestones.error');
         this.milestoneLoading.set(false);
       },
     });
@@ -115,7 +140,7 @@ export class ProjectDetailPage {
       next: () => this.loadMilestones(projectUuid),
       error: (error) => {
         console.error('Error deleting milestone', error);
-        this.milestoneError.set('We couldn\'t delete the milestone.');
+        this.milestoneError.set('project.milestones.error');
         this.milestoneLoading.set(false);
       },
     });
@@ -127,14 +152,20 @@ export class ProjectDetailPage {
       return;
     }
     this.taskLoading.set(true);
-    this.taskService.create(projectUuid, command).subscribe({
+    const editing = this.selectedTask();
+    const request$ = editing
+      ? this.taskService.update(projectUuid, editing.uuid, command)
+      : this.taskService.create(projectUuid, command);
+
+    request$.subscribe({
       next: () => {
         this.taskForm?.resetForm();
+        this.selectedTask.set(null);
         this.loadTasks(projectUuid);
       },
       error: (error) => {
-        console.error('Error creating task', error);
-        this.taskError.set('We couldn\'t create the task.');
+        console.error('Error saving task', error);
+        this.taskError.set('project.tasks.error');
         this.taskLoading.set(false);
       },
     });
@@ -150,9 +181,45 @@ export class ProjectDetailPage {
       next: () => this.loadTasks(projectUuid),
       error: (error) => {
         console.error('Error deleting task', error);
-        this.taskError.set('We couldn\'t delete the task.');
+        this.taskError.set('project.tasks.error');
         this.taskLoading.set(false);
       },
+    });
+  }
+
+  editTask(task: Task): void {
+    this.selectedTask.set(task);
+  }
+
+  cancelTaskEdition(): void {
+    this.selectedTask.set(null);
+    this.taskForm?.resetForm();
+  }
+
+  addMember(): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    if (this.memberForm.invalid) {
+      this.memberForm.markAllAsTouched();
+      return;
+    }
+    this.memberLoading.set(true);
+    this.projectService.addMember(projectUuid, { email: this.memberForm.controls.email.value }).subscribe({
+      next: (project) => {
+        this.project.set(project);
+        this.memberForm.reset({ email: '' });
+        this.memberError.set(null);
+        this.memberSuccess.set('project.members.success');
+      },
+      error: (error) => {
+        console.error('Unable to add member', error);
+        this.memberError.set('project.members.error');
+        this.memberSuccess.set(null);
+        this.memberLoading.set(false);
+      },
+      complete: () => this.memberLoading.set(false),
     });
   }
 
@@ -185,6 +252,10 @@ export class ProjectDetailPage {
     return task.uuid;
   }
 
+  trackMember(_: number, member: { id: number }): number {
+    return member.id;
+  }
+
   private loadProject(projectUuid: string): void {
     this.projectLoading.set(true);
     this.projectService.get(projectUuid).subscribe({
@@ -195,7 +266,7 @@ export class ProjectDetailPage {
       error: (error) => {
         console.error('Unable to load project', error);
         this.project.set(undefined);
-        this.projectError.set('We couldn\'t load the project.');
+        this.projectError.set('projects.error.load');
       },
       complete: () => this.projectLoading.set(false),
     });
@@ -211,7 +282,7 @@ export class ProjectDetailPage {
       error: (error) => {
         console.error('Unable to load milestones', error);
         this.milestones.set([]);
-        this.milestoneError.set('We couldn\'t load the milestones.');
+        this.milestoneError.set('project.milestones.error');
         this.milestoneLoading.set(false);
       },
       complete: () => this.milestoneLoading.set(false),
@@ -228,7 +299,7 @@ export class ProjectDetailPage {
       error: (error) => {
         console.error('Unable to load tasks', error);
         this.tasks.set([]);
-        this.taskError.set('We couldn\'t load the tasks.');
+        this.taskError.set('project.tasks.error');
         this.taskLoading.set(false);
       },
       complete: () => this.taskLoading.set(false),
@@ -245,7 +316,7 @@ export class ProjectDetailPage {
       error: (error) => {
         console.error('Unable to load project analysis', error);
         this.analysis.set(undefined);
-        this.analysisError.set('We couldn\'t load the analysis.');
+        this.analysisError.set('project.analysis.error');
         this.analysisLoading.set(false);
       },
       complete: () => this.analysisLoading.set(false),

@@ -1,31 +1,22 @@
 <section class="stack-md">
-  <article class="card pad stack-md">
-    @if (projectLoading()) {
-      <p>Cargando proyecto...</p>
-    }
-    @if (projectError(); as error) {
-      <p class="error">{{ error }}</p>
-    }
-  </article>
-
   @if (project(); as projectDetail) {
     <article class="card pad stack-md">
       <div class="row">
         <div>
-          <p class="subtitle">Resumen</p>
+          <p class="subtitle">{{ 'project.summary.subtitle' | translate }}</p>
           <h1 class="title">{{ projectDetail.title }}</h1>
         </div>
-        <span class="pill">UUID: {{ projectDetail.uuid }}</span>
+        <span class="pill">{{ 'common.uuid' | translate }}: {{ projectDetail.uuid }}</span>
       </div>
-      <p>{{ projectDetail.description || 'Sin descripción disponible.' }}</p>
+      <p>{{ projectDetail.description || ('project.summary.description' | translate) }}</p>
       <dl>
-        <dt>Inicio</dt>
+        <dt>{{ 'project.summary.start' | translate }}</dt>
         <dd>{{ projectDetail.startDate.year }}/{{ projectDetail.startDate.month + 1 }}/S{{ projectDetail.startDate.week }}</dd>
-        <dt>Fin</dt>
+        <dt>{{ 'project.summary.end' | translate }}</dt>
         <dd>{{ projectDetail.endDate.year }}/{{ projectDetail.endDate.month + 1 }}/S{{ projectDetail.endDate.week }}</dd>
       </dl>
       @if (projectDetail.additionalFields && (projectDetail.additionalFields | keyvalue).length) {
-        <h3>Campos adicionales</h3>
+        <h3>{{ 'project.summary.additional' | translate }}</h3>
         <ul class="stack-sm">
           @for (field of projectDetail.additionalFields | keyvalue; track field.key) {
             <li><strong>{{ field.key }}:</strong> {{ field.value }}</li>
@@ -35,34 +26,97 @@
     </article>
 
     <article class="card pad stack-md">
-      <h2 class="title">Editar proyecto</h2>
+      <h2 class="title">{{ 'project.tasks.summaryTitle' | translate }}</h2>
+      <div class="summary-grid">
+        <div class="stat">
+          <p class="stat-label">{{ 'project.tasks.total' | translate }}</p>
+          <p class="stat-value">{{ taskSummary().total }}</p>
+        </div>
+        <div class="stat">
+          <p class="stat-label">{{ 'project.tasks.pendingCount' | translate }}</p>
+          <p class="stat-value">{{ taskSummary().pending }}</p>
+        </div>
+        <div class="stat">
+          <p class="stat-label">{{ 'project.tasks.doneCount' | translate }}</p>
+          <p class="stat-value">{{ taskSummary().done }}</p>
+        </div>
+        <div class="stat">
+          <p class="stat-label">{{ 'project.tasks.progress' | translate }}</p>
+          <p class="stat-value">{{ taskSummary().progress }}%</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card pad stack-md">
+      <div class="row">
+        <h2 class="title">{{ 'project.members.title' | translate }}</h2>
+        @if (memberLoading()) {
+          <span class="pill">{{ 'common.loading' | translate }}</span>
+        }
+      </div>
+      <p class="subtitle">{{ 'project.members.subtitle' | translate }}</p>
+      @if (projectDetail.members && projectDetail.members.length > 0) {
+        <ul class="member-list">
+          @for (member of projectDetail.members; track trackMember($index, member)) {
+            <li>
+              <span>{{ member.alias }} · {{ member.email }}</span>
+              @if (member.id === projectDetail.ownerId) {
+                <span class="pill">{{ 'project.members.owner' | translate }}</span>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="note">{{ 'project.members.empty' | translate }}</p>
+      }
+      <form [formGroup]="memberForm" (ngSubmit)="addMember()" class="member-form">
+        <label>{{ 'project.members.form.email' | translate }}</label>
+        <div class="member-form-controls">
+          <input type="email" formControlName="email" placeholder="person@example.com" />
+          <button class="btn primary" type="submit">{{ 'project.members.form.submit' | translate }}</button>
+        </div>
+        @if (memberError(); as error) {
+          <p class="error">{{ error | translate }}</p>
+        }
+        @if (memberSuccess(); as success) {
+          <p class="success">{{ success | translate }}</p>
+        }
+      </form>
+    </article>
+
+    <article class="card pad stack-md">
+      <h2 class="title">{{ 'project.edit.title' | translate }}</h2>
       <app-project-form [data]="projectDetail" (edited)="update($event)"></app-project-form>
     </article>
 
     <div class="grid two">
       <article class="card pad stack-md">
         <div class="row">
-          <h2 class="title">Hitos</h2>
-          <button class="btn ghost" type="button" (click)="refreshMilestones()">Refrescar</button>
+          <h2 class="title">{{ 'project.milestones.title' | translate }}</h2>
+          <button class="btn ghost" type="button" (click)="refreshMilestones()">
+            {{ 'project.milestones.refresh' | translate }}
+          </button>
         </div>
         @if (milestoneLoading()) {
-          <p>Cargando hitos...</p>
+          <p>{{ 'project.milestones.loading' | translate }}</p>
         }
         @if (milestoneError(); as error) {
-          <p class="error">{{ error }}</p>
+          <p class="error">{{ error | translate }}</p>
         }
         @if (!milestoneLoading() && milestones().length === 0) {
-          <p>No hay hitos registrados.</p>
+          <p>{{ 'project.milestones.empty' | translate }}</p>
         } @else {
           <ul class="stack-md">
             @for (milestone of milestones(); track trackMilestone($index, milestone)) {
               <li class="task">
                 <div class="row">
                   <strong>{{ milestone.title }}</strong>
-                  <button class="btn danger" type="button" (click)="removeMilestone(milestone.uuid)">Eliminar</button>
+                  <button class="btn danger" type="button" (click)="removeMilestone(milestone.uuid)">
+                    {{ 'common.delete' | translate }}
+                  </button>
                 </div>
                 <p class="muted">{{ milestone.date.year }}/{{ milestone.date.month + 1 }}/S{{ milestone.date.week }}</p>
-                <p class="note">{{ milestone.description || 'Sin descripción.' }}</p>
+                <p class="note">{{ milestone.description || ('common.description.empty' | translate) }}</p>
               </li>
             }
           </ul>
@@ -72,45 +126,107 @@
 
       <article class="card pad stack-md">
         <div class="row">
-          <h2 class="title">Tareas</h2>
-          <button class="btn ghost" type="button" (click)="refreshTasks()">Refrescar</button>
+          <h2 class="title">{{ 'project.tasks.title' | translate }}</h2>
+          <button class="btn ghost" type="button" (click)="refreshTasks()">
+            {{ 'project.tasks.refresh' | translate }}
+          </button>
         </div>
         @if (taskLoading()) {
-          <p>Cargando tareas...</p>
+          <p>{{ 'project.tasks.loading' | translate }}</p>
         }
         @if (taskError(); as error) {
-          <p class="error">{{ error }}</p>
+          <p class="error">{{ error | translate }}</p>
         }
-        @if (!taskLoading() && tasks().length === 0) {
-          <p>No hay tareas registradas.</p>
-        } @else {
-          <ul class="stack-md">
-            @for (task of tasks(); track trackTask($index, task)) {
-              <li class="task">
-                <div class="row">
-                  <strong>{{ task.title }}</strong>
-                  <button class="btn danger" type="button" (click)="removeTask(task.uuid)">Eliminar</button>
-                </div>
-                <p class="muted">{{ task.startDate.year }}/{{ task.startDate.month + 1 }}/S{{ task.startDate.week }} · {{ task.durationWeeks }} semanas</p>
-                <p class="note">{{ task.description || 'Sin descripción.' }}</p>
-              </li>
+        <div class="task-columns">
+          <section class="task-column">
+            <h3>{{ 'project.tasks.pending' | translate }} ({{ pendingTasks().length }})</h3>
+            @if (pendingTasks().length === 0) {
+              <p class="note">{{ 'project.tasks.empty' | translate }}</p>
+            } @else {
+              <ul class="stack-md">
+                @for (task of pendingTasks(); track trackTask($index, task)) {
+                  <li class="task">
+                    <div class="row">
+                      <strong>{{ task.title }}</strong>
+                      <div class="task-actions">
+                        <button class="btn ghost" type="button" (click)="editTask(task)">
+                          {{ 'project.tasks.edit' | translate }}
+                        </button>
+                        <button class="btn danger" type="button" (click)="removeTask(task.uuid)">
+                          {{ 'common.delete' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                    <p class="muted">
+                      {{ task.startDate.year }}/{{ task.startDate.month + 1 }}/S{{ task.startDate.week }} ·
+                      {{ task.durationWeeks }} {{ 'common.weeks' | translate }}
+                    </p>
+                    <p class="note">{{ 'form.task.status' | translate }}: {{ ('form.task.status.' + task.status) | translate }}</p>
+                    @if (task.assignee) {
+                      <p class="note">{{ task.assignee.alias }} · {{ task.assignee.email }}</p>
+                    }
+                    <p class="note">{{ task.description || ('common.description.empty' | translate) }}</p>
+                  </li>
+                }
+              </ul>
             }
-          </ul>
-        }
-        <app-task-form #taskCreator (submitted)="saveTask($event)"></app-task-form>
+          </section>
+          <section class="task-column">
+            <h3>{{ 'project.tasks.done' | translate }} ({{ doneTasks().length }})</h3>
+            @if (doneTasks().length === 0) {
+              <p class="note">{{ 'project.tasks.doneEmpty' | translate }}</p>
+            } @else {
+              <ul class="stack-md">
+                @for (task of doneTasks(); track trackTask($index, task)) {
+                  <li class="task">
+                    <div class="row">
+                      <strong>{{ task.title }}</strong>
+                      <div class="task-actions">
+                        <button class="btn ghost" type="button" (click)="editTask(task)">
+                          {{ 'project.tasks.edit' | translate }}
+                        </button>
+                        <button class="btn danger" type="button" (click)="removeTask(task.uuid)">
+                          {{ 'common.delete' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                    <p class="muted">
+                      {{ task.startDate.year }}/{{ task.startDate.month + 1 }}/S{{ task.startDate.week }} ·
+                      {{ task.durationWeeks }} {{ 'common.weeks' | translate }}
+                    </p>
+                    <p class="note">{{ 'form.task.status' | translate }}: {{ ('form.task.status.' + task.status) | translate }}</p>
+                    @if (task.assignee) {
+                      <p class="note">{{ task.assignee.alias }} · {{ task.assignee.email }}</p>
+                    }
+                    <p class="note">{{ task.description || ('common.description.empty' | translate) }}</p>
+                  </li>
+                }
+              </ul>
+            }
+          </section>
+        </div>
+        <app-task-form
+          #taskCreator
+          [data]="selectedTask() ?? undefined"
+          [members]="projectDetail.members ?? []"
+          (submitted)="saveTask($event)"
+          (cancelled)="cancelTaskEdition()"
+        ></app-task-form>
       </article>
     </div>
 
     <article class="card pad stack-md">
       <div class="row">
-        <h2 class="title">Análisis</h2>
-        <button class="btn ghost" type="button" (click)="refreshAnalysis()">Actualizar</button>
+        <h2 class="title">{{ 'project.analysis.title' | translate }}</h2>
+        <button class="btn ghost" type="button" (click)="refreshAnalysis()">
+          {{ 'project.analysis.refresh' | translate }}
+        </button>
       </div>
       @if (analysisLoading()) {
-        <p>Cargando análisis...</p>
+        <p>{{ 'project.analysis.loading' | translate }}</p>
       }
       @if (analysisError(); as error) {
-        <p class="error">{{ error }}</p>
+        <p class="error">{{ error | translate }}</p>
       }
       @if (analysis(); as data) {
         <div class="analysis stack-md">
@@ -122,7 +238,11 @@
                 →
                 {{ milestoneAnalysis.endDate.year }}/{{ milestoneAnalysis.endDate.month + 1 }}/S{{ milestoneAnalysis.endDate.week }}
               </p>
-              <p>Progreso: {{ milestoneAnalysis.initialCompletion * 100 | number:'1.0-0' }}% → {{ milestoneAnalysis.endCompletion * 100 | number:'1.0-0' }}%</p>
+              <p>
+                {{ 'project.analysis.progress' | translate }}:
+                {{ milestoneAnalysis.initialCompletion * 100 | number:'1.0-0' }}% →
+                {{ milestoneAnalysis.endCompletion * 100 | number:'1.0-0' }}%
+              </p>
               <ul class="stack-sm">
                 @for (taskAnalysis of milestoneAnalysis.taskList; track taskAnalysis.taskUuid) {
                   <li>
@@ -135,12 +255,12 @@
           }
         </div>
       } @else if (!analysisLoading()) {
-        <p>No hay datos de análisis todavía.</p>
+        <p>{{ 'project.analysis.empty' | translate }}</p>
       }
     </article>
   } @else {
     <article class="card pad">
-      <p>Selecciona un proyecto desde el listado.</p>
+      <p>{{ 'project.selection.placeholder' | translate }}</p>
     </article>
   }
 </section>

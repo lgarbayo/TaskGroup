@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../service/auth-service';
 import { LoginCommand, RegisterCommand } from '../../../model/auth.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-auth-panel',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './auth-panel.html',
-  styleUrl: './auth-panel.scss',
+  styleUrl: './auth-panel.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthPanel {
@@ -32,7 +33,7 @@ export class AuthPanel {
 
   readonly mode = signal<'login' | 'register'>('login');
   readonly loading = signal(false);
-  readonly errorMessage = signal<string | null>(null);
+  readonly errorMessage = signal<{ key?: string; params?: Record<string, string | number>; raw?: string } | null>(null);
 
   switchMode(mode: 'login' | 'register'): void {
     this.mode.set(mode);
@@ -43,6 +44,7 @@ export class AuthPanel {
     this.normalizeLoginForm();
     if (this.loginForm.invalid || this.loading()) {
       this.loginForm.markAllAsTouched();
+      this.errorMessage.set({ key: 'auth.error.form' });
       return;
     }
 
@@ -66,7 +68,7 @@ export class AuthPanel {
     this.normalizeRegisterForm();
     if (this.registerForm.invalid || this.loading()) {
       this.registerForm.markAllAsTouched();
-      this.errorMessage.set('Revisa los campos resaltados antes de continuar.');
+      this.errorMessage.set({ key: 'auth.error.form' });
       return;
     }
 
@@ -96,23 +98,23 @@ export class AuthPanel {
     this.registerForm.reset();
   }
 
-  private resolveErrorMessage(error: unknown): string {
+  private resolveErrorMessage(error: unknown): { key?: string; raw?: string } {
     if (typeof error === 'string') {
-      return error;
+      return { raw: error };
     }
     if (error && typeof error === 'object') {
       const err = error as { error?: { message?: string; errors?: Record<string, string[]> } };
       if (err.error?.message) {
-        return err.error.message;
+        return { raw: err.error.message };
       }
       if (err.error?.errors) {
         const first = Object.values(err.error.errors)[0];
         if (first?.length) {
-          return first[0];
+          return { raw: first[0] };
         }
       }
     }
-    return 'No pudimos procesar tu solicitud. Revisa los datos e inténtalo de nuevo.';
+    return { key: 'auth.error.form' };
   }
 
   inputInvalid(controlName: keyof typeof this.registerForm.controls): boolean {

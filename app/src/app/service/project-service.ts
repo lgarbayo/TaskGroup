@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Project, UpsertProjectCommand, UpsertProjectCommandForm } from '../model/project.model';
+import { AddMemberCommand, Project, UpsertProjectCommand, UpsertProjectCommandForm } from '../model/project.model';
 import { CoreService } from './core-service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -41,6 +41,12 @@ export class ProjectService {
 
   deleteProject(projectUuid: string): Observable<void> {
     return this.http.delete<void>(`${this.resourceUrl}/${projectUuid}`);
+  }
+
+  addMember(projectUuid: string, command: AddMemberCommand): Observable<Project> {
+    return this.http
+      .post<{ data: Project }>(`${this.resourceUrl}/${projectUuid}/members`, command)
+      .pipe(map((response) => response.data));
   }
 
   projectForm(project?: Project): UpsertProjectCommandForm {

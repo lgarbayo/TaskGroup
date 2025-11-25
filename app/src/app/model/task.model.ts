@@ -8,6 +8,16 @@ export interface Task {
   description?: string;
   durationWeeks: number;
   startDate: DateType;
+  status: TaskStatus;
+  assignee?: TaskAssignee | null;
+}
+
+export type TaskStatus = 'pending' | 'done';
+
+export interface TaskAssignee {
+  id: number;
+  alias: string;
+  email: string;
 }
 
 export interface UpsertTaskCommand {
@@ -15,6 +25,8 @@ export interface UpsertTaskCommand {
   description?: string;
   durationWeeks: number;
   startDate: DateType;
+  status: TaskStatus;
+  assigneeId?: number | null;
 }
 
 export type UpsertTaskCommandForm = FormGroup<{
@@ -22,4 +34,6 @@ export type UpsertTaskCommandForm = FormGroup<{
   description: FormControl<string>;
   durationWeeks: FormControl<number>;
   startDate: DateTypeForm;
+  status: FormControl<TaskStatus>;
+  assigneeId: FormControl<number | null>;
 }>;

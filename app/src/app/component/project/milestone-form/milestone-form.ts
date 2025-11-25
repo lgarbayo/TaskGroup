@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, output } fro
 import { ReactiveFormsModule } from '@angular/forms';
 import { Milestone, UpsertMilestoneCommand } from '../../../model/milestone.model';
 import { MilestoneService } from '../../../service/milestone-service';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-milestone-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './milestone-form.html',
-  styleUrl: './milestone-form.scss',
+  styleUrl: './milestone-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MilestoneForm {

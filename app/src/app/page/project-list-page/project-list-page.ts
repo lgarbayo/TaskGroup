@@ -4,16 +4,18 @@ import { Project, UpsertProjectCommand } from '../../model/project.model';
 import { RouterLink } from '@angular/router';
 import { ProjectForm } from "../../component/project/project-form/project-form";
 import { AuthService } from '../../service/auth-service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-project-list-page',
   standalone: true,
   imports: [
     RouterLink,
-    ProjectForm
+    ProjectForm,
+    TranslatePipe
 ],
   templateUrl: './project-list-page.html',
-  styleUrl: './project-list-page.scss',
+  styleUrl: './project-list-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectListPage {
@@ -46,7 +48,7 @@ export class ProjectListPage {
       },
       error: (error) => {
         console.error('Unable to fetch project list', error);
-        this.errorMessage.set('We couldn\'t load the project list.');
+        this.errorMessage.set('projects.error.list');
         this.loading.set(false);
       },
       complete: () => this.loading.set(false),
@@ -62,7 +64,7 @@ export class ProjectListPage {
       },
       error: (error) => {
         console.error('Error creating project', error);
-        this.errorMessage.set('We couldn\'t create the project.');
+        this.errorMessage.set('projects.error.create');
         this.loading.set(false);
       },
     });
@@ -74,7 +76,7 @@ export class ProjectListPage {
       next: () => this.loadProjects(),
       error: (error) => {
         console.error('Error deleting project', error);
-        this.errorMessage.set('We couldn\'t delete the project.');
+        this.errorMessage.set('projects.error.delete');
         this.loading.set(false);
       },
     });

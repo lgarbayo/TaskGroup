@@ -1,8 +1,8 @@
 <section class="auth-card card pad stack-md">
   @if (!isAuthenticated()) {
     <header class="stack-xs">
-      <p class="subtitle">Identifícate para continuar</p>
-      <h2 class="title">Bienvenido a TaskGroup</h2>
+      <p class="subtitle">{{ 'auth.title' | translate }}</p>
+      <h2 class="title">{{ 'auth.subtitle' | translate }}</h2>
     </header>
 
     <div class="tab-bar">
@@ -12,7 +12,7 @@
         type="button"
         (click)="switchMode('login')"
       >
-        Iniciar sesión
+        {{ 'auth.tab.login' | translate }}
       </button>
       <button
         class="tab"
@@ -20,78 +20,102 @@
         type="button"
         (click)="switchMode('register')"
       >
-        Crear cuenta
+        {{ 'auth.tab.register' | translate }}
       </button>
     </div>
 
     @if (mode() === 'login') {
       <form class="stack-sm" (ngSubmit)="submitLogin()" [formGroup]="loginForm">
         <label class="stack-xxs">
-          <span>Email</span>
-          <input type="email" formControlName="email" placeholder="persona@ejemplo.com" />
+          <span>{{ 'auth.field.email' | translate }}</span>
+          <input
+            type="email"
+            formControlName="email"
+            [placeholder]="'auth.placeholder.email' | translate"
+          />
         </label>
         <label class="stack-xxs">
-          <span>Contraseña</span>
-          <input type="password" formControlName="password" placeholder="********" />
+          <span>{{ 'auth.field.password' | translate }}</span>
+          <input
+            type="password"
+            formControlName="password"
+            [placeholder]="'auth.placeholder.password' | translate"
+          />
         </label>
-        <button class="btn" type="submit" [disabled]="loading()">Entrar</button>
+        <button class="btn" type="submit" [disabled]="loading()">
+          {{ 'auth.submit.login' | translate }}
+        </button>
       </form>
     } @else {
       <form class="stack-sm" (ngSubmit)="submitRegister()" [formGroup]="registerForm" novalidate>
         <label class="stack-xxs">
-          <span>Alias</span>
+          <span>{{ 'auth.field.alias' | translate }}</span>
           <input
             type="text"
             formControlName="alias"
-            placeholder="usuario123"
+            [placeholder]="'auth.placeholder.alias' | translate"
             [class.invalid]="inputInvalid('alias')"
           />
           @if (inputInvalid('alias')) {
-            <small class="error">El alias es obligatorio.</small>
+            <small class="error">{{ 'auth.error.alias' | translate }}</small>
           }
         </label>
         <label class="stack-xxs">
-          <span>Nombre (opcional)</span>
-          <input type="text" formControlName="name" placeholder="Nombre completo" />
+          <span>{{ 'auth.field.name' | translate }}</span>
+          <input
+            type="text"
+            formControlName="name"
+            [placeholder]="'auth.placeholder.name' | translate"
+          />
         </label>
         <label class="stack-xxs">
-          <span>Email</span>
+          <span>{{ 'auth.field.email' | translate }}</span>
           <input
             type="email"
             formControlName="email"
-            placeholder="persona@ejemplo.com"
+            [placeholder]="'auth.placeholder.email' | translate"
             [class.invalid]="inputInvalid('email')"
           />
           @if (inputInvalid('email')) {
-            <small class="error">Introduce un email válido.</small>
+            <small class="error">{{ 'auth.error.email' | translate }}</small>
           }
         </label>
         <label class="stack-xxs">
-          <span>Contraseña</span>
+          <span>{{ 'auth.field.password' | translate }}</span>
           <input
             type="password"
             formControlName="password"
-            placeholder="********"
+            [placeholder]="'auth.placeholder.password' | translate"
             [class.invalid]="inputInvalid('password')"
           />
           @if (inputInvalid('password')) {
-            <small class="error">Mínimo 8 caracteres.</small>
+            <small class="error">{{ 'auth.error.password' | translate }}</small>
           }
         </label>
-        <button class="btn" type="submit" [disabled]="loading()">Crear cuenta</button>
+        <button class="btn" type="submit" [disabled]="loading()">
+          {{ 'auth.submit.register' | translate }}
+        </button>
       </form>
     }
 
     @if (errorMessage(); as error) {
-      <p class="error">{{ error }}</p>
+      <p class="error">
+        @if (error.key) {
+          {{ error.key | translate:error.params }}
+        } @else if (error.raw) {
+          {{ error.raw }}
+        }
+      </p>
     }
   } @else {
     @if (user(); as currentUser) {
       <div class="stack-sm">
-        <p class="subtitle">Sesión iniciada</p>
-        <h2 class="title">Hola, {{ currentUser.alias }}</h2>
-        <p class="muted">{{ currentUser.email }}</p>
-        <button class="btn ghost" type="button" (click)="logout()">Cerrar sesión</button>
+        <p class="subtitle">{{ 'auth.logged.title' | translate }}</p>
+        <h2 class="title">{{ 'auth.logged.subtitle' | translate:{ name: currentUser.alias } }}</h2>
+        <p class="muted">{{ 'auth.logged.email' | translate:{ email: currentUser.email } }}</p>
+        <button class="btn ghost" type="button" (click)="logout()">
+          {{ 'auth.logged.logout' | translate }}
+        </button>
       </div>
     }
   }

@@ -1,28 +1,60 @@
 <form [formGroup]="form" (ngSubmit)="save()">
-  <div>
-    <label>Title</label>
+  <div class="field-group">
+    <label>{{ 'form.task.title' | translate }}</label>
     <input formControlName="title" />
   </div>
 
-  <div>
-    <label>Description</label>
+  <div class="field-group">
+    <label>{{ 'form.task.description' | translate }}</label>
     <textarea rows="2" formControlName="description"></textarea>
   </div>
 
-  <div>
-    <label>Duration (weeks)</label>
+  <div class="field-group">
+    <label>{{ 'form.task.duration' | translate }}</label>
     <input type="number" min="1" formControlName="durationWeeks" />
   </div>
 
+  <div class="field-group">
+    <label>{{ 'form.task.status' | translate }}</label>
+    <select formControlName="status">
+      @for (status of statuses; track status.value) {
+        <option [value]="status.value">{{ status.label | translate }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field-group">
+    <label>{{ 'form.task.assignee' | translate }}</label>
+    <select formControlName="assigneeId">
+      <option [ngValue]="null">{{ 'form.task.assignee.none' | translate }}</option>
+      @for (member of members(); track member.id) {
+        <option [ngValue]="member.id">{{ member.alias }} · {{ member.email }}</option>
+      }
+    </select>
+  </div>
+
   <fieldset formGroupName="startDate">
-    <legend>Start Date</legend>
-    <label>Year</label>
+    <legend>{{ 'form.task.start' | translate }}</legend>
+    <label>{{ 'form.project.year' | translate }}</label>
     <input type="number" formControlName="year" />
-    <label>Month</label>
+    <label>{{ 'form.project.month' | translate }}</label>
     <input type="number" min="0" max="11" formControlName="month" />
-    <label>Week</label>
+    <label>{{ 'form.project.week' | translate }}</label>
     <input type="number" min="0" max="3" formControlName="week" />
   </fieldset>
 
-  <button type="submit">Save task</button>
+  <div class="form-actions">
+    <button class="btn primary" type="submit">
+      @if (isEditing()) {
+        {{ 'form.task.submit.update' | translate }}
+      } @else {
+        {{ 'form.task.submit' | translate }}
+      }
+    </button>
+    @if (isEditing()) {
+      <button class="btn ghost" type="button" (click)="cancelEdit()">
+        {{ 'form.task.cancel' | translate }}
+      </button>
+    }
+  </div>
 </form>

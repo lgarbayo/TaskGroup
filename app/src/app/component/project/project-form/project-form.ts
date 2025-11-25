@@ -2,15 +2,17 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, output } fro
 import { Project, UpsertProjectCommand } from '../../../model/project.model';
 import { ProjectService } from '../../../service/project-service';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslatePipe
   ],
   templateUrl: './project-form.html',
-  styleUrl: './project-form.scss',
+  styleUrl: './project-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectForm {

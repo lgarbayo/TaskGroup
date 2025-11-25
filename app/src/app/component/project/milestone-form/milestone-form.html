@@ -1,23 +1,25 @@
 <form [formGroup]="form" (ngSubmit)="save()">
-  <div>
-    <label>Title</label>
+  <div class="field-group">
+    <label>{{ 'form.milestone.title' | translate }}</label>
     <input formControlName="title" />
   </div>
 
-  <div>
-    <label>Description</label>
+  <div class="field-group">
+    <label>{{ 'form.milestone.description' | translate }}</label>
     <textarea rows="2" formControlName="description"></textarea>
   </div>
 
   <fieldset formGroupName="date">
-    <legend>Date</legend>
-    <label>Year</label>
+    <legend>{{ 'form.milestone.date' | translate }}</legend>
+    <label>{{ 'form.project.year' | translate }}</label>
     <input type="number" formControlName="year" />
-    <label>Month</label>
+    <label>{{ 'form.project.month' | translate }}</label>
     <input type="number" min="0" max="11" formControlName="month" />
-    <label>Week</label>
+    <label>{{ 'form.project.week' | translate }}</label>
     <input type="number" min="0" max="3" formControlName="week" />
   </fieldset>
 
-  <button type="submit">Save milestone</button>
+  <div class="form-actions">
+    <button class="btn primary" type="submit">{{ 'form.milestone.submit' | translate }}</button>
+  </div>
 </form>

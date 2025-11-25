@@ -1,30 +1,12 @@
 <section class="stack-md">
   <article class="card pad stack-md">
     <div class="row">
-      <div>
-        <p class="subtitle">Panel de proyectos</p>
-        <h1 class="title">Organiza tus iniciativas</h1>
-      </div>
-      <div class="form-actions">
-        <button class="btn ghost" type="button" (click)="loadProjects()">Actualizar</button>
-        @if (loading()) {
-          <span class="pill">Cargando...</span>
-        }
-      </div>
-    </div>
-    @if (errorMessage(); as error) {
-      <p class="error">{{ error }}</p>
-    }
-  </article>
-
-  <article class="card pad stack-md">
-    <div class="row">
-      <h2 class="title">Proyectos activos</h2>
-      <span class="pill">{{ projectList().length }} en total</span>
+      <h2 class="title">{{ 'projects.list.title' | translate }}</h2>
+      <span class="pill">{{ 'projects.list.total' | translate:{ count: projectList().length } }}</span>
     </div>
 
     @if (!loading() && projectList().length === 0) {
-      <p>No hay proyectos todavía. Usa el formulario para crear el primero.</p>
+      <p>{{ 'projects.list.empty' | translate }}</p>
     } @else {
       <div class="grid projects">
         @for (project of projectList(); track trackProject($index, project)) {
@@ -32,13 +14,17 @@
             <div>
               <p class="project-title">{{ project.title }}</p>
               <p class="project-meta">
-                <span>Inicio: {{ project.startDate.year }}/{{ project.startDate.month + 1 }}</span>
-                <span>Fin: {{ project.endDate.year }}/{{ project.endDate.month + 1 }}</span>
+                <span>{{ 'project.summary.start' | translate }}: {{ project.startDate.year }}/{{ project.startDate.month + 1 }}</span>
+                <span>{{ 'project.summary.end' | translate }}: {{ project.endDate.year }}/{{ project.endDate.month + 1 }}</span>
               </p>
             </div>
             <div class="project-actions">
-              <a class="btn ghost" [routerLink]="['..', 'project', project.uuid]">Ver detalle</a>
-              <button class="btn danger" type="button" (click)="deleteProject(project.uuid)">Eliminar</button>
+              <a class="btn ghost" [routerLink]="['..', 'project', project.uuid]">
+                {{ 'projects.card.detail' | translate }}
+              </a>
+              <button class="btn danger" type="button" (click)="deleteProject(project.uuid)">
+                {{ 'common.delete' | translate }}
+              </button>
             </div>
           </article>
         }
@@ -47,8 +33,8 @@
   </article>
 
   <article class="card pad stack-md">
-    <h2 class="title">Crear nuevo proyecto</h2>
-    <p class="subtitle">Define el nombre, las fechas y cualquier campo adicional.</p>
+    <h2 class="title">{{ 'projects.create.title' | translate }}</h2>
+    <p class="subtitle">{{ 'projects.create.subtitle' | translate }}</p>
     <app-project-form (edited)="createProject($event)"></app-project-form>
   </article>
 </section>

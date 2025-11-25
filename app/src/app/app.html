@@ -1,22 +1,29 @@
 <header class="app-header">
   <div class="wrap">
-    <button class="btn-icon" aria-label="Menú principal">
-      <span>☰</span>
-    </button>
-    <a class="brand" routerLink="/">TaskGroup</a>
+    <a class="brand" routerLink="/">
+      <img src="/appicon.png" alt="TaskGroup logo" class="brand-logo" width="34" height="34" loading="lazy" />
+      {{ 'common.appName' | translate }}
+    </a>
     <div class="spacer"></div>
-    <select class="select-inline" aria-label="Idioma">
-      <option>Español</option>
-      <option>English</option>
+    <select
+      class="select-inline"
+      [value]="language()"
+      #languageSelect
+      (change)="changeLanguage(languageSelect.value)"
+      aria-label="{{ 'header.language.label' | translate }}"
+    >
+      @for (lang of languages; track lang.code) {
+        <option [value]="lang.code">{{ lang.labelKey | translate }}</option>
+      }
     </select>
     <button class="btn ghost" type="button" (click)="toggleTheme()">
-      {{ theme() === 'dark' ? 'Modo claro' : 'Modo oscuro' }}
+      {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
     </button>
     @if (isAuthenticated() && user(); as currentUser) {
-      <span class="pill">Hola, {{ currentUser.alias }}</span>
-      <button class="btn danger" type="button" (click)="logout()">Cerrar sesión</button>
+      <span class="pill">{{ 'header.greeting' | translate }}, {{ currentUser.alias }}</span>
+      <button class="btn danger" type="button" (click)="logout()">{{ 'header.logout' | translate }}</button>
     } @else {
-      <span class="pill muted">Sesión no iniciada</span>
+      <span class="pill muted">{{ 'header.noSession' | translate }}</span>
     }
   </div>
 </header>
@@ -30,5 +37,5 @@
 </main>
 
 <footer class="footer">
-  © TaskGroup · 2025
+  © {{ 'common.appName' | translate }} · 2025
 </footer>

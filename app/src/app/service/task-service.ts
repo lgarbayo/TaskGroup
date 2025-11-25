@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormControl, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -49,6 +49,8 @@ export class TaskService {
       description: task?.description ?? '',
       durationWeeks: [task?.durationWeeks ?? 1, [Validators.required]],
       startDate: this.coreService.dateTypeForm(task?.startDate),
+      status: [task?.status ?? 'pending', [Validators.required]],
+      assigneeId: new FormControl<number | null>(task?.assignee?.id ?? null),
     });
   }
 
@@ -58,6 +60,8 @@ export class TaskService {
       description: command.description,
       duration_weeks: command.durationWeeks,
       start_date: command.startDate,
+      status: command.status,
+      assignee_id: command.assigneeId ?? null,
     };
   }
 }

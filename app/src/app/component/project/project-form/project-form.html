@@ -1,59 +1,79 @@
 <form [formGroup]="form" (ngSubmit)="save()">
-  <div>
-    <label>Title</label>
+  <div class="field-group">
+    <label>{{ 'form.project.title' | translate }}</label>
     <input formControlName="title" />
     @if (form.controls.title.invalid && form.controls.title.touched) {
-      <small>Title is required.</small>
+      <small>{{ 'form.project.titleRequired' | translate }}</small>
     }
   </div>
 
-  <div>
-    <label>Description</label>
+  <div class="field-group">
+    <label>{{ 'form.project.description' | translate }}</label>
     <textarea rows="3" formControlName="description"></textarea>
   </div>
 
   <fieldset formGroupName="startDate">
-    <legend>Start Date</legend>
-    <label>Year</label>
-    <input type="number" formControlName="year" />
-    <label>Month</label>
-    <input type="number" min="0" max="11" formControlName="month" />
-    <label>Week</label>
-    <input type="number" min="0" max="3" formControlName="week" />
+    <label>{{ 'form.project.start' | translate }}</label>
+    <div class="fieldset-grid">
+      <div>
+        <label>{{ 'form.project.year' | translate }}</label>
+        <input type="number" formControlName="year" />
+      </div>
+      <div>
+        <label>{{ 'form.project.month' | translate }}</label>
+        <input type="number" min="0" max="11" formControlName="month" />
+      </div>
+      <div>
+        <label>{{ 'form.project.week' | translate }}</label>
+        <input type="number" min="0" max="3" formControlName="week" />
+      </div>
+    </div>
   </fieldset>
 
   <fieldset formGroupName="endDate">
-    <legend>End Date</legend>
-    <label>Year</label>
-    <input type="number" formControlName="year" />
-    <label>Month</label>
-    <input type="number" min="0" max="11" formControlName="month" />
-    <label>Week</label>
-    <input type="number" min="0" max="3" formControlName="week" />
+    <label>{{ 'form.project.end' | translate }}</label>
+    <div class="fieldset-grid">
+      <div>
+        <label>{{ 'form.project.year' | translate }}</label>
+        <input type="number" formControlName="year" />
+      </div>
+      <div>
+        <label>{{ 'form.project.month' | translate }}</label>
+        <input type="number" min="0" max="11" formControlName="month" />
+      </div>
+      <div>
+        <label>{{ 'form.project.week' | translate }}</label>
+        <input type="number" min="0" max="3" formControlName="week" />
+      </div>
+    </div>
   </fieldset>
 
   <section>
-    <h3>Additional Fields</h3>
-    <div [formGroup]="additionalFieldForm">
-      <input placeholder="Key" formControlName="key" />
-      <input placeholder="Value" formControlName="value" />
-      <button type="button" (click)="addAdditionalField()">Add field</button>
+    <h3>{{ 'form.project.additional' | translate }}</h3>
+    <div class="field-group additional-controls" [formGroup]="additionalFieldForm">
+      <input [placeholder]="'form.project.additional.key' | translate" formControlName="key" />
+      <input [placeholder]="'form.project.additional.value' | translate" formControlName="value" />
+      <button class="btn ghost" type="button" (click)="addAdditionalField()">
+        {{ 'form.project.additional.add' | translate }}
+      </button>
     </div>
     @if (additionalFieldForm.controls.key.errors?.['duplicated']) {
-      <small>The field already exists.</small>
+      <small>{{ 'form.project.additional.exists' | translate }}</small>
     }
     <div>
       @for (field of additionalFieldList(); track field.key) {
-        <div>
+        <div class="field-group">
           <label>{{ field.key }}</label>
           <input [formControl]="field.control" />
-          <button type="button" (click)="removeAdditionalField(field.key)">Eliminar</button>
+          <button class="btn danger" type="button" (click)="removeAdditionalField(field.key)">
+            {{ 'form.project.additional.remove' | translate }}
+          </button>
         </div>
       }
     </div>
   </section>
 
-  <div>
-    <button type="submit">Save changes</button>
+  <div class="form-actions">
+    <button class="btn primary" type="submit">{{ 'form.project.submit' | translate }}</button>
   </div>
 </form>

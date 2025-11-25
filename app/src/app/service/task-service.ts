@@ -51,6 +51,7 @@ export class TaskService {
       startDate: this.coreService.dateTypeForm(task?.startDate),
       status: [task?.status ?? 'pending', [Validators.required]],
       assigneeId: new FormControl<number | null>(task?.assignee?.id ?? null),
+      milestoneUuid: new FormControl<string | null>(task?.milestone?.uuid ?? null),
     });
   }
 
@@ -62,6 +63,7 @@ export class TaskService {
       start_date: command.startDate,
       status: command.status,
       assignee_id: command.assigneeId ?? null,
+      milestone_uuid: command.milestoneUuid ?? null,
     };
   }
 }

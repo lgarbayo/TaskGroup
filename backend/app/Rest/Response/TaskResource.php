@@ -22,6 +22,7 @@ class TaskResource extends JsonResource
                 'week' => $this->startWeek,
             ],
             'assignee' => $this->assignee,
+            'milestone' => $this->milestone,
         ];
     }
 }

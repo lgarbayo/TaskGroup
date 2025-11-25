@@ -33,6 +33,16 @@
     </select>
   </div>
 
+  <div class="field-group">
+    <label>{{ 'form.task.milestone' | translate }}</label>
+    <select formControlName="milestoneUuid">
+      <option [ngValue]="null">{{ 'form.task.milestone.none' | translate }}</option>
+      @for (milestone of milestones(); track milestone.uuid) {
+        <option [ngValue]="milestone.uuid">{{ milestone.title }}</option>
+      }
+    </select>
+  </div>
+
   <fieldset formGroupName="startDate">
     <legend>{{ 'form.task.start' | translate }}</legend>
     <label>{{ 'form.project.year' | translate }}</label>

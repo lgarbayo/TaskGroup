@@ -10,6 +10,7 @@ export interface Task {
   startDate: DateType;
   status: TaskStatus;
   assignee?: TaskAssignee | null;
+  milestone?: TaskMilestone | null;
 }
 
 export type TaskStatus = 'pending' | 'done';
@@ -20,6 +21,11 @@ export interface TaskAssignee {
   email: string;
 }
 
+export interface TaskMilestone {
+  uuid: string;
+  title: string;
+}
+
 export interface UpsertTaskCommand {
   title: string;
   description?: string;
@@ -27,6 +33,7 @@ export interface UpsertTaskCommand {
   startDate: DateType;
   status: TaskStatus;
   assigneeId?: number | null;
+  milestoneUuid?: string | null;
 }
 
 export type UpsertTaskCommandForm = FormGroup<{
@@ -36,4 +43,5 @@ export type UpsertTaskCommandForm = FormGroup<{
   startDate: DateTypeForm;
   status: FormControl<TaskStatus>;
   assigneeId: FormControl<number | null>;
+  milestoneUuid: FormControl<string | null>;
 }>;

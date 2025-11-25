@@ -14,6 +14,7 @@ class Task extends Model
 
     protected $fillable = [
         'project_id',
+        'milestone_uuid',
         'assignee_id',
         'uuid',
         'title',
@@ -40,6 +41,11 @@ class Task extends Model
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id');
+    }
+
+    public function milestone()
+    {
+        return $this->belongsTo(Milestone::class, 'milestone_uuid', 'uuid');
     }
 
     public function getRouteKeyName()

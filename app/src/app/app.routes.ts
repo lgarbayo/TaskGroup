@@ -13,5 +13,9 @@ export const routes: Routes = [
     {
         path: 'project/:projectUuid',
         loadComponent: () => import('./page/project-detail-page/project-detail-page').then(c => c.ProjectDetailPage)
+    },
+    {
+        path: 'contact',
+        loadComponent: () => import('./page/contact-page/contact-page').then(c => c.ContactPage)
     }
 ];

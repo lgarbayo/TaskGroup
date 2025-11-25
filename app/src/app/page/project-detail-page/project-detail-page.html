@@ -162,6 +162,9 @@
                       {{ task.durationWeeks }} {{ 'common.weeks' | translate }}
                     </p>
                     <p class="note">{{ 'form.task.status' | translate }}: {{ ('form.task.status.' + task.status) | translate }}</p>
+                    @if (task.milestone) {
+                      <p class="note">{{ 'project.tasks.milestone' | translate }}: {{ task.milestone.title }}</p>
+                    }
                     @if (task.assignee) {
                       <p class="note">{{ task.assignee.alias }} · {{ task.assignee.email }}</p>
                     }
@@ -195,6 +198,9 @@
                       {{ task.durationWeeks }} {{ 'common.weeks' | translate }}
                     </p>
                     <p class="note">{{ 'form.task.status' | translate }}: {{ ('form.task.status.' + task.status) | translate }}</p>
+                    @if (task.milestone) {
+                      <p class="note">{{ 'project.tasks.milestone' | translate }}: {{ task.milestone.title }}</p>
+                    }
                     @if (task.assignee) {
                       <p class="note">{{ task.assignee.alias }} · {{ task.assignee.email }}</p>
                     }
@@ -209,55 +215,13 @@
           #taskCreator
           [data]="selectedTask() ?? undefined"
           [members]="projectDetail.members ?? []"
+          [milestones]="milestones()"
           (submitted)="saveTask($event)"
           (cancelled)="cancelTaskEdition()"
         ></app-task-form>
       </article>
     </div>
 
-    <article class="card pad stack-md">
-      <div class="row">
-        <h2 class="title">{{ 'project.analysis.title' | translate }}</h2>
-        <button class="btn ghost" type="button" (click)="refreshAnalysis()">
-          {{ 'project.analysis.refresh' | translate }}
-        </button>
-      </div>
-      @if (analysisLoading()) {
-        <p>{{ 'project.analysis.loading' | translate }}</p>
-      }
-      @if (analysisError(); as error) {
-        <p class="error">{{ error | translate }}</p>
-      }
-      @if (analysis(); as data) {
-        <div class="analysis stack-md">
-          @for (milestoneAnalysis of data.milestoneList; track milestoneAnalysis.milestoneUuid) {
-            <article class="task">
-              <h3>{{ milestoneAnalysis.milestoneTitle }}</h3>
-              <p class="muted">
-                {{ milestoneAnalysis.startDate.year }}/{{ milestoneAnalysis.startDate.month + 1 }}/S{{ milestoneAnalysis.startDate.week }}
-                →
-                {{ milestoneAnalysis.endDate.year }}/{{ milestoneAnalysis.endDate.month + 1 }}/S{{ milestoneAnalysis.endDate.week }}
-              </p>
-              <p>
-                {{ 'project.analysis.progress' | translate }}:
-                {{ milestoneAnalysis.initialCompletion * 100 | number:'1.0-0' }}% →
-                {{ milestoneAnalysis.endCompletion * 100 | number:'1.0-0' }}%
-              </p>
-              <ul class="stack-sm">
-                @for (taskAnalysis of milestoneAnalysis.taskList; track taskAnalysis.taskUuid) {
-                  <li>
-                    {{ taskAnalysis.taskTitle }} · {{ taskAnalysis.initialCompletion * 100 | number:'1.0-0' }}% →
-                    {{ taskAnalysis.endCompletion * 100 | number:'1.0-0' }}%
-                  </li>
-                }
-              </ul>
-            </article>
-          }
-        </div>
-      } @else if (!analysisLoading()) {
-        <p>{{ 'project.analysis.empty' | translate }}</p>
-      }
-    </article>
   } @else {
     <article class="card pad">
       <p>{{ 'project.selection.placeholder' | translate }}</p>

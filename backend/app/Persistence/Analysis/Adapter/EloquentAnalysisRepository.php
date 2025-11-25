@@ -42,122 +42,61 @@ class EloquentAnalysisRepository implements AnalysisRepository
             ->sortBy(fn (MilestoneModel $milestone) => $this->dateToIndex($milestone->dateYear, $milestone->dateMonth, $milestone->dateWeek))
             ->values();
 
+        $tasks = collect($project->tasks);
         $segments = [];
-        $startIndex = $this->dateToIndex($project->startYear, $project->startMonth, $project->startWeek);
-        $projectEndIndex = $this->dateToIndex($project->endYear, $project->endMonth, $project->endWeek);
-
-        if ($milestones->isEmpty()) {
-            $segments[] = $this->createSegment(null, $project, $startIndex, $projectEndIndex);
-
-            return $segments;
-        }
 
         foreach ($milestones as $milestone) {
-            $milestoneIndex = $this->dateToIndex($milestone->dateYear, $milestone->dateMonth, $milestone->dateWeek);
-
-            if ($milestoneIndex <= $startIndex) {
-                continue;
-            }
-
-            $segments[] = $this->createSegment($milestone, $project, $startIndex, $milestoneIndex);
-            $startIndex = $milestoneIndex;
+            $assignedTasks = $tasks->filter(fn (TaskModel $task) => ($task->milestone['uuid'] ?? null) === $milestone->uuid);
+            $segments[] = $this->createAssignedSegment($project, $milestone, $assignedTasks);
         }
 
-        if ($startIndex < $projectEndIndex) {
-            $segments[] = $this->createSegment(null, $project, $startIndex, $projectEndIndex);
+        $unassigned = $tasks->filter(fn (TaskModel $task) => empty($task->milestone));
+        if ($unassigned->isNotEmpty() || $segments === []) {
+            $segments[] = $this->createAssignedSegment($project, null, $unassigned);
         }
 
         return $segments;
     }
 
-    private function createSegment(?MilestoneModel $milestone, ProjectModel $project, int $startIndex, int $endIndex): MilestoneAnalysisModel
+    private function createAssignedSegment(ProjectModel $project, ?MilestoneModel $milestone, $tasks): MilestoneAnalysisModel
     {
-        $tasks = collect($project->tasks)->filter(fn (TaskModel $task) => $this->taskOverlaps($task, $startIndex, $endIndex));
-
-        $taskList = $tasks->map(function (TaskModel $task) use ($startIndex, $endIndex) {
-            $initial = $this->progressAt($task, $startIndex);
-            $end = $this->progressAt($task, $endIndex);
-
+        $taskList = collect($tasks)->map(function (TaskModel $task) {
             return new TaskAnalysisModel(
                 taskUuid: $task->uuid,
                 taskTitle: $task->title,
-                initialCompletion: round($initial, 4),
-                endCompletion: round($end, 4),
+                initialCompletion: 0.0,
+                endCompletion: $task->status === 'done' ? 1.0 : 0.0,
             );
         })->values();
-
-        $initialCompletion = $taskList->isNotEmpty()
-            ? round($taskList->avg(fn (TaskAnalysisModel $model) => $model->initialCompletion), 4)
-            : 0.0;
 
         $endCompletion = $taskList->isNotEmpty()
             ? round($taskList->avg(fn (TaskAnalysisModel $model) => $model->endCompletion), 4)
             : 0.0;
 
-        $startDate = $this->indexToDate($startIndex);
-        $endDate = $this->indexToDate($endIndex);
+        $startDate = $milestone
+            ? ['year' => $milestone->dateYear, 'month' => $milestone->dateMonth, 'week' => $milestone->dateWeek]
+            : ['year' => $project->startYear, 'month' => $project->startMonth, 'week' => $project->startWeek];
 
-        $milestoneUuid = $milestone?->uuid ?? sprintf('%s-closure-%d', $project->uuid, $endIndex);
-        $milestoneTitle = $milestone?->title ?? 'Cierre del proyecto';
+        $endDate = $milestone
+            ? ['year' => $milestone->dateYear, 'month' => $milestone->dateMonth, 'week' => $milestone->dateWeek]
+            : ['year' => $project->endYear, 'month' => $project->endMonth, 'week' => $project->endWeek];
+
+        $milestoneUuid = $milestone?->uuid ?? sprintf('%s-general', $project->uuid);
+        $milestoneTitle = $milestone?->title ?? 'General';
 
         return new MilestoneAnalysisModel(
             milestoneUuid: $milestoneUuid,
             milestoneTitle: $milestoneTitle,
             startDate: $startDate,
             endDate: $endDate,
-            initialCompletion: $initialCompletion,
+            initialCompletion: 0.0,
             endCompletion: $endCompletion,
             taskList: $taskList->all(),
         );
     }
 
-    private function taskOverlaps(TaskModel $task, int $startIndex, int $endIndex): bool
-    {
-        $taskStart = $this->dateToIndex($task->startYear, $task->startMonth, $task->startWeek);
-        $duration = max(1, $task->durationWeeks);
-        $taskEnd = $taskStart + $duration;
-
-        return $taskEnd > $startIndex && $taskStart < $endIndex;
-    }
-
-    private function progressAt(TaskModel $task, int $referenceIndex): float
-    {
-        $taskStart = $this->dateToIndex($task->startYear, $task->startMonth, $task->startWeek);
-        $duration = max(1, $task->durationWeeks);
-        $taskEnd = $taskStart + $duration;
-
-        if ($referenceIndex <= $taskStart) {
-            return 0.0;
-        }
-
-        if ($referenceIndex >= $taskEnd) {
-            return 1.0;
-        }
-
-        $elapsed = $referenceIndex - $taskStart;
-
-        return min(1, max(0, $elapsed / $duration));
-    }
-
     private function dateToIndex(int $year, int $month, int $week): int
     {
         return (($year * 12) + $month) * 4 + $week;
-    }
-
-    /**
-     * @return array{year:int,month:int,week:int}
-     */
-    private function indexToDate(int $index): array
-    {
-        $week = $index % 4;
-        $monthTotal = intdiv($index, 4);
-        $month = $monthTotal % 12;
-        $year = intdiv($monthTotal, 12);
-
-        return [
-            'year' => $year,
-            'month' => $month,
-            'week' => $week,
-        ];
     }
 }

@@ -61,6 +61,10 @@ textarea:focus-visible,
 .app-header .wrap { width: 100%; max-width: none; margin: 0 auto; padding: 12px 40px; display: flex; align-items: center; gap: 16px; }
 .brand { font-weight: 700; color: var(--primary); letter-spacing: 0.2px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 .brand-logo { height: 34px; width: auto; display: block; }
+.nav-links { display: flex; align-items: center; gap: 12px; margin-left: 24px; }
+.nav-link { color: var(--muted); font-weight: 600; text-decoration: none; padding: 6px 10px; border-radius: 999px; transition: background 0.2s ease, color 0.2s ease; }
+.nav-link:hover { background: var(--ghost-hover); color: var(--text); }
+.nav-link.active { background: var(--primary); color: #0f0f0f; }
 .spacer { flex: 1 1 auto; }
 .avatar { width: 28px; height: 28px; border-radius: 50%; background: #1f2937; display: inline-flex; align-items: center; justify-content: center; color: #93c5fd; font-weight: 600; font-size: 0.9rem; }
 .avatar { background-size: cover; background-position: center; background-repeat: no-repeat; }

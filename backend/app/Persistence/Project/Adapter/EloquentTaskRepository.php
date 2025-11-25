@@ -14,7 +14,7 @@ class EloquentTaskRepository implements TaskRepository
     {
         $project = $this->findProjectAccessible($projectUuid, $userId);
 
-        return $project->tasks()->with(['assignee', 'project'])
+        return $project->tasks()->with(['assignee', 'project', 'milestone'])
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn ($task) => TaskMapper::toModel($task))
@@ -24,7 +24,7 @@ class EloquentTaskRepository implements TaskRepository
     public function create(string $projectUuid, int $userId, array $data): TaskModel
     {
         $project = $this->findProjectAccessible($projectUuid, $userId);
-        $task = $project->tasks()->create($data)->load('assignee', 'project');
+        $task = $project->tasks()->create($data)->load('assignee', 'project', 'milestone');
 
         return TaskMapper::toModel($task);
     }
@@ -33,7 +33,7 @@ class EloquentTaskRepository implements TaskRepository
     {
         $task = $this->findTaskInProject($projectUuid, $taskUuid, $userId);
 
-        return TaskMapper::toModel($task->load('assignee', 'project'));
+        return TaskMapper::toModel($task->load('assignee', 'project', 'milestone'));
     }
 
     public function update(string $projectUuid, string $taskUuid, int $userId, array $data): TaskModel
@@ -41,7 +41,7 @@ class EloquentTaskRepository implements TaskRepository
         $task = $this->findTaskInProject($projectUuid, $taskUuid, $userId);
         $task->update($data);
 
-        return TaskMapper::toModel($task->fresh()->load('assignee', 'project'));
+        return TaskMapper::toModel($task->fresh()->load('assignee', 'project', 'milestone'));
     }
 
     public function delete(string $projectUuid, string $taskUuid, int $userId): void

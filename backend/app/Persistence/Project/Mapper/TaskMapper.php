@@ -24,6 +24,10 @@ class TaskMapper
                 'alias' => $task->assignee->alias,
                 'email' => $task->assignee->email,
             ] : null,
+            milestone: $task->milestone ? [
+                'uuid' => $task->milestone->uuid,
+                'title' => $task->milestone->title,
+            ] : null,
         );
     }
 }

@@ -4,13 +4,11 @@ import { map } from 'rxjs';
 import { ProjectService } from '../../service/project-service';
 import { Project, UpsertProjectCommand } from '../../model/project.model';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { Milestone, UpsertMilestoneCommand } from '../../model/milestone.model';
 import { Task, UpsertTaskCommand } from '../../model/task.model';
 import { MilestoneService } from '../../service/milestone-service';
 import { TaskService } from '../../service/task-service';
-import { AnalysisService } from '../../service/analysis-service';
-import { ProjectAnalysis } from '../../model/analysis.model';
 import { ProjectForm } from "../../component/project/project-form/project-form";
 import { MilestoneForm } from "../../component/project/milestone-form/milestone-form";
 import { TaskForm } from "../../component/project/task-form/task-form";
@@ -22,7 +20,6 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'app-project-detail-page',
   standalone: true,
   imports: [
-    DecimalPipe,
     KeyValuePipe,
     ReactiveFormsModule,
     ProjectForm,
@@ -39,7 +36,6 @@ export class ProjectDetailPage {
   private projectService = inject(ProjectService);
   private milestoneService = inject(MilestoneService);
   private taskService = inject(TaskService);
-  private analysisService = inject(AnalysisService);
   private nfb = inject(NonNullableFormBuilder);
 
   @ViewChild('milestoneCreator') milestoneForm?: MilestoneForm;
@@ -54,7 +50,6 @@ export class ProjectDetailPage {
   project = signal<Project | undefined>(undefined);
   milestones = signal<Array<Milestone>>([]);
   tasks = signal<Array<Task>>([]);
-  analysis = signal<ProjectAnalysis | undefined>(undefined);
   selectedTask = signal<Task | null>(null);
 
   projectLoading = signal(false);
@@ -63,8 +58,6 @@ export class ProjectDetailPage {
   milestoneError = signal<string | null>(null);
   taskLoading = signal(false);
   taskError = signal<string | null>(null);
-  analysisLoading = signal(false);
-  analysisError = signal<string | null>(null);
   memberLoading = signal(false);
   memberError = signal<string | null>(null);
   memberSuccess = signal<string | null>(null);
@@ -91,7 +84,6 @@ export class ProjectDetailPage {
         this.loadProject(projectUuid);
         this.loadMilestones(projectUuid);
         this.loadTasks(projectUuid);
-        this.loadAnalysis(projectUuid);
       }
     });
   }
@@ -223,13 +215,6 @@ export class ProjectDetailPage {
     });
   }
 
-  refreshAnalysis(): void {
-    const projectUuid = this.projectUuid();
-    if (projectUuid) {
-      this.loadAnalysis(projectUuid);
-    }
-  }
-
   refreshMilestones(): void {
     const projectUuid = this.projectUuid();
     if (projectUuid) {
@@ -306,20 +291,4 @@ export class ProjectDetailPage {
     });
   }
 
-  private loadAnalysis(projectUuid: string): void {
-    this.analysisLoading.set(true);
-    this.analysisService.getProjectAnalysis(projectUuid).subscribe({
-      next: (analysis) => {
-        this.analysis.set(analysis);
-        this.analysisError.set(null);
-      },
-      error: (error) => {
-        console.error('Unable to load project analysis', error);
-        this.analysis.set(undefined);
-        this.analysisError.set('project.analysis.error');
-        this.analysisLoading.set(false);
-      },
-      complete: () => this.analysisLoading.set(false),
-    });
-  }
 }

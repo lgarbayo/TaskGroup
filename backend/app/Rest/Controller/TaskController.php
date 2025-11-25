@@ -32,6 +32,11 @@ class TaskController extends Controller
 
         $assigneeId = $data['assignee_id'] ?? $user->id;
         $this->ensureUserBelongsToProject($projectModel, $assigneeId);
+        $milestoneUuid = $data['milestone_uuid'] ?? null;
+
+        if ($milestoneUuid) {
+            $this->ensureMilestoneBelongsToProject($projectModel, $milestoneUuid);
+        }
 
         $task = $this->facade->createTask($project, $user->id, [
             'title' => $data['title'],
@@ -42,6 +47,7 @@ class TaskController extends Controller
             'duration_weeks' => $data['duration_weeks'],
             'status' => $data['status'] ?? 'pending',
             'assignee_id' => $assigneeId,
+            'milestone_uuid' => $milestoneUuid,
         ]);
 
         return redirect()->to("/api/projects/{$project}/tasks/{$task->uuid}")->setStatusCode(303);
@@ -63,9 +69,16 @@ class TaskController extends Controller
         $data = $request->validated();
         $taskModel = $this->facade->getTask($project, $task, $user->id);
         $assigneeId = $data['assignee_id'] ?? ($taskModel->assignee['id'] ?? null);
+        $milestoneUuid = array_key_exists('milestone_uuid', $data)
+            ? $data['milestone_uuid']
+            : ($taskModel->milestone['uuid'] ?? null);
 
         if ($assigneeId) {
             $this->ensureUserBelongsToProject($projectModel, $assigneeId);
+        }
+
+        if ($milestoneUuid) {
+            $this->ensureMilestoneBelongsToProject($projectModel, $milestoneUuid);
         }
 
         $updated = $this->facade->updateTask($project, $task, $user->id, [
@@ -77,6 +90,7 @@ class TaskController extends Controller
             'duration_weeks' => $data['duration_weeks'],
             'status' => $data['status'] ?? $taskModel->status,
             'assignee_id' => $assigneeId,
+            'milestone_uuid' => $milestoneUuid,
         ]);
 
         return new TaskResource($updated);
@@ -97,6 +111,15 @@ class TaskController extends Controller
 
         if (! $isMember) {
             throw new HttpException(422, 'El usuario asignado no pertenece al proyecto.');
+        }
+    }
+
+    protected function ensureMilestoneBelongsToProject($projectModel, string $milestoneUuid): void
+    {
+        $exists = collect($projectModel->milestones)->firstWhere('uuid', $milestoneUuid);
+
+        if (! $exists) {
+            throw new HttpException(422, 'El hito seleccionado no pertenece al proyecto.');
         }
     }
 }

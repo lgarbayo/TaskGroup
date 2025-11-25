@@ -4,6 +4,10 @@
       <img src="/appicon.png" alt="TaskGroup logo" class="brand-logo" width="34" height="34" loading="lazy" />
       {{ 'common.appName' | translate }}
     </a>
+    <nav class="nav-links">
+      <a class="nav-link" routerLink="/list" routerLinkActive="active">{{ 'projects.list.title' | translate }}</a>
+      <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contacto</a>
+    </nav>
     <div class="spacer"></div>
     <select
       class="select-inline"

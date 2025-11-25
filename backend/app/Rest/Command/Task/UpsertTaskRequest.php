@@ -22,6 +22,7 @@ class UpsertTaskRequest extends FormRequest
             'start_date.month' => ['required', 'integer', 'min:0', 'max:11'],
             'start_date.week' => ['required', 'integer', 'min:0', 'max:3'],
             'assignee_id' => ['nullable', 'integer', 'exists:users,id'],
+            'milestone_uuid' => ['nullable', 'string', 'exists:milestones,uuid'],
         ];
     }
 }

@@ -4,6 +4,7 @@ import { Task, TaskStatus, UpsertTaskCommand } from '../../../model/task.model';
 import { TaskService } from '../../../service/task-service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { ProjectMember } from '../../../model/project.model';
+import { Milestone } from '../../../model/milestone.model';
 
 @Component({
   selector: 'app-task-form',
@@ -19,6 +20,7 @@ export class TaskForm {
   form = this.taskService.form();
   data = input<Task>();
   members = input<Array<ProjectMember>>([]);
+  milestones = input<Array<Milestone>>([]);
   submitted = output<UpsertTaskCommand>();
   cancelled = output<void>();
   readonly statuses: Array<{ value: TaskStatus; label: string }> = [

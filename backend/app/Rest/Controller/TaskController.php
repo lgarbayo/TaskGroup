@@ -44,7 +44,7 @@ class TaskController extends Controller
             'assignee_id' => $assigneeId,
         ]);
 
-        return (new TaskResource($task))->response()->setStatusCode(201);
+        return redirect()->to("/api/projects/{$project}/tasks/{$task->uuid}")->setStatusCode(303);
     }
 
     public function show(Request $request, string $project, string $task)

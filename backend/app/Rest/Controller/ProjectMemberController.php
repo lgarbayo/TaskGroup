@@ -32,6 +32,8 @@ class ProjectMemberController extends Controller
 
         $project->members()->attach($user->id, ['role' => $data['role'] ?? 'member']);
 
-        return new ProjectResource($project->fresh(['members']));
+        $project->load('members');
+
+        return redirect()->to("/api/projects/{$projectId}")->setStatusCode(303);
     }
 }

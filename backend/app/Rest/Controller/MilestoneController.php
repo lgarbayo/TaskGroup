@@ -36,7 +36,7 @@ class MilestoneController extends Controller
             'date_week' => $data['date']['week'],
         ]);
 
-        return (new MilestoneResource($milestone))->response()->setStatusCode(201);
+        return redirect()->to("/api/projects/{$projectUuid}/milestone/{$milestone->uuid}")->setStatusCode(303);
     }
 
     public function show(Request $request, string $projectUuid, string $milestone)

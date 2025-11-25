@@ -39,7 +39,7 @@ class ProjectController extends Controller
             'additional_fields' => $data['additional_fields'] ?? null,
         ]);
 
-        return (new ProjectResource($project))->response()->setStatusCode(201);
+        return redirect()->to("/api/projects/{$project->uuid}")->setStatusCode(303);
     }
 
     public function show(Request $request, string $project)

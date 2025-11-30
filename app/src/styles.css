@@ -252,7 +252,7 @@ app-milestone-form form {
 .detail-grid .card { margin-top: 0; }
 @media (max-width: 960px) { .detail-grid { grid-template-columns: 1fr; } }
 
-.table-card { max-height: 370px; height: 370px; display: flex; flex-direction: column; }
+.table-card { max-height: 370px; height: 370px; display: flex; flex-direction: column; overflow: hidden; }
 .table-card.tasks { max-height: 550px; height: 550px; }
 .table-card .table-wrapper { flex: 1 1 auto; overflow-x: auto; overflow-y: auto; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
@@ -387,6 +387,18 @@ app-milestone-form form {
 /* Task list */
 .task { border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--card); display: flex; flex-direction: column; gap: 8px; }
 .task + .task { margin-top: 10px; }
+.task-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.task-group { border: 1px solid var(--border); border-radius: 16px; padding: 16px; background: rgba(255,255,255,0.02); }
+.task-group-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.task-group .table-wrapper { margin-top: 12px; }
 .table-wrapper table tr { transition: transform .15s ease, box-shadow .15s ease; }
 .table-wrapper table tr:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.12); background: rgba(245,158,11,0.04); }
 
@@ -468,6 +480,7 @@ fieldset label + textarea {
   border-radius: 16px;
   overflow: hidden;
   overflow-x: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 .table-card table { width: 100%; border-collapse: collapse; }

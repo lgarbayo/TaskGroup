@@ -158,68 +158,147 @@
       @if (taskError(); as error) {
         <p class="error">{{ error | translate }}</p>
       }
-      @if (!taskLoading() && tasks().length === 0) {
-        <p class="note">{{ 'project.tasks.empty' | translate }}</p>
-      } @else if (tasks().length > 0) {
-        <div class="table-wrapper">
-          <table class="data-table task-table">
-            <thead>
-              <tr>
-                <th>{{ 'form.task.title' | translate }}</th>
-                <th>{{ 'form.task.duration' | translate }}</th>
-                <th>{{ 'project.summary.start' | translate }}</th>
-                <th>{{ 'form.task.status' | translate }}</th>
-                <th>{{ 'form.task.assignee' | translate }}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (task of tasks(); track trackTask($index, task); let idx = $index) {
-                <tr class="data-row" [style.animationDelay]="(idx * 40) + 'ms'">
-                  <td>
-                    <strong>{{ task.title }}</strong>
-                    <p class="note">{{ task.description || ('common.description.empty' | translate) }}</p>
-                  </td>
-                  <td>{{ task.durationWeeks }} {{ 'common.weeks' | translate }}</td>
-                  <td>{{ core.formatDateLabel(task.startDate) }}</td>
-                  <td>
-                    <span class="badge" [class.badge.success]="task.status === 'done'">
-                      {{ ('form.task.status.' + task.status) | translate }}
-                    </span>
-                    @if (task.milestone) {
-                      <p class="note">{{ 'project.tasks.milestone' | translate }}: {{ task.milestone.title }}</p>
+      @if (!taskLoading()) {
+        <div class="task-groups">
+          <section class="task-group">
+            <header class="task-group-header">
+              <h3 class="subtitle">{{ 'project.tasks.pending' | translate }}</h3>
+              <span class="pill muted">{{ pendingTasks().length }}</span>
+            </header>
+            @if (pendingTasks().length === 0) {
+              <p class="note">{{ 'project.tasks.empty' | translate }}</p>
+            } @else {
+              <div class="table-wrapper">
+                <table class="data-table task-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'form.task.title' | translate }}</th>
+                      <th>{{ 'form.task.duration' | translate }}</th>
+                      <th>{{ 'project.summary.start' | translate }}</th>
+                      <th>{{ 'form.task.status' | translate }}</th>
+                      <th>{{ 'form.task.assignee' | translate }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (task of pendingTasks(); track trackTask($index, task); let idx = $index) {
+                      <tr class="data-row" [style.animationDelay]="(idx * 40) + 'ms'">
+                        <td>
+                          <strong>{{ task.title }}</strong>
+                          <p class="note">{{ task.description || ('common.description.empty' | translate) }}</p>
+                        </td>
+                        <td>{{ task.durationWeeks }} {{ 'common.weeks' | translate }}</td>
+                        <td>{{ core.formatDateLabel(task.startDate) }}</td>
+                        <td>
+                          <span class="badge">{{ ('form.task.status.' + task.status) | translate }}</span>
+                          @if (task.milestone) {
+                            <p class="note">{{ 'project.tasks.milestone' | translate }}: {{ task.milestone.title }}</p>
+                          }
+                        </td>
+                        <td>
+                          @if (task.assignee) {
+                            <strong>{{ task.assignee.alias }}</strong>
+                            <p class="note">{{ task.assignee.email }}</p>
+                          } @else {
+                            <p class="note">{{ 'form.task.assignee.none' | translate }}</p>
+                          }
+                        </td>
+                        <td class="table-actions">
+                          <button
+                            class="btn ghost icon-only"
+                            type="button"
+                            (click)="editTask(task)"
+                            aria-label="{{ 'project.tasks.edit' | translate }}"
+                          >
+                            <img src="/edit.svg" alt="" width="20" height="20" />
+                          </button>
+                          <button
+                            class="btn danger icon-only"
+                            type="button"
+                            (click)="removeTask(task.uuid)"
+                            aria-label="{{ 'common.delete' | translate }}"
+                          >
+                            <img src="/trash.svg" alt="" width="20" height="20" />
+                          </button>
+                        </td>
+                      </tr>
                     }
-                  </td>
-                  <td>
-                    @if (task.assignee) {
-                      <strong>{{ task.assignee.alias }}</strong>
-                      <p class="note">{{ task.assignee.email }}</p>
-                    } @else {
-                      <p class="note">{{ 'form.task.assignee.none' | translate }}</p>
+                  </tbody>
+                </table>
+              </div>
+            }
+          </section>
+
+          <section class="task-group">
+            <header class="task-group-header">
+              <h3 class="subtitle">{{ 'project.tasks.done' | translate }}</h3>
+              <span class="pill muted">{{ doneTasks().length }}</span>
+            </header>
+            @if (doneTasks().length === 0) {
+              <p class="note">{{ 'project.tasks.doneEmpty' | translate }}</p>
+            } @else {
+              <div class="table-wrapper">
+                <table class="data-table task-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'form.task.title' | translate }}</th>
+                      <th>{{ 'form.task.duration' | translate }}</th>
+                      <th>{{ 'project.summary.start' | translate }}</th>
+                      <th>{{ 'form.task.status' | translate }}</th>
+                      <th>{{ 'form.task.assignee' | translate }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (task of doneTasks(); track trackTask($index, task); let idx = $index) {
+                      <tr class="data-row" [style.animationDelay]="(idx * 40) + 'ms'">
+                        <td>
+                          <strong>{{ task.title }}</strong>
+                          <p class="note">{{ task.description || ('common.description.empty' | translate) }}</p>
+                        </td>
+                        <td>{{ task.durationWeeks }} {{ 'common.weeks' | translate }}</td>
+                        <td>{{ core.formatDateLabel(task.startDate) }}</td>
+                        <td>
+                          <span class="badge success">
+                            {{ ('form.task.status.' + task.status) | translate }}
+                          </span>
+                          @if (task.milestone) {
+                            <p class="note">{{ 'project.tasks.milestone' | translate }}: {{ task.milestone.title }}</p>
+                          }
+                        </td>
+                        <td>
+                          @if (task.assignee) {
+                            <strong>{{ task.assignee.alias }}</strong>
+                            <p class="note">{{ task.assignee.email }}</p>
+                          } @else {
+                            <p class="note">{{ 'form.task.assignee.none' | translate }}</p>
+                          }
+                        </td>
+                        <td class="table-actions">
+                          <button
+                            class="btn ghost icon-only"
+                            type="button"
+                            (click)="editTask(task)"
+                            aria-label="{{ 'project.tasks.edit' | translate }}"
+                          >
+                            <img src="/edit.svg" alt="" width="20" height="20" />
+                          </button>
+                          <button
+                            class="btn danger icon-only"
+                            type="button"
+                            (click)="removeTask(task.uuid)"
+                            aria-label="{{ 'common.delete' | translate }}"
+                          >
+                            <img src="/trash.svg" alt="" width="20" height="20" />
+                          </button>
+                        </td>
+                      </tr>
                     }
-                  </td>
-                  <td class="table-actions">
-                    <button
-                      class="btn ghost icon-only"
-                      type="button"
-                      (click)="editTask(task)"
-                      aria-label="{{ 'project.tasks.edit' | translate }}"
-                    >
-                      <img src="/edit.svg" alt="" width="20" height="20" />
-                    </button>
-                    <button
-                      class="btn danger icon-only"
-                      type="button"
-                      (click)="removeTask(task.uuid)"
-                      aria-label="{{ 'common.delete' | translate }}"
-                    >
-                      <img src="/trash.svg" alt="" width="20" height="20" />
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+                  </tbody>
+                </table>
+              </div>
+            }
+          </section>
         </div>
       }
     </article>

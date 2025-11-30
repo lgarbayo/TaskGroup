@@ -17,19 +17,19 @@ body *::-moz-selection {
 }
 
 :root {
-  --bg: #fffdf5;              /* crema muy suave */
-  --card: #ffffff;            /* tarjetas blancas */
-  --text: #0b0b0b;            /* casi negro */
-  --muted: #6b7280;           /* gris medio */
-  --primary: #f59e0b;         /* amber-500 */
-  --primary-600: #d97706;     /* amber-600 */
+  --bg: #fffdf5;              
+  --card: #ffffff;
+  --text: #0b0b0b;
+  --muted: #6b7280;
+  --primary: #f59e0b;
+  --primary-600: #d97706;
   --danger: #ef4444;
   --success: #16a34a;
   --warning: #f59e0b;
-  --border: #e5e7eb;          /* gris claro */
-  --chip: #f4f4f5;            /* gris neutro */
-  --button-bg: #f4f4f5;       /* light neutral button */
-  --button-hover: #e4e4e7;    /* hover neutro */
+  --border: #e5e7eb;
+  --chip: #f4f4f5;
+  --button-bg: #f4f4f5;
+  --button-hover: #e4e4e7;
   --ghost-hover: rgba(0,0,0,0.05);
   --progress-bg: #e5e7eb;
   --badge-muted-bg: #f4f4f5;

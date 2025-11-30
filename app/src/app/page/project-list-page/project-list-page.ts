@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ProjectForm } from "../../component/project/project-form/project-form";
 import { AuthService } from '../../service/auth-service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
+import { CoreService } from '../../service/core-service';
 
 @Component({
   selector: 'app-project-list-page',
@@ -15,17 +16,18 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
     TranslatePipe
 ],
   templateUrl: './project-list-page.html',
-  styleUrl: './project-list-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectListPage {
   private projectService = inject(ProjectService);
   private authService = inject(AuthService);
+  protected core = inject(CoreService);
   @ViewChild(ProjectForm) projectFormComponent?: ProjectForm;
 
   projectList = signal<Array<Project>>([]);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
+  showCreateModal = signal(false);
 
   constructor() {
     effect(() => {
@@ -55,11 +57,20 @@ export class ProjectListPage {
     });
   }
 
+  openCreateModal(): void {
+    this.showCreateModal.set(true);
+  }
+
+  closeCreateModal(): void {
+    this.projectFormComponent?.resetForm();
+    this.showCreateModal.set(false);
+  }
+
   createProject(command: UpsertProjectCommand): void {
     this.loading.set(true);
     this.projectService.createProject(command).subscribe({
       next: () => {
-        this.projectFormComponent?.resetForm();
+        this.closeCreateModal();
         this.loadProjects();
       },
       error: (error) => {

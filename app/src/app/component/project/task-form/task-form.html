@@ -45,12 +45,29 @@
 
   <fieldset formGroupName="startDate">
     <legend>{{ 'form.task.start' | translate }}</legend>
-    <label>{{ 'form.project.year' | translate }}</label>
-    <input type="number" formControlName="year" />
-    <label>{{ 'form.project.month' | translate }}</label>
-    <input type="number" min="0" max="11" formControlName="month" />
-    <label>{{ 'form.project.week' | translate }}</label>
-    <input type="number" min="0" max="3" formControlName="week" />
+    <div class="fieldset-grid">
+      <div class="field-group">
+        <label>{{ 'form.project.year' | translate }}</label>
+        <input type="number" formControlName="year" />
+      </div>
+      <div class="field-group">
+        <label>{{ 'form.project.month' | translate }}</label>
+        <select formControlName="month">
+          @for (month of core.monthNames; track month; let idx = $index) {
+            <option [value]="idx">{{ month }}</option>
+          }
+        </select>
+      </div>
+      <div class="field-group">
+        <label>{{ 'form.project.week' | translate }}</label>
+        <select formControlName="week">
+          <option [value]="0">1</option>
+          <option [value]="1">2</option>
+          <option [value]="2">3</option>
+          <option [value]="3">4</option>
+        </select>
+      </div>
+    </div>
   </fieldset>
 
   <div class="form-actions">

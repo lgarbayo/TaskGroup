@@ -9,7 +9,6 @@ import { TranslatePipe } from '../../../i18n/translate.pipe';
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './milestone-form.html',
-  styleUrl: './milestone-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MilestoneForm {
@@ -18,6 +17,7 @@ export class MilestoneForm {
   form = this.milestoneService.form();
   data = input<Milestone>();
   submitted = output<UpsertMilestoneCommand>();
+  cancelled = output<void>();
 
   constructor() {
     effect(() => this.resetFormState(this.data()));
@@ -33,6 +33,10 @@ export class MilestoneForm {
 
   resetForm(): void {
     this.resetFormState(this.data());
+  }
+
+  cancelEdition(): void {
+    this.cancelled.emit();
   }
 
   private resetFormState(milestone?: Milestone): void {

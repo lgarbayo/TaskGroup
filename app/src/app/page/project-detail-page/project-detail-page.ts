@@ -15,6 +15,7 @@ import { TaskForm } from "../../component/project/task-form/task-form";
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CoreService } from '../../service/core-service';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -26,9 +27,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     MilestoneForm,
     TaskForm,
     TranslatePipe
-],
+  ],
   templateUrl: './project-detail-page.html',
-  styleUrl: './project-detail-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectDetailPage {
@@ -37,6 +37,7 @@ export class ProjectDetailPage {
   private milestoneService = inject(MilestoneService);
   private taskService = inject(TaskService);
   private nfb = inject(NonNullableFormBuilder);
+  protected core = inject(CoreService);
 
   @ViewChild('milestoneCreator') milestoneForm?: MilestoneForm;
   @ViewChild('taskCreator') taskForm?: TaskForm;
@@ -51,6 +52,7 @@ export class ProjectDetailPage {
   milestones = signal<Array<Milestone>>([]);
   tasks = signal<Array<Task>>([]);
   selectedTask = signal<Task | null>(null);
+  selectedMilestone = signal<Milestone | null>(null);
 
   projectLoading = signal(false);
   projectError = signal<string | null>(null);
@@ -61,6 +63,11 @@ export class ProjectDetailPage {
   memberLoading = signal(false);
   memberError = signal<string | null>(null);
   memberSuccess = signal<string | null>(null);
+  showMeta = signal(false);
+  showProjectModal = signal(false);
+  showMilestoneModal = signal(false);
+  showTaskModal = signal(false);
+  showMemberModal = signal(false);
 
   memberForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -95,12 +102,32 @@ export class ProjectDetailPage {
       next: (updated) => {
         this.project.set(updated);
         this.projectError.set(null);
+        this.showProjectModal.set(false);
       },
       error: (error) => {
         console.error('Error updating project', error);
         this.projectError.set('projects.error.load');
       },
     });
+  }
+
+  openProjectModal(): void {
+    this.showProjectModal.set(true);
+  }
+
+  closeProjectModal(): void {
+    this.showProjectModal.set(false);
+  }
+
+  openMilestoneModal(milestone?: Milestone): void {
+    this.selectedMilestone.set(milestone ?? null);
+    this.showMilestoneModal.set(true);
+  }
+
+  cancelMilestoneEdition(): void {
+    this.selectedMilestone.set(null);
+    this.milestoneForm?.resetForm();
+    this.showMilestoneModal.set(false);
   }
 
   saveMilestone(command: UpsertMilestoneCommand): void {
@@ -111,7 +138,7 @@ export class ProjectDetailPage {
     this.milestoneLoading.set(true);
     this.milestoneService.create(projectUuid, command).subscribe({
       next: () => {
-        this.milestoneForm?.resetForm();
+        this.cancelMilestoneEdition();
         this.loadMilestones(projectUuid);
       },
       error: (error) => {
@@ -138,6 +165,10 @@ export class ProjectDetailPage {
     });
   }
 
+  editMilestone(milestone: Milestone): void {
+    this.openMilestoneModal(milestone);
+  }
+
   saveTask(command: UpsertTaskCommand): void {
     const projectUuid = this.projectUuid();
     if (!projectUuid) {
@@ -151,8 +182,7 @@ export class ProjectDetailPage {
 
     request$.subscribe({
       next: () => {
-        this.taskForm?.resetForm();
-        this.selectedTask.set(null);
+        this.cancelTaskEdition();
         this.loadTasks(projectUuid);
       },
       error: (error) => {
@@ -180,12 +210,33 @@ export class ProjectDetailPage {
   }
 
   editTask(task: Task): void {
-    this.selectedTask.set(task);
+    this.openTaskModal(task);
+  }
+
+  openTaskModal(task?: Task): void {
+    this.selectedTask.set(task ?? null);
+    this.showTaskModal.set(true);
   }
 
   cancelTaskEdition(): void {
     this.selectedTask.set(null);
     this.taskForm?.resetForm();
+    this.showTaskModal.set(false);
+  }
+
+  openMemberModal(): void {
+    this.memberError.set(null);
+    this.memberSuccess.set(null);
+    this.memberForm.reset({ email: '' });
+    this.showMemberModal.set(true);
+  }
+
+  closeMemberModal(): void {
+    this.showMemberModal.set(false);
+  }
+
+  toggleMeta(): void {
+    this.showMeta.update(value => !value);
   }
 
   addMember(): void {

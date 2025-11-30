@@ -2,7 +2,7 @@ FROM php:8.2-apache
 
 # Install extensions
 RUN apt-get update && apt-get install -y \
-    libpq-dev libzip-dev libonig-dev libxml2-dev git unzip \
+    libpq-dev libzip-dev libonig-dev libxml2-dev git unzip curl \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -15,7 +15,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader

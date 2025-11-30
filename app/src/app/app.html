@@ -1,26 +1,33 @@
 <header class="app-header">
   <div class="wrap">
     <a class="brand" routerLink="/">
-      <img src="/appicon.png" alt="TaskGroup logo" class="brand-logo" width="34" height="34" loading="lazy" />
-      {{ 'common.appName' | translate }}
+      <img src="/icon.svg" alt="TaskGroup logo" class="brand-logo" width="48" height="48" loading="eager" />
+      <span class="brand-title">{{ 'common.appName' | translate }}</span>
     </a>
     <nav class="nav-links">
       <a class="nav-link" routerLink="/list" routerLinkActive="active">{{ 'projects.list.title' | translate }}</a>
-      <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contacto</a>
+      <a class="nav-link" routerLink="/contact" routerLinkActive="active">{{ 'header.nav.contact' | translate }}</a>
     </nav>
     <div class="spacer"></div>
-    <select
-      class="select-inline"
-      [value]="language()"
-      #languageSelect
-      (change)="changeLanguage(languageSelect.value)"
-      aria-label="{{ 'header.language.label' | translate }}"
-    >
+    <div class="language-switcher" aria-label="{{ 'header.language.label' | translate }}">
       @for (lang of languages; track lang.code) {
-        <option [value]="lang.code">{{ lang.labelKey | translate }}</option>
+        <button
+          type="button"
+          class="language-btn"
+          [class.active]="language() === lang.code"
+          (click)="changeLanguage(lang.code)"
+        >
+          <img
+            class="language-flag"
+            [src]="flagFor(lang.code)"
+            [alt]="lang.labelKey | translate"
+            width="28"
+            height="28"
+          />
+        </button>
       }
-    </select>
-    <button class="btn ghost" type="button" (click)="toggleTheme()">
+    </div>
+    <button class="btn ghost" type="button" (click)="toggleTheme()" aria-label="{{ 'header.theme.label' | translate }}">
       {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
     </button>
     @if (isAuthenticated() && user(); as currentUser) {

@@ -7,6 +7,7 @@ use App\Rest\Command\Milestone\UpsertMilestoneRequest;
 use App\Rest\Response\MilestoneResource;
 use App\Business\Facade\ProjectFacade;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class MilestoneController extends Controller
 {
@@ -36,7 +37,9 @@ class MilestoneController extends Controller
             'date_week' => $data['date']['week'],
         ]);
 
-        return redirect()->to("/api/projects/{$projectUuid}/milestone/{$milestone->uuid}")->setStatusCode(303);
+        return (new MilestoneResource($milestone))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Request $request, string $projectUuid, string $milestone)

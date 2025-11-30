@@ -8,6 +8,7 @@ use App\Rest\Response\TaskResource;
 use App\Business\Facade\ProjectFacade;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
@@ -50,7 +51,9 @@ class TaskController extends Controller
             'milestone_uuid' => $milestoneUuid,
         ]);
 
-        return redirect()->to("/api/projects/{$project}/tasks/{$task->uuid}")->setStatusCode(303);
+        return (new TaskResource($task))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Request $request, string $project, string $task)

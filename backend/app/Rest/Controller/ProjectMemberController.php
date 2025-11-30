@@ -4,11 +4,11 @@ namespace App\Rest\Controller;
 
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Project\AddMemberRequest;
-use App\Rest\Response\ProjectResource;
 use App\Business\Project\Service\ProjectService;
 use App\Persistence\User\Entity\User;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\Response;
 
 class ProjectMemberController extends Controller
 {
@@ -32,8 +32,10 @@ class ProjectMemberController extends Controller
 
         $project->members()->attach($user->id, ['role' => $data['role'] ?? 'member']);
 
-        $project->load('members');
+        $project = $project->fresh(['members']);
 
-        return redirect()->to("/api/projects/{$projectId}")->setStatusCode(303);
+        return (new \App\Rest\Response\ProjectResource($project))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 }

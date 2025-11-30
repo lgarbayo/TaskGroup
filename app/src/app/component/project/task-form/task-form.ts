@@ -5,17 +5,18 @@ import { TaskService } from '../../../service/task-service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { ProjectMember } from '../../../model/project.model';
 import { Milestone } from '../../../model/milestone.model';
+import { CoreService } from '../../../service/core-service';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './task-form.html',
-  styleUrl: './task-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskForm {
   private taskService = inject(TaskService);
+  protected core = inject(CoreService);
 
   form = this.taskService.form();
   data = input<Task>();

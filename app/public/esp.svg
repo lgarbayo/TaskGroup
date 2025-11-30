@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <mask id="mask_es">
+        <rect width="64" height="64" rx="16" fill="white"/>
+    </mask>
+
+    <g mask="url(#mask_es)">
+        <rect width="64" height="64" fill="#FFC400"/>
+
+        <rect width="64" height="16" fill="#C60B1E"/>
+        <rect y="48" width="64" height="16" fill="#C60B1E"/>
+
+        <rect width="64" height="64" rx="16" stroke="black" stroke-opacity="0.1" stroke-width="2"/>
+    </g>
+</svg>

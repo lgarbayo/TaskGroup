@@ -7,6 +7,7 @@ use App\Rest\Command\Project\UpsertProjectRequest;
 use App\Rest\Response\ProjectResource;
 use App\Business\Facade\ProjectFacade;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ProjectController extends Controller
 {
@@ -39,7 +40,16 @@ class ProjectController extends Controller
             'additional_fields' => $data['additional_fields'] ?? null,
         ]);
 
-        return redirect()->to("/api/projects/{$project->uuid}")->setStatusCode(303);
+        $origin = $request->headers->get('Origin');
+        if ($origin) {
+            $target = rtrim($origin, '/') . "/api/projects/{$project->uuid}";
+
+            return redirect()->away($target, Response::HTTP_SEE_OTHER);
+        }
+
+        return redirect()
+            ->to(url("/api/projects/{$project->uuid}"))
+            ->setStatusCode(Response::HTTP_SEE_OTHER);
     }
 
     public function show(Request $request, string $project)

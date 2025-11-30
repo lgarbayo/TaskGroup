@@ -10,13 +10,17 @@ import { LanguageCode } from './i18n/translations';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, AuthPanel, TranslatePipe],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  templateUrl: './app.html'
 })
 export class App {
   private document = inject(DOCUMENT);
   private authService = inject(AuthService);
   private translation = inject(TranslationService);
+  private readonly flagMap: Record<LanguageCode, string> = {
+    es: '/esp.svg',
+    en: '/uk.svg',
+    gl: '/gal.svg',
+  };
 
   protected readonly title = signal('TaskGroup');
   protected readonly theme = signal<'light' | 'dark'>(App.loadTheme());
@@ -50,6 +54,10 @@ export class App {
     const lang = code as LanguageCode;
     if (lang === this.language()) return;
     this.translation.setLanguage(lang);
+  }
+
+  flagFor(code: LanguageCode): string {
+    return this.flagMap[code] ?? '/icon.svg';
   }
 
   private static loadTheme(): 'light' | 'dark' {

@@ -1,29 +1,51 @@
 <section class="stack-md">
   <article class="card pad stack-md">
-    <div class="row">
-      <h2 class="title">{{ 'projects.list.title' | translate }}</h2>
-      <span class="pill">{{ 'projects.list.total' | translate:{ count: projectList().length } }}</span>
+    <div class="row row-refresh">
+      <div>
+        <h1 class="title">{{ 'projects.list.title' | translate }}</h1>
+        <span class="pill">{{ 'projects.list.total' | translate:{ count: projectList().length } }}</span>
+      </div>
+      <div class="form-actions">
+        <button
+          class="btn primary icon-only"
+          type="button"
+          (click)="openCreateModal()"
+          aria-label="{{ 'projects.create.title' | translate }}"
+        >
+          <img src="/add.svg" alt="" width="24" height="24" />
+        </button>
+        @if (loading()) {
+          <span class="pill">{{ 'common.loading' | translate }}</span>
+        }
+      </div>
     </div>
-
+    @if (errorMessage(); as error) {
+      <p class="error">{{ error | translate }}</p>
+    }
     @if (!loading() && projectList().length === 0) {
-      <p>{{ 'projects.list.empty' | translate }}</p>
+      <p class="note">{{ 'projects.list.empty' | translate }}</p>
     } @else {
       <div class="grid projects">
-        @for (project of projectList(); track trackProject($index, project)) {
-          <article class="project-card">
+        @for (project of projectList(); track trackProject($index, project); let idx = $index) {
+          <article class="project-card" [style.animationDelay]="(idx * 80) + 'ms'">
             <div>
               <p class="project-title">{{ project.title }}</p>
               <p class="project-meta">
-                <span>{{ 'project.summary.start' | translate }}: {{ project.startDate.year }}/{{ project.startDate.month + 1 }}</span>
-                <span>{{ 'project.summary.end' | translate }}: {{ project.endDate.year }}/{{ project.endDate.month + 1 }}</span>
+                <span>{{ 'project.summary.start' | translate }}: {{ core.formatDateLabel(project.startDate) }}</span>
+                <span>{{ 'project.summary.end' | translate }}: {{ core.formatDateLabel(project.endDate) }}</span>
               </p>
             </div>
             <div class="project-actions">
               <a class="btn ghost" [routerLink]="['..', 'project', project.uuid]">
                 {{ 'projects.card.detail' | translate }}
               </a>
-              <button class="btn danger" type="button" (click)="deleteProject(project.uuid)">
-                {{ 'common.delete' | translate }}
+              <button
+                class="btn danger icon-only"
+                type="button"
+                (click)="deleteProject(project.uuid)"
+                aria-label="{{ 'common.delete' | translate }}"
+              >
+                <img src="/trash.svg" alt="" width="20" height="20" />
               </button>
             </div>
           </article>
@@ -31,10 +53,21 @@
       </div>
     }
   </article>
-
-  <article class="card pad stack-md">
-    <h2 class="title">{{ 'projects.create.title' | translate }}</h2>
-    <p class="subtitle">{{ 'projects.create.subtitle' | translate }}</p>
-    <app-project-form (edited)="createProject($event)"></app-project-form>
-  </article>
 </section>
+
+@if (showCreateModal()) {
+  <div class="modal-backdrop" (click)="closeCreateModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="title">{{ 'projects.create.title' | translate }}</h2>
+        <button class="btn ghost" type="button" (click)="closeCreateModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="subtitle">{{ 'projects.create.subtitle' | translate }}</p>
+        <app-project-form (edited)="createProject($event)" (cancelled)="closeCreateModal()"></app-project-form>
+      </div>
+    </div>
+  </div>
+}

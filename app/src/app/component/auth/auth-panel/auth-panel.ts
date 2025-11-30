@@ -9,7 +9,6 @@ import { TranslatePipe } from '../../../i18n/translate.pipe';
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './auth-panel.html',
-  styleUrl: './auth-panel.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthPanel {

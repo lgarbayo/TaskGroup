@@ -6,7 +6,6 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './contact-page.html',
-  styleUrl: './contact-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactPage {}

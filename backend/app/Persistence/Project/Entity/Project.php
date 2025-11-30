@@ -3,11 +3,10 @@
 namespace App\Persistence\Project\Entity;
 
 use App\Persistence\User\Entity\User;
-use App\Persistence\Project\Entity\Task;
-use App\Persistence\Project\Entity\Milestone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -56,6 +55,11 @@ class Project extends Model
     public function milestones()
     {
         return $this->hasMany(Milestone::class);
+    }
+
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(ProjectInvitation::class);
     }
 
     public function getRouteKeyName()

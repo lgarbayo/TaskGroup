@@ -18,7 +18,8 @@ class ProjectModel
         public readonly ?array $additionalFields = null,
         public readonly array $members = [],
         public readonly array $tasks = [],
-        public readonly array $milestones = []
+        public readonly array $milestones = [],
+        public readonly array $invitations = []
     ) {
     }
 }

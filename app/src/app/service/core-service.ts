@@ -1,25 +1,34 @@
 import { inject, Injectable } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { DateType, DateTypeForm } from '../model/core.model';
+import { TranslationService } from '../i18n/translation.service';
+import { computed } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoreService {
   private nfb = inject(NonNullableFormBuilder);
-  readonly monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+  private translation = inject(TranslationService);
+  readonly monthNames = computed(() =>
+    this.monthKeys.map((key, index) => {
+      const month = this.translation.translate(key);
+      return !month || month === key ? `M${index + 1}` : month;
+    })
+  );
+  private readonly monthKeys = [
+    'date.month.january',
+    'date.month.february',
+    'date.month.march',
+    'date.month.april',
+    'date.month.may',
+    'date.month.june',
+    'date.month.july',
+    'date.month.august',
+    'date.month.september',
+    'date.month.october',
+    'date.month.november',
+    'date.month.december',
   ];
 
   dateTypeForm(data?: DateType): DateTypeForm {
@@ -41,9 +50,14 @@ export class CoreService {
       return '';
     }
     const monthIndex = typeof date.month === 'number' ? date.month : 0;
-    const month = this.monthNames[monthIndex] ?? `M${monthIndex + 1}`;
+    const monthKey = this.monthKeys[monthIndex] ?? null;
+    let month = monthKey ? this.translation.translate(monthKey) : '';
+    if (!month || month === monthKey) {
+      month = `M${monthIndex + 1}`;
+    }
     const week = this.toDisplayWeek(date.week);
-    return `${month} ${date.year} · W${week}`;
+    const prefix = this.translation.language() === 'en' ? 'W' : 'S';
+    return `${month} ${date.year} · ${prefix}${week}`;
   }
 
   toDisplayWeek(value?: number | null): number {

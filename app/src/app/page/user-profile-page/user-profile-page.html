@@ -1,0 +1,35 @@
+<section class="stack-md profile-page">
+  <article class="card pad stack-md">
+    <div class="row row-refresh">
+      <div>
+        <h1 class="title">{{ 'profile.title' | translate }}</h1>
+        <p class="muted">{{ 'profile.subtitle' | translate }}</p>
+      </div>
+      <button class="btn ghost sm" type="button" (click)="goBack()">
+        {{ 'profile.back' | translate }}
+      </button>
+    </div>
+    @if (user(); as currentUser) {
+      <ul class="summary-list">
+        <li>
+          <span>{{ 'profile.alias' | translate }}</span>
+          <strong>{{ currentUser.alias }}</strong>
+        </li>
+        <li>
+          <span>{{ 'profile.email' | translate }}</span>
+          <strong>{{ currentUser.email }}</strong>
+        </li>
+        <li>
+          <span>{{ 'profile.name' | translate }}</span>
+          <strong>{{ currentUser.name || ('profile.name.empty' | translate) }}</strong>
+        </li>
+        <li>
+          <span>{{ 'profile.id' | translate }}</span>
+          <strong>#{{ currentUser.id }}</strong>
+        </li>
+      </ul>
+    } @else {
+      <p class="note">{{ 'profile.empty' | translate }}</p>
+    }
+  </article>
+</section>

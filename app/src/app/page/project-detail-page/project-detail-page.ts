@@ -79,6 +79,7 @@ export class ProjectDetailPage {
   showMilestoneAnalysisModal = signal(false);
   showTaskAnalysisModal = signal(false);
   showSparklineModal = signal(false);
+  showMemberListModal = signal(false);
 
   memberForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -316,6 +317,14 @@ export class ProjectDetailPage {
     this.showMemberModal.set(false);
   }
 
+  openMemberListModal(): void {
+    this.showMemberListModal.set(true);
+  }
+
+  closeMemberListModal(): void {
+    this.showMemberListModal.set(false);
+  }
+
   toggleMeta(): void {
     this.showMeta.update(value => !value);
   }
@@ -409,6 +418,28 @@ export class ProjectDetailPage {
       error: (error) => {
         console.error('Unable to add member', error);
         this.memberError.set('project.members.error');
+        this.memberSuccess.set(null);
+        this.memberLoading.set(false);
+      },
+      complete: () => this.memberLoading.set(false),
+    });
+  }
+
+  removeMember(memberId: number): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    this.memberLoading.set(true);
+    this.projectService.removeMember(projectUuid, memberId).subscribe({
+      next: (project) => {
+        this.project.set(project);
+        this.memberError.set(null);
+        this.memberSuccess.set('project.members.removeSuccess');
+      },
+      error: (error) => {
+        console.error('Unable to remove member', error);
+        this.memberError.set('project.members.removeError');
         this.memberSuccess.set(null);
         this.memberLoading.set(false);
       },

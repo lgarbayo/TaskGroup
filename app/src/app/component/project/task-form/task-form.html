@@ -71,9 +71,9 @@
           formControlName="month"
           [class.invalid]="form.controls.startDate.controls.month.invalid && form.controls.startDate.controls.month.touched"
         >
-          @for (month of core.monthNames; track month; let idx = $index) {
-            <option [value]="idx">{{ month }}</option>
-          }
+        @for (month of core.monthNames(); track month; let idx = $index) {
+          <option [value]="idx">{{ month }}</option>
+        }
         </select>
       </div>
       <div>

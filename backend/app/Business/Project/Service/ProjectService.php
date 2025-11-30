@@ -35,4 +35,24 @@ class ProjectService
     {
         $this->projects->delete($projectUuid, $userId);
     }
+
+    public function inviteMember(string $projectUuid, int $ownerId, string $email, ?string $role = null): ProjectModel
+    {
+        return $this->projects->inviteMember($projectUuid, $ownerId, $email, $role);
+    }
+
+    public function acceptInvitation(string $token, int $userId): ProjectModel
+    {
+        return $this->projects->acceptInvitation($token, $userId);
+    }
+
+    public function cancelInvitation(string $projectUuid, int $ownerId, int $invitationId): ProjectModel
+    {
+        return $this->projects->cancelInvitation($projectUuid, $ownerId, $invitationId);
+    }
+
+    public function removeMember(string $projectUuid, int $ownerId, int $memberId): ProjectModel
+    {
+        return $this->projects->removeMember($projectUuid, $ownerId, $memberId);
+    }
 }

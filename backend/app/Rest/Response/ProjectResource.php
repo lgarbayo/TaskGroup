@@ -28,6 +28,7 @@ class ProjectResource extends JsonResource
             'additionalFields' => $this->additionalFields ?? [],
             'ownerId' => $this->ownerId,
             'members' => $this->members,
+            'invitations' => $this->invitations,
             'tasks' => TaskResource::collection($this->tasks),
             'milestones' => MilestoneResource::collection($this->milestones),
             'tasks_count' => $this->tasks ? count($this->tasks) : null,

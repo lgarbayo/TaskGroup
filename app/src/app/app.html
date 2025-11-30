@@ -31,7 +31,9 @@
       {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
     </button>
     @if (isAuthenticated() && user(); as currentUser) {
-      <span class="pill">{{ 'header.greeting' | translate }}, {{ currentUser.alias }}</span>
+      <button class="pill pill-action" type="button" routerLink="/profile">
+        {{ 'header.greeting' | translate }}, {{ currentUser.alias }}
+      </button>
       <button class="btn danger" type="button" (click)="logout()">{{ 'header.logout' | translate }}</button>
     } @else {
       <span class="pill muted">{{ 'header.noSession' | translate }}</span>

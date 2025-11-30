@@ -3,6 +3,7 @@
 use App\Rest\Controller\AuthController;
 use App\Rest\Controller\ProjectController;
 use App\Rest\Controller\ProjectMemberController;
+use App\Rest\Controller\ProjectInvitationController;
 use App\Rest\Controller\ProjectSummaryController;
 use App\Rest\Controller\AnalysisController;
 use App\Rest\Controller\TaskController;
@@ -27,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
 
     Route::post('/projects/{project}/members', [ProjectMemberController::class, 'store']);
+    Route::delete('/projects/{project}/members/{member}', [ProjectMemberController::class, 'destroy']);
+    Route::get('/projects/{project}/invitations', [ProjectMemberController::class, 'invitations']);
+    Route::delete('/projects/{project}/invitations/{invitation}', [ProjectMemberController::class, 'cancelInvitation']);
     Route::get('/projects/{project}/summary', [ProjectSummaryController::class, 'show']);
     Route::get('/projects/{project}/analysis', [AnalysisController::class, 'show']);
 
@@ -41,4 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects/{project}/milestone/{milestone}', [MilestoneController::class, 'show']);
     Route::put('/projects/{project}/milestone/{milestone}', [MilestoneController::class, 'update']);
     Route::delete('/projects/{project}/milestone/{milestone}', [MilestoneController::class, 'destroy']);
+
+    Route::post('/invitations/{token}/accept', [ProjectInvitationController::class, 'accept']);
 });

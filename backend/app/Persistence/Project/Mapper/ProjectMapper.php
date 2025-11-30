@@ -5,6 +5,7 @@ namespace App\Persistence\Project\Mapper;
 use App\Business\Project\Model\ProjectModel;
 use App\Business\Project\Model\TaskModel;
 use App\Business\Project\Model\MilestoneModel;
+use App\Business\Project\Model\ProjectInvitationModel;
 use App\Persistence\Project\Entity\Project;
 
 class ProjectMapper
@@ -14,6 +15,7 @@ class ProjectMapper
         $members = [];
         $tasks = [];
         $milestones = [];
+        $invitations = [];
 
         if ($withRelations) {
             $members = $project->members->map(fn ($m) => [
@@ -53,6 +55,17 @@ class ProjectMapper
                     dateWeek: $m->date_week,
                 );
             })->all();
+
+            $invitations = $project->invitations->map(function ($invitation) {
+                return new ProjectInvitationModel(
+                    id: $invitation->id,
+                    email: $invitation->email,
+                    role: $invitation->role,
+                    status: $invitation->status,
+                    inviteeId: $invitation->invitee_id,
+                    token: $invitation->token,
+                );
+            })->all();
         }
 
         return new ProjectModel(
@@ -70,6 +83,7 @@ class ProjectMapper
             members: $members,
             tasks: $tasks,
             milestones: $milestones,
+            invitations: $invitations,
         );
     }
 }

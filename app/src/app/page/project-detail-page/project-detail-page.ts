@@ -19,6 +19,7 @@ import { CoreService } from '../../service/core-service';
 import { AuthService } from '../../service/auth-service';
 import { AnalysisService } from '../../service/analysis-service';
 import { MilestoneAnalysis, ProjectAnalysis, TaskAnalysis } from '../../model/analysis.model';
+import { DateType } from '../../model/core.model';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -77,6 +78,7 @@ export class ProjectDetailPage {
   showProjectAnalysisModal = signal(false);
   showMilestoneAnalysisModal = signal(false);
   showTaskAnalysisModal = signal(false);
+  showSparklineModal = signal(false);
 
   memberForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -85,6 +87,18 @@ export class ProjectDetailPage {
   pendingTasks = computed(() => this.tasks().filter((task) => task.status !== 'done'));
   doneTasks = computed(() => this.tasks().filter((task) => task.status === 'done'));
   currentUserId = computed(() => this.authService.user()?.id ?? null);
+  timelineRange = computed(() => {
+    const projectDetail = this.project();
+    if (!projectDetail?.startDate || !projectDetail?.endDate) {
+      return null;
+    }
+    const start = this.linearIndex(projectDetail.startDate);
+    const end = this.linearIndex(projectDetail.endDate);
+    return {
+      start,
+      total: Math.max(end - start + 1, 1),
+    };
+  });
   taskSummary = computed(() => {
     const all = this.tasks();
     const total = all.length;
@@ -109,6 +123,57 @@ export class ProjectDetailPage {
         this.loadTasks(projectUuid);
       }
     });
+  }
+
+  taskSparklineStyle(task: Task): { left: string; width: string } {
+    const range = this.timelineRange();
+    if (!range || !task.startDate) {
+      return { left: '0%', width: '0%' };
+    }
+    const offset = Math.max(this.linearIndex(task.startDate) - range.start, 0);
+    const duration = Math.max(task.durationWeeks ?? 1, 1);
+    const leftPercent = Math.min(100, (offset / range.total) * 100);
+    const widthPercent = Math.min(100 - leftPercent, (duration / range.total) * 100);
+    return {
+      left: `${leftPercent}%`,
+      width: `${Math.max(widthPercent, 2)}%`,
+    };
+  }
+
+  taskEndLabel(task: Task): string {
+    if (!task.startDate) {
+      return '—';
+    }
+    const startDate = this.toDate(task.startDate);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + Math.max(task.durationWeeks ?? 1, 1) * 7);
+    return this.core.formatDateLabel(this.fromDate(endDate));
+  }
+
+  taskStartLabel(task: Task): string {
+    return task.startDate ? this.core.formatDateLabel(task.startDate) : '—';
+  }
+
+  taskProgressValue(task: Task): number {
+    if (!task.startDate) {
+      return 0;
+    }
+    const today = new Date();
+    const startDate = this.toDate(task.startDate);
+    const durationWeeks = Math.max(task.durationWeeks ?? 1, 1);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + durationWeeks * 7);
+
+    if (today >= endDate) {
+      return 100;
+    }
+    if (today <= startDate) {
+      return 0;
+    }
+
+    const elapsedMs = today.getTime() - startDate.getTime();
+    const totalMs = endDate.getTime() - startDate.getTime();
+    return Math.min(100, Math.round((elapsedMs / totalMs) * 100));
   }
 
   update(data: UpsertProjectCommand): void {
@@ -316,6 +381,14 @@ export class ProjectDetailPage {
     this.selectedMilestoneAnalysis.set(null);
   }
 
+  openSparkline(): void {
+    this.showSparklineModal.set(true);
+  }
+
+  closeSparkline(): void {
+    this.showSparklineModal.set(false);
+  }
+
   addMember(): void {
     const projectUuid = this.projectUuid();
     if (!projectUuid) {
@@ -388,6 +461,22 @@ export class ProjectDetailPage {
 
   trackMember(_: number, member: { id: number }): number {
     return member.id;
+  }
+
+  private linearIndex(date: DateType): number {
+    return date.year * 48 + date.month * 4 + (date.week ?? 0);
+  }
+
+  private toDate(date: DateType): Date {
+    const week = date.week ?? 0;
+    return new Date(date.year, date.month, 1 + week * 7);
+  }
+
+  private fromDate(value: Date): DateType {
+    const year = value.getFullYear();
+    const month = value.getMonth();
+    const week = Math.min(Math.floor((value.getDate() - 1) / 7), 3);
+    return { year, month, week };
   }
 
   private loadProject(projectUuid: string): void {

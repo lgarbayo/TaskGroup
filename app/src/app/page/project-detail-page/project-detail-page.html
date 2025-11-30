@@ -150,17 +150,20 @@
 
     <article class="card pad stack-md table-card tasks">
       <div class="row row-refresh">
+        <h2 class="title">{{ 'project.tasks.title' | translate }}</h2>
         <div class="row">
-          <h2 class="title">{{ 'project.tasks.title' | translate }}</h2>
+          <button class="btn ghost" type="button" (click)="openSparkline()">
+            {{ 'project.tasks.sparklineTitle' | translate }}
+          </button>
+          <button
+            class="btn primary icon-only"
+            type="button"
+            (click)="openTaskModal()"
+            aria-label="{{ 'form.task.submit' | translate }}"
+          >
+            <img src="/add.svg" alt="" width="24" height="24" />
+          </button>
         </div>
-        <button
-          class="btn primary icon-only"
-          type="button"
-          (click)="openTaskModal()"
-          aria-label="{{ 'form.task.submit' | translate }}"
-        >
-          <img src="/add.svg" alt="" width="24" height="24" />
-        </button>
       </div>
       @if (taskLoading()) {
         <p class="note">{{ 'project.tasks.loading' | translate }}</p>
@@ -617,6 +620,65 @@
             } @else {
               <p class="note">{{ 'project.analysis.empty' | translate }}</p>
             }
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (showSparklineModal()) {
+      <div class="modal-backdrop" (click)="closeSparkline()">
+        <div class="modal modal-wide" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="title">{{ 'project.tasks.sparklineTitle' | translate }}</h2>
+            <button class="btn ghost" type="button" (click)="closeSparkline()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="sparkline-card">
+              <div class="row row-refresh">
+                <h3 class="subtitle">{{ 'project.tasks.sparklineTitle' | translate }}</h3>
+                <span class="pill muted">{{ tasks().length }}</span>
+              </div>
+              @if (tasks().length === 0) {
+                <p class="note">{{ 'project.tasks.empty' | translate }}</p>
+              } @else {
+                <div class="sparkline-grid">
+                  @for (task of tasks(); track trackTask($index, task); let idx = $index) {
+                    <article class="spark-card" [style.animationDelay]="(idx * 30) + 'ms'">
+                      <div class="spark-card-header">
+                        <div>
+                          <strong>{{ task.title }}</strong>
+                          <p class="note">
+                            {{ taskStartLabel(task) }} → {{ taskEndLabel(task) }}
+                          </p>
+                        </div>
+                        <span class="spark-progress">{{ taskProgressValue(task) }}%</span>
+                      </div>
+                      <div class="spark-body">
+                        <div class="spark-track">
+                          @if (task.startDate) {
+                            <span
+                              class="spark-fill"
+                              [style.left]="taskSparklineStyle(task).left"
+                              [style.width]="taskSparklineStyle(task).width"
+                            ></span>
+                          }
+                        </div>
+                        <div class="spark-extra">
+                          <span>
+                            {{ 'project.tasks.durationLabel' | translate:{ weeks: task.durationWeeks || 1 } }}
+                          </span>
+                          @if (task.assignee) {
+                            <span>{{ task.assignee.alias }}</span>
+                          }
+                        </div>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </div>
           </div>
         </div>
       </div>

@@ -32,15 +32,27 @@
             type="email"
             formControlName="email"
             [placeholder]="'auth.placeholder.email' | translate"
+            [class.invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
           />
         </label>
         <label class="stack-xxs">
           <span>{{ 'auth.field.password' | translate }}</span>
-          <input
-            type="password"
-            formControlName="password"
-            [placeholder]="'auth.placeholder.password' | translate"
-          />
+          <div class="password-field">
+            <input
+              [type]="loginPasswordVisible() ? 'text' : 'password'"
+              formControlName="password"
+              [placeholder]="'auth.placeholder.password' | translate"
+              [class.invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleLoginPasswordVisibility()"
+              [attr.aria-label]="loginPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)"
+            >
+              {{ loginPasswordVisible() ? '🙈' : '👁' }}
+            </button>
+          </div>
         </label>
         <button class="btn" type="submit" [disabled]="loading()">
           {{ 'auth.submit.login' | translate }}
@@ -88,12 +100,22 @@
         </label>
         <label class="stack-xxs">
           <span>{{ 'auth.field.password' | translate }}</span>
-          <input
-            type="password"
-            formControlName="password"
-            [placeholder]="'auth.placeholder.password' | translate"
-            [class.invalid]="inputInvalid('password')"
-          />
+          <div class="password-field">
+            <input
+              [type]="registerPasswordVisible() ? 'text' : 'password'"
+              formControlName="password"
+              [placeholder]="'auth.placeholder.password' | translate"
+              [class.invalid]="inputInvalid('password')"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleRegisterPasswordVisibility()"
+              [attr.aria-label]="registerPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)"
+            >
+              {{ registerPasswordVisible() ? '🙈' : '👁' }}
+            </button>
+          </div>
           @if (inputInvalid('password')) {
             <small class="error">{{ 'auth.error.password' | translate }}</small>
           }

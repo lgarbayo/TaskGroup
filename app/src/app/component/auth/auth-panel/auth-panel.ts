@@ -33,6 +33,8 @@ export class AuthPanel {
   readonly mode = signal<'login' | 'register'>('login');
   readonly loading = signal(false);
   readonly errorMessage = signal<{ key?: string; params?: Record<string, string | number>; raw?: string } | null>(null);
+  readonly loginPasswordVisible = signal(false);
+  readonly registerPasswordVisible = signal(false);
 
   switchMode(mode: 'login' | 'register'): void {
     this.mode.set(mode);
@@ -141,5 +143,13 @@ export class AuthPanel {
       },
       { emitEvent: false }
     );
+  }
+
+  toggleLoginPasswordVisibility(): void {
+    this.loginPasswordVisible.update((visible) => !visible);
+  }
+
+  toggleRegisterPasswordVisibility(): void {
+    this.registerPasswordVisible.update((visible) => !visible);
   }
 }

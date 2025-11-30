@@ -25,8 +25,9 @@ export class CoreService {
   dateTypeForm(data?: DateType): DateTypeForm {
     const today = new Date();
     const currentYear = today.getFullYear();
-    const initialYear = data?.year ?? currentYear;
-    const minYear = Math.min(initialYear, currentYear - 5);
+    const baseYear = 2025;
+    const initialYear = Math.max(data?.year ?? currentYear, baseYear);
+    const minYear = baseYear;
     const maxYear = Math.max(initialYear, currentYear + 5);
     return this.nfb.group({
       year: [initialYear, [Validators.min(minYear), Validators.max(maxYear)]],

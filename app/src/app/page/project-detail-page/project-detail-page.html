@@ -340,6 +340,7 @@
               [data]="selectedTask() ?? undefined"
               [members]="projectDetail.members ?? []"
               [milestones]="milestones()"
+              [projectRange]="{ start: projectDetail.startDate, end: projectDetail.endDate }"
               (submitted)="saveTask($event)"
               (cancelled)="cancelTaskEdition()"
             ></app-task-form>

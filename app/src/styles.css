@@ -154,6 +154,12 @@ textarea { min-height: 96px; resize: vertical; }
 .additional-controls .additional-field { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .additional-controls .additional-field small { margin-top: 0; }
 .additional-controls .btn { flex: 0 0 auto; }
+input.invalid,
+select.invalid,
+textarea.invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 2px rgba(239,68,68,0.15);
+}
 
 app-auth-panel .auth-card { max-width: 480px; margin: 2rem auto; }
 app-auth-panel .tab-bar { display: flex; gap: 0.5rem; }

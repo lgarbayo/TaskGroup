@@ -1,10 +1,15 @@
 import { inject, Injectable } from '@angular/core';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ValidatorFn } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Milestone, UpsertMilestoneCommand, UpsertMilestoneCommandForm } from '../model/milestone.model';
 import { CoreService } from './core-service';
+
+const trimmedRequired: ValidatorFn = (control) => {
+  const value = (control.value ?? '') as string;
+  return value.trim() ? null : { required: true };
+};
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +57,7 @@ export class MilestoneService {
 
   form(milestone?: Milestone): UpsertMilestoneCommandForm {
     return this.nfb.group({
-      title: [milestone?.title ?? '', [Validators.required]],
+      title: [milestone?.title ?? '', [trimmedRequired]],
       description: milestone?.description ?? '',
       date: this.coreService.dateTypeForm(milestone?.date),
     });

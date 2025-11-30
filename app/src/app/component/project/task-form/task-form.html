@@ -1,7 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <div class="field-group">
     <label>{{ 'form.task.title' | translate }}</label>
-    <input formControlName="title" />
+    <input formControlName="title" [class.invalid]="form.controls.title.invalid && form.controls.title.touched" />
+    @if (form.controls.title.invalid && form.controls.title.touched) {
+      <small>⚠️ {{ 'form.task.titleRequired' | translate }}</small>
+    }
   </div>
 
   <div class="field-group">
@@ -11,7 +14,15 @@
 
   <div class="field-group">
     <label>{{ 'form.task.duration' | translate }}</label>
-    <input type="number" min="1" formControlName="durationWeeks" />
+    <input
+      type="number"
+      min="1"
+      formControlName="durationWeeks"
+      [class.invalid]="form.controls.durationWeeks.invalid && form.controls.durationWeeks.touched"
+    />
+    @if (form.controls.durationWeeks.invalid && form.controls.durationWeeks.touched) {
+      <small>⚠️ {{ 'form.task.durationRequired' | translate }}</small>
+    }
   </div>
 
   <div class="field-group">
@@ -46,21 +57,31 @@
   <fieldset formGroupName="startDate">
     <legend>{{ 'form.task.start' | translate }}</legend>
     <div class="fieldset-grid">
-      <div class="field-group">
+      <div>
         <label>{{ 'form.project.year' | translate }}</label>
-        <input type="number" formControlName="year" />
+        <input
+          type="number"
+          formControlName="year"
+          [class.invalid]="form.controls.startDate.controls.year.invalid && form.controls.startDate.controls.year.touched"
+        />
       </div>
-      <div class="field-group">
+      <div>
         <label>{{ 'form.project.month' | translate }}</label>
-        <select formControlName="month">
+        <select
+          formControlName="month"
+          [class.invalid]="form.controls.startDate.controls.month.invalid && form.controls.startDate.controls.month.touched"
+        >
           @for (month of core.monthNames; track month; let idx = $index) {
             <option [value]="idx">{{ month }}</option>
           }
         </select>
       </div>
-      <div class="field-group">
+      <div>
         <label>{{ 'form.project.week' | translate }}</label>
-        <select formControlName="week">
+        <select
+          formControlName="week"
+          [class.invalid]="form.controls.startDate.controls.week.invalid && form.controls.startDate.controls.week.touched"
+        >
           <option [value]="0">1</option>
           <option [value]="1">2</option>
           <option [value]="2">3</option>
@@ -68,6 +89,12 @@
         </select>
       </div>
     </div>
+    @if (form.controls.startDate.touched && form.controls.startDate.errors?.['projectRange']) {
+      <small>⚠️ {{ 'form.task.range.project' | translate }}</small>
+    }
+    @if (form.controls.startDate.touched && form.controls.startDate.errors?.['milestoneRange']) {
+      <small>⚠️ {{ 'form.task.range.milestone' | translate }}</small>
+    }
   </fieldset>
 
   <div class="form-actions">

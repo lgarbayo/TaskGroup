@@ -1,10 +1,15 @@
 import { inject, Injectable } from '@angular/core';
-import { FormControl, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormControl, NonNullableFormBuilder, Validators, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Task, UpsertTaskCommand, UpsertTaskCommandForm } from '../model/task.model';
 import { CoreService } from './core-service';
+
+const trimmedRequired: ValidatorFn = (control) => {
+  const value = (control.value ?? '') as string;
+  return value.trim() ? null : { required: true };
+};
 
 @Injectable({
   providedIn: 'root',
@@ -45,9 +50,9 @@ export class TaskService {
 
   form(task?: Task): UpsertTaskCommandForm {
     return this.nfb.group({
-      title: [task?.title ?? '', [Validators.required]],
+      title: [task?.title ?? '', [trimmedRequired]],
       description: task?.description ?? '',
-      durationWeeks: [task?.durationWeeks ?? 1, [Validators.required]],
+      durationWeeks: [task?.durationWeeks ?? 1, [Validators.required, Validators.min(1)]],
       startDate: this.coreService.dateTypeForm(task?.startDate),
       status: [task?.status ?? 'pending', [Validators.required]],
       assigneeId: new FormControl<number | null>(task?.assignee?.id ?? null),

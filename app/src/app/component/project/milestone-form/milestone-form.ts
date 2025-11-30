@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Milestone, UpsertMilestoneCommand } from '../../../model/milestone.model';
 import { MilestoneService } from '../../../service/milestone-service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
+import { CoreService } from '../../../service/core-service';
 
 @Component({
   selector: 'app-milestone-form',
@@ -13,6 +14,7 @@ import { TranslatePipe } from '../../../i18n/translate.pipe';
 })
 export class MilestoneForm {
   private milestoneService = inject(MilestoneService);
+  protected core = inject(CoreService);
 
   form = this.milestoneService.form();
   data = input<Milestone>();
@@ -24,6 +26,8 @@ export class MilestoneForm {
   }
 
   save(): void {
+    const titleControl = this.form.controls.title;
+    titleControl.setValue(titleControl.value.trim(), { emitEvent: false });
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

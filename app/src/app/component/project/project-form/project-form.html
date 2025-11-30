@@ -1,9 +1,13 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <fieldset>
     <legend>{{ 'form.project.title' | translate }}</legend>
-    <input formControlName="title" [placeholder]="'form.project.title' | translate" />
+    <input
+      formControlName="title"
+      [placeholder]="'form.project.title' | translate"
+      [class.invalid]="form.controls.title.invalid && form.controls.title.touched"
+    />
     @if (form.controls.title.invalid && form.controls.title.touched) {
-      <small>{{ 'form.project.titleRequired' | translate }}</small>
+      <small>⚠️ {{ 'form.project.titleRequired' | translate }}</small>
     }
   </fieldset>
 
@@ -17,11 +21,18 @@
     <div class="fieldset-grid">
       <div>
         <label>{{ 'form.project.year' | translate }}</label>
-        <input type="number" formControlName="year" />
+        <input
+          type="number"
+          formControlName="year"
+          [class.invalid]="form.controls.startDate.controls.year.invalid && form.controls.startDate.controls.year.touched"
+        />
       </div>
       <div>
         <label>{{ 'form.project.month' | translate }}</label>
-        <select formControlName="month">
+        <select
+          formControlName="month"
+          [class.invalid]="form.controls.startDate.controls.month.invalid && form.controls.startDate.controls.month.touched"
+        >
           @for (month of core.monthNames; track month; let idx = $index) {
             <option [value]="idx">{{ month }}</option>
           }
@@ -29,7 +40,10 @@
       </div>
       <div>
         <label>{{ 'form.project.week' | translate }}</label>
-        <select formControlName="week">
+        <select
+          formControlName="week"
+          [class.invalid]="form.controls.startDate.controls.week.invalid && form.controls.startDate.controls.week.touched"
+        >
           <option [value]="0">1</option>
           <option [value]="1">2</option>
           <option [value]="2">3</option>
@@ -37,6 +51,9 @@
         </select>
       </div>
     </div>
+    @if (form.controls.startDate.controls.year.errors?.['min'] && form.controls.startDate.controls.year.touched) {
+      <small>⚠️ {{ 'form.project.yearMin' | translate }}</small>
+    }
   </fieldset>
 
   <fieldset formGroupName="endDate">
@@ -44,11 +61,18 @@
     <div class="fieldset-grid">
       <div>
         <label>{{ 'form.project.year' | translate }}</label>
-        <input type="number" formControlName="year" />
+        <input
+          type="number"
+          formControlName="year"
+          [class.invalid]="form.controls.endDate.controls.year.invalid && form.controls.endDate.controls.year.touched"
+        />
       </div>
       <div>
         <label>{{ 'form.project.month' | translate }}</label>
-        <select formControlName="month">
+        <select
+          formControlName="month"
+          [class.invalid]="form.controls.endDate.controls.month.invalid && form.controls.endDate.controls.month.touched"
+        >
           @for (month of core.monthNames; track month; let idx = $index) {
             <option [value]="idx">{{ month }}</option>
           }
@@ -56,7 +80,10 @@
       </div>
       <div>
         <label>{{ 'form.project.week' | translate }}</label>
-        <select formControlName="week">
+        <select
+          formControlName="week"
+          [class.invalid]="form.controls.endDate.controls.week.invalid && form.controls.endDate.controls.week.touched"
+        >
           <option [value]="0">1</option>
           <option [value]="1">2</option>
           <option [value]="2">3</option>
@@ -65,7 +92,10 @@
       </div>
     </div>
     @if (dateRangeError()) {
-      <small>{{ 'form.project.dateRange' | translate }}</small>
+      <small>⚠️ {{ 'form.project.dateRange' | translate }}</small>
+    }
+    @if (form.controls.endDate.controls.year.errors?.['min'] && form.controls.endDate.controls.year.touched) {
+      <small>⚠️ {{ 'form.project.yearMin' | translate }}</small>
     }
   </fieldset>
 
@@ -73,15 +103,23 @@
     <legend>{{ 'form.project.additional' | translate }}</legend>
     <div class="additional-controls" [formGroup]="additionalFieldForm">
       <div class="additional-field">
-        <input [placeholder]="'form.project.additional.key' | translate" formControlName="key" />
+        <input
+          [placeholder]="'form.project.additional.key' | translate"
+          formControlName="key"
+          [class.invalid]="additionalFieldForm.controls.key.invalid && additionalFieldForm.controls.key.touched"
+        />
         @if (additionalFieldForm.controls.key.invalid && additionalFieldForm.controls.key.touched) {
-          <small>{{ 'form.project.titleRequired' | translate }}</small>
+          <small>⚠️ {{ 'form.project.titleRequired' | translate }}</small>
         }
       </div>
       <div class="additional-field">
-        <input [placeholder]="'form.project.additional.value' | translate" formControlName="value" />
+        <input
+          [placeholder]="'form.project.additional.value' | translate"
+          formControlName="value"
+          [class.invalid]="additionalFieldForm.controls.value.invalid && additionalFieldForm.controls.value.touched"
+        />
         @if (additionalFieldForm.controls.value.invalid && additionalFieldForm.controls.value.touched) {
-          <small>{{ 'form.project.titleRequired' | translate }}</small>
+          <small>⚠️ {{ 'form.project.titleRequired' | translate }}</small>
         }
       </div>
       <button class="btn ghost" type="button" (click)="addAdditionalField()">
@@ -89,7 +127,7 @@
       </button>
     </div>
     @if (additionalFieldForm.controls.key.errors?.['duplicated']) {
-      <small>{{ 'form.project.additional.exists' | translate }}</small>
+      <small>⚠️ {{ 'form.project.additional.exists' | translate }}</small>
     }
     <div class="stack-sm">
       @for (field of additionalFieldList(); track field.key) {

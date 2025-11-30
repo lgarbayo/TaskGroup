@@ -420,6 +420,7 @@
               [members]="projectDetail.members ?? []"
               [milestones]="milestones()"
               [projectRange]="{ start: projectDetail.startDate, end: projectDetail.endDate }"
+              [defaultAssigneeId]="currentUserId()"
               (submitted)="saveTask($event)"
               (cancelled)="cancelTaskEdition()"
             ></app-task-form>

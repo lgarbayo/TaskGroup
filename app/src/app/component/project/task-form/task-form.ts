@@ -25,6 +25,7 @@ export class TaskForm implements OnDestroy {
   members = input<Array<ProjectMember>>([]);
   milestones = input<Array<Milestone>>([]);
   projectRange = input<{ start: DateType; end: DateType } | null>(null);
+  defaultAssigneeId = input<number | null>(null);
   submitted = output<UpsertTaskCommand>();
   cancelled = output<void>();
   private formChanges?: Subscription;
@@ -68,6 +69,12 @@ export class TaskForm implements OnDestroy {
 
   private resetFormState(task?: Task): void {
     this.form = this.taskService.form(task);
+    if (!task) {
+      const defaultAssignee = this.defaultAssigneeId();
+      if (defaultAssignee != null) {
+        this.form.controls.assigneeId.setValue(defaultAssignee);
+      }
+    }
     this.formChanges?.unsubscribe();
     this.formChanges = this.form.valueChanges.subscribe(() => this.validateRanges(false));
   }

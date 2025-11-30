@@ -16,6 +16,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CoreService } from '../../service/core-service';
+import { AuthService } from '../../service/auth-service';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -38,6 +39,7 @@ export class ProjectDetailPage {
   private taskService = inject(TaskService);
   private nfb = inject(NonNullableFormBuilder);
   protected core = inject(CoreService);
+  private authService = inject(AuthService);
 
   @ViewChild('milestoneCreator') milestoneForm?: MilestoneForm;
   @ViewChild('taskCreator') taskForm?: TaskForm;
@@ -75,6 +77,7 @@ export class ProjectDetailPage {
 
   pendingTasks = computed(() => this.tasks().filter((task) => task.status !== 'done'));
   doneTasks = computed(() => this.tasks().filter((task) => task.status === 'done'));
+  currentUserId = computed(() => this.authService.user()?.id ?? null);
   taskSummary = computed(() => {
     const all = this.tasks();
     const total = all.length;

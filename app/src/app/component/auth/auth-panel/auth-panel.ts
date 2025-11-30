@@ -24,7 +24,7 @@ export class AuthPanel {
   });
 
   readonly registerForm = this.nfb.group({
-    alias: ['', [Validators.required]],
+    alias: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
     name: [''],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],

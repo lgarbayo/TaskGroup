@@ -316,16 +316,6 @@ export class ProjectDetailPage {
     this.selectedMilestoneAnalysis.set(null);
   }
 
-  refreshAnalysis(): void {
-    const projectUuid = this.projectUuid();
-    if (!projectUuid) {
-      return;
-    }
-    this.projectAnalysis.set(null);
-    this.analysisError.set(null);
-    this.loadAnalysis(projectUuid);
-  }
-
   addMember(): void {
     const projectUuid = this.projectUuid();
     if (!projectUuid) {

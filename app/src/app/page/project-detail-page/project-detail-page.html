@@ -458,14 +458,9 @@
         <div class="modal" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <h2 class="title">{{ 'project.analysis.title' | translate }}</h2>
-            <div class="form-actions">
-              <button class="btn ghost" type="button" (click)="refreshAnalysis()">
-                {{ 'project.analysis.refresh' | translate }}
-              </button>
-              <button class="btn ghost" type="button" (click)="closeProjectAnalysis()">
-                {{ 'common.cancel' | translate }}
-              </button>
-            </div>
+            <button class="btn ghost" type="button" (click)="closeProjectAnalysis()">
+              {{ 'common.cancel' | translate }}
+            </button>
           </div>
           <div class="modal-body">
             @if (analysisLoading()) {

@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 import { ProjectService } from '../../service/project-service';
 import { Project, UpsertProjectCommand } from '../../model/project.model';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { KeyValuePipe } from '@angular/common';
+import { KeyValuePipe, DecimalPipe } from '@angular/common';
 import { Milestone, UpsertMilestoneCommand } from '../../model/milestone.model';
 import { Task, UpsertTaskCommand } from '../../model/task.model';
 import { MilestoneService } from '../../service/milestone-service';
@@ -17,12 +17,15 @@ import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CoreService } from '../../service/core-service';
 import { AuthService } from '../../service/auth-service';
+import { AnalysisService } from '../../service/analysis-service';
+import { MilestoneAnalysis, ProjectAnalysis, TaskAnalysis } from '../../model/analysis.model';
 
 @Component({
   selector: 'app-project-detail-page',
   standalone: true,
   imports: [
     KeyValuePipe,
+    DecimalPipe,
     ReactiveFormsModule,
     ProjectForm,
     MilestoneForm,
@@ -40,6 +43,7 @@ export class ProjectDetailPage {
   private nfb = inject(NonNullableFormBuilder);
   protected core = inject(CoreService);
   private authService = inject(AuthService);
+  private analysisService = inject(AnalysisService);
 
   @ViewChild('milestoneCreator') milestoneForm?: MilestoneForm;
   @ViewChild('taskCreator') taskForm?: TaskForm;
@@ -70,6 +74,9 @@ export class ProjectDetailPage {
   showMilestoneModal = signal(false);
   showTaskModal = signal(false);
   showMemberModal = signal(false);
+  showProjectAnalysisModal = signal(false);
+  showMilestoneAnalysisModal = signal(false);
+  showTaskAnalysisModal = signal(false);
 
   memberForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -86,6 +93,12 @@ export class ProjectDetailPage {
     const progress = total > 0 ? Math.round((done / total) * 100) : 0;
     return { total, done, pending, progress };
   });
+
+  analysisLoading = signal(false);
+  analysisError = signal<string | null>(null);
+  projectAnalysis = signal<ProjectAnalysis | null>(null);
+  selectedMilestoneAnalysis = signal<MilestoneAnalysis | null>(null);
+  selectedTaskAnalysis = signal<TaskAnalysis | null>(null);
 
   constructor() {
     effect(() => {
@@ -242,6 +255,77 @@ export class ProjectDetailPage {
     this.showMeta.update(value => !value);
   }
 
+  openProjectAnalysis(): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    this.analysisError.set(null);
+    this.showProjectAnalysisModal.set(true);
+    this.loadAnalysis(projectUuid);
+  }
+
+  closeProjectAnalysis(): void {
+    this.showProjectAnalysisModal.set(false);
+  }
+
+  openMilestoneAnalysis(milestoneUuid: string): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    this.loadAnalysis(projectUuid, () => {
+      const milestone = this.projectAnalysis()
+        ?.milestoneList.find((item) => item.milestoneUuid === milestoneUuid);
+      if (!milestone) {
+        this.analysisError.set('project.analysis.milestoneMissing');
+        return;
+      }
+      this.selectedMilestoneAnalysis.set(milestone);
+      this.showMilestoneAnalysisModal.set(true);
+    });
+  }
+
+  closeMilestoneAnalysis(): void {
+    this.showMilestoneAnalysisModal.set(false);
+    this.selectedMilestoneAnalysis.set(null);
+  }
+
+  openTaskAnalysis(taskUuid: string): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    this.loadAnalysis(projectUuid, () => {
+      const milestone = this.projectAnalysis()
+        ?.milestoneList.find((m) => m.taskList.some((task) => task.taskUuid === taskUuid));
+      const task = milestone?.taskList.find((item) => item.taskUuid === taskUuid) ?? null;
+      if (!task) {
+        this.analysisError.set('project.analysis.taskMissing');
+        return;
+      }
+      this.selectedMilestoneAnalysis.set(milestone ?? null);
+      this.selectedTaskAnalysis.set(task);
+      this.showTaskAnalysisModal.set(true);
+    });
+  }
+
+  closeTaskAnalysis(): void {
+    this.showTaskAnalysisModal.set(false);
+    this.selectedTaskAnalysis.set(null);
+    this.selectedMilestoneAnalysis.set(null);
+  }
+
+  refreshAnalysis(): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    this.projectAnalysis.set(null);
+    this.analysisError.set(null);
+    this.loadAnalysis(projectUuid);
+  }
+
   addMember(): void {
     const projectUuid = this.projectUuid();
     if (!projectUuid) {
@@ -266,6 +350,27 @@ export class ProjectDetailPage {
         this.memberLoading.set(false);
       },
       complete: () => this.memberLoading.set(false),
+    });
+  }
+
+  private loadAnalysis(projectUuid: string, onReady?: () => void): void {
+    if (this.projectAnalysis()) {
+      onReady?.();
+      return;
+    }
+    this.analysisLoading.set(true);
+    this.analysisService.projectAnalysis(projectUuid).subscribe({
+      next: (analysis) => {
+        this.projectAnalysis.set(analysis);
+        this.analysisLoading.set(false);
+        this.analysisError.set(null);
+        onReady?.();
+      },
+      error: (error) => {
+        console.error('Error loading analysis', error);
+        this.analysisError.set('project.analysis.error');
+        this.analysisLoading.set(false);
+      },
     });
   }
 

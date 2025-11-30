@@ -187,7 +187,7 @@ app-milestone-form form {
 }
 
 /* Buttons */
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--button-bg); color: var(--text); text-decoration: none; cursor: pointer; font-weight: 600; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--button-bg); color: var(--text); text-decoration: none; cursor: pointer; font-weight: 600; text-transform: uppercase; transition: background .15s ease, color .15s ease, border-color .15s ease; }
 .btn:hover { background: var(--button-hover); }
 .btn.sm { padding: 6px 10px; font-size: 0.85rem; }
 .btn.primary { background: var(--primary); color: #0f0f0f; }

@@ -13,9 +13,11 @@
             <button class="btn ghost sm" type="button" (click)="openProjectAnalysis()">
               {{ 'project.analysis.open' | translate }}
             </button>
-            <button class="btn ghost sm" type="button" (click)="openMemberListModal()">
-              {{ 'project.members.manage' | translate }}
-            </button>
+            @if (currentUserId() === projectDetail.ownerId) {
+              <button class="btn ghost sm" type="button" (click)="openMemberListModal()">
+                {{ 'project.members.manage' | translate }}
+              </button>
+            }
           </div>
         </div>
         <p class="muted">{{ projectDetail.description || ('project.summary.description' | translate) }}</p>
@@ -47,19 +49,21 @@
             <p class="stat-value">{{ taskSummary().progress }}%</p>
           </div>
         </div>
-        <div class="project-actions-float">
-          <button class="btn primary sm" type="button" (click)="openMemberModal()">
-            {{ 'project.members.add' | translate }}
-          </button>
-          <button
-            class="btn ghost icon-only sm"
-            type="button"
-            (click)="openProjectModal()"
-            aria-label="{{ 'project.edit.title' | translate }}"
-          >
-            <img src="/edit.svg" alt="" width="22" height="22" />
-          </button>
-        </div>
+        @if (currentUserId() === projectDetail.ownerId) {
+          <div class="project-actions-float">
+            <button class="btn primary sm" type="button" (click)="openMemberModal()">
+              {{ 'project.members.add' | translate }}
+            </button>
+            <button
+              class="btn ghost icon-only sm"
+              type="button"
+              (click)="openProjectModal()"
+              aria-label="{{ 'project.edit.title' | translate }}"
+            >
+              <img src="/edit.svg" alt="" width="22" height="22" />
+            </button>
+          </div>
+        }
       </article>
       <article class="card pad stack-md table-card">
         <div class="row row-refresh">
@@ -316,7 +320,7 @@
       }
     </article>
 
-    @if (showMemberModal()) {
+    @if (showMemberModal() && currentUserId() === projectDetail.ownerId) {
       <div class="modal-backdrop" (click)="closeMemberModal()">
         <div class="modal" (click)="$event.stopPropagation()">
           <div class="modal-header">
@@ -346,7 +350,7 @@
       </div>
     }
 
-    @if (showMemberListModal()) {
+    @if (showMemberListModal() && currentUserId() === projectDetail.ownerId) {
       <div class="modal-backdrop" (click)="closeMemberListModal()">
         <div class="modal" (click)="$event.stopPropagation()">
           <div class="modal-header">

@@ -57,7 +57,13 @@
             [class.invalid]="inputInvalid('alias')"
           />
           @if (inputInvalid('alias')) {
-            <small class="error">{{ 'auth.error.alias' | translate }}</small>
+            <small class="error">
+              @if (registerForm.controls.alias.errors?.['pattern']) {
+                {{ 'auth.error.aliasPattern' | translate }}
+              } @else {
+                {{ 'auth.error.aliasRequired' | translate }}
+              }
+            </small>
           }
         </label>
         <label class="stack-xxs">

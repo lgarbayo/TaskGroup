@@ -37,20 +37,19 @@ body *::-moz-selection {
 }
 
 :root[data-theme="dark"] {
-  /* Tema oscuro: fondo casi negro con acento amarillo */
-  --bg: #0b0f14;              /* casi negro con tinte */
-  --card: #141820;            /* paneles oscuros */
-  --text: #e5e7eb;            /* texto claro */
-  --muted: #9ca3af;           /* gris claro */
-  --primary: #fbbf24;         /* amber-400 (more visible on dark) */
-  --primary-600: #f59e0b;     /* amber-500 para hover */
+  --bg: #0b0f14;
+  --card: #141820;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --primary: #fbbf24;
+  --primary-600: #f59e0b;
   --danger: #ef4444;
   --success: #22c55e;
   --warning: #f59e0b;
-  --border: #2a2f3a;          /* borde oscuro neutro */
-  --chip: #1c222c;            /* chip oscuro */
-  --button-bg: #141820;       /* dark base button */
-  --button-hover: #1b2230;    /* hover oscuro */
+  --border: #2a2f3a;
+  --chip: #1c222c;
+  --button-bg: #141820;
+  --button-hover: #1b2230;
   --ghost-hover: rgba(255, 200, 0, 0.08);
   --progress-bg: #1f2937;
   --badge-muted-bg: #1f2937;

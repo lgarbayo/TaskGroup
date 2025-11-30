@@ -96,7 +96,7 @@ textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px;
 .language-btn.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(245,158,11,0.35); }
 .language-flag { display: block; border-radius: 50%; width: 28px; height: 28px; }
 
-.container { width: 100%; max-width: none; margin: 24px auto; padding: 0 40px; }
+.container { width: 100%; max-width: 1200px; margin: 24px auto; padding: 0 40px; }
 
 /* Rhythm: spacing and type scale */
 :root {
@@ -261,7 +261,7 @@ app-milestone-form form {
 .data-table th { text-align: left; font-weight: 600; color: var(--muted); }
 .data-table tr:last-child td { border-bottom: none; }
 .table-actions { display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
-.task-table { table-layout: fixed; }
+.task-table { table-layout: fixed; min-width: 720px; }
 .col-title { width: 160px; }
 .col-duration { width: 120px; }
 .col-actions { width: 220px; }
@@ -299,42 +299,89 @@ app-milestone-form form {
 .project-summary-card { position: relative; }
 .project-summary-card .edit-float { position: absolute; bottom: 16px; right: 16px; border-radius: 999px; }
 
-/* Avatar upload mobile phone */
+/* Responsive adaptations */
 @media (max-width: 640px) {
-.app-header .wrap { gap: 8px; padding: 16px 20px; }
-.brand { font-size: 1.4rem; letter-spacing: 1px; }
-.brand-logo { height: 36px; width: 36px; }
-.container { padding: 0 16px; }
-.btn { padding: 8px 10px; }
-.grid.projects { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-.detail-grid { grid-template-columns: 1fr; }
-.table-card { height: auto; max-height: none; }
-.table-card.tasks { height: auto; max-height: none; }
-.project-actions-row { flex-direction: column; align-items: flex-end; }
-.project-actions { justify-content: flex-start; }
+  body { font-size: 0.95rem; }
+  .app-header .wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+  .brand { font-size: 1.35rem; letter-spacing: 1px; }
+  .brand-logo { height: 36px; width: 36px; }
+  .nav-links {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .nav-link {
+    flex: 1 1 calc(50% - 8px);
+    text-align: center;
+  }
+  .spacer { display: none; }
+  .language-switcher {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .language-btn { padding: 2px; }
+  .language-flag { width: 24px; height: 24px; }
+  .app-header .btn.ghost { width: 100%; justify-content: center; }
+  .pill { width: 100%; justify-content: center; }
+  .container { padding: 0 16px; }
+  .grid.projects { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .project-summary-head,
+  .row.row-refresh { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .summary-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .table-card,
+  .table-card.tasks { height: auto; max-height: none; margin-bottom: 18px;}
+  .table-card .table-wrapper { overflow-x: auto; }
+  .project-actions { flex-wrap: wrap; justify-content: flex-start; width: 100%; }
+  .project-actions .btn { flex: 1 0 auto; }
+  .footer { position: static; padding: 16px; margin-top: 24px; }
 }
 
-@media (max-width: 480px) { /* here is included 320px rule */
-  .app-header .wrap { padding: 12px 12px; }
-  .brand { font-size: 1.1rem; letter-spacing: 0.5px; }
-  .brand-logo { height: 28px; width: 28px; }
+@media (max-width: 480px) { /* includes 320px layout */
+  .app-header .wrap { padding: 12px; }
+  .brand { font-size: 1.15rem; letter-spacing: 0.5px; }
+  .nav-links { flex-direction: column; }
+  .nav-link { flex: 1 1 auto; width: 100%; }
+  .language-switcher { justify-content: center; }
+  .language-btn { flex: 1 1 auto; }
   .container { padding: 0 12px; }
+  main.container { padding-bottom: 110px; }
   .grid.projects { grid-template-columns: 1fr; }
-  .project-card { padding: 10px; }
+  .detail-grid { gap: 20px; }
+  .project-card { padding: 12px; }
+  .project-summary-card,
+  .table-card,
+  .tasks { margin-bottom: 18px; }
   .project-actions { flex-direction: column; align-items: stretch; }
   .project-actions .btn { width: 100%; }
-  .icon-only { width: 28px; height: 28px; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .stat { width: 100%; }
+  .stat { padding: 12px; }
   .table-wrapper table { font-size: 0.85rem; }
-  .modal { width: 100%; }
+  .data-table th,
+  .data-table td { padding: 8px; }
+  .modal { width: 100%; max-height: 90vh; border-radius: 0; }
+  .footer { text-align: center; }
 }
 
 @media (min-width: 1920px) {
-  .container { max-width: none; width: 100%; padding: 0 60px; }
-  .card.pad { padding: 28px; }
-  .detail-grid { grid-template-columns: minmax(360px, 1fr) minmax(0, 2fr); }
-  .project-card { padding: 20px; }
-  .table-card { max-height: 420px; height: 420px; }
-  .table-card.tasks { max-height: 620px; height: 620px; }
+  body { font-size: 1.05rem; }
+  .container { width: 100%; max-width: none; padding: 0 50px; }
+  .card.pad { padding: 32px; }
+  .detail-grid { grid-template-columns: minmax(420px, 1fr) minmax(0, 2fr); gap: 32px; }
+  .project-card { padding: 24px; }
+  .summary-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .table-card { max-height: 460px; height: 460px; }
+  .table-card.tasks { max-height: 640px; height: 640px; }
+  .app-header .wrap { padding: 32px 80px; }
 }
 
 /* Task list */
@@ -416,7 +463,13 @@ fieldset label + textarea {
 .member-form-controls input { flex: 1 1 220px; }
 .member-form-controls .btn { flex: 0 0 auto; }
 .table-card { display: flex; flex-direction: column; gap: 12px; }
-.table-card .table-wrapper { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.table-card .table-wrapper {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .table-card table { width: 100%; border-collapse: collapse; }
 .table-card th { text-align: left; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; background: rgba(255,255,255,0.02); }
 .table-card th, .table-card td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }

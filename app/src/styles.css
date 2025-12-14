@@ -477,26 +477,10 @@ body.auth-view main.container {
   text-align: left;
 }
 
-.auth-switch {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.9rem;
-  color: rgba(90, 95, 103, 0.8);
-}
-
 :root[data-theme='light'] body.auth-view .auth-card label span {
   color: rgba(75, 80, 90, 0.95);
 }
 
-:root[data-theme='light'] body.auth-view .auth-switch {
-  color: rgba(90, 95, 103, 0.8);
-}
-
-:root[data-theme='light'] body.auth-view .auth-switch button {
-  border-color: rgba(15, 23, 42, 0.3);
-}
 .auth-card form {
   display: flex;
   flex-direction: column;
@@ -555,6 +539,11 @@ body.auth-view main.container {
 :root[data-theme='dark'] .auth-card .password-field .password-toggle img {
   filter: invert(1);
 }
+:root[data-theme='dark'] img[src="/add.svg"],
+:root[data-theme='dark'] img[src="/edit.svg"],
+:root[data-theme='dark'] img[src="/trash.svg"] {
+  filter: invert(1);
+}
 
 .auth-card .btn {
   background: #384152;
@@ -587,6 +576,12 @@ body.auth-view main.container {
   font-size: 0.9rem;
   color: rgba(90, 95, 103, 0.8);
 }
+:root[data-theme='light'] body.auth-view .auth-switch {
+  color: rgba(90, 95, 103, 0.8);
+}
+:root[data-theme='dark'] body.auth-view .auth-switch {
+  color: rgba(208, 213, 221, 0.85);
+}
 
 .auth-switch button {
   border: 1px solid rgba(90, 95, 103, 0.5);
@@ -596,6 +591,9 @@ body.auth-view main.container {
   padding: 8px 18px;
   font-weight: 600;
   cursor: pointer;
+}
+:root[data-theme='light'] body.auth-view .auth-switch button {
+  border-color: rgba(15, 23, 42, 0.3);
 }
 
 :root[data-theme='dark'] body.auth-view .auth-switch button {
@@ -799,16 +797,17 @@ textarea {
 .row-refresh .btn.primary.icon-only,
 .table-card .btn.primary.icon-only,
 .tasks .btn.primary.icon-only {
-  background: var(--button-bg);
-  border-color: var(--border);
-  color: var(--text);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .row-refresh .btn.primary.icon-only:hover,
 .table-card .btn.primary.icon-only:hover,
 .tasks .btn.primary.icon-only:hover {
-  background: var(--button-hover);
-  border-color: var(--border);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .btn.ghost {
@@ -855,6 +854,13 @@ textarea {
   background: rgba(185, 28, 28, 0.25);
   color: #7f1d1d;
 }
+.btn.danger.icon-only,
+.btn.danger.icon-only:hover,
+.btn.danger.icon-only:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
 .btn.danger:focus-visible {
   outline-color: rgba(185, 28, 28, 0.8);
 }
@@ -872,6 +878,21 @@ textarea {
 
 :root[data-theme="dark"] .btn.danger:focus-visible {
   outline-color: rgba(248, 113, 113, 0.8);
+}
+
+.btn.icon-only {
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  line-height: 0;
+}
+
+.btn.icon-only:hover,
+.btn.icon-only:focus-visible {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .btn:active {

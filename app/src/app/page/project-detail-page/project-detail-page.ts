@@ -19,6 +19,7 @@ import { CoreService } from '../../service/core-service';
 import { AuthService } from '../../service/auth-service';
 import { AnalysisService } from '../../service/analysis-service';
 import { MilestoneAnalysis, ProjectAnalysis, TaskAnalysis } from '../../model/analysis.model';
+import { TaskGantt } from '../../component/project/task-gantt/task-gantt';
 import { DateType } from '../../model/core.model';
 
 @Component({
@@ -31,6 +32,7 @@ import { DateType } from '../../model/core.model';
     ProjectForm,
     MilestoneForm,
     TaskForm,
+    TaskGantt,
     TranslatePipe
   ],
   templateUrl: './project-detail-page.html',
@@ -304,6 +306,41 @@ export class ProjectDetailPage {
     this.selectedTask.set(null);
     this.taskForm?.resetForm();
     this.showTaskModal.set(false);
+  }
+
+  onTaskTimelineChange(change: { task: Task; startDate: Date; durationWeeks: number }): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    const updatedStart = this.fromDate(change.startDate);
+    const updatedTask: Task = {
+      ...change.task,
+      startDate: updatedStart,
+      durationWeeks: change.durationWeeks,
+    };
+    this.tasks.update((list) => list.map((task) => (task.uuid === updatedTask.uuid ? updatedTask : task)));
+    const command: UpsertTaskCommand = {
+      title: updatedTask.title,
+      description: updatedTask.description,
+      durationWeeks: updatedTask.durationWeeks,
+      startDate: updatedStart,
+      status: updatedTask.status,
+      assigneeId: updatedTask.assignee?.id ?? null,
+      milestoneUuid: updatedTask.milestone?.uuid ?? null,
+    };
+    this.taskService.update(projectUuid, updatedTask.uuid, command).subscribe({
+      next: () => {
+        this.taskError.set(null);
+        this.loadTasks(projectUuid);
+        this.loadAnalysis(projectUuid);
+      },
+      error: (error) => {
+        console.error('Error updating task', error);
+        this.taskError.set('project.tasks.error');
+        this.loadTasks(projectUuid);
+      },
+    });
   }
 
   openMemberModal(): void {

@@ -585,6 +585,12 @@ textarea {
   .detail-grid {
     grid-template-columns: 1fr;
   }
+
+  .table-card,
+  .table-card.tasks {
+    height: auto;
+    max-height: none;
+  }
 }
 
 .table-card {
@@ -951,6 +957,7 @@ textarea {
 .project-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .project-actions {
@@ -960,6 +967,8 @@ textarea {
 /* Avatar upload mobile phone */
 @media (max-width: 640px) {
   .app-header .wrap {
+    flex-wrap: wrap;
+    justify-content: flex-start;
     gap: 8px;
     padding: 16px 20px;
   }
@@ -972,6 +981,33 @@ textarea {
   .brand-logo {
     height: 36px;
     width: 36px;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .nav-links {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .language-switcher {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .language-switcher .language-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .app-header .btn.ghost {
+    width: 100%;
+    justify-content: center;
   }
 
   .container {
@@ -1007,6 +1043,17 @@ textarea {
 
   .project-actions {
     justify-content: flex-start;
+    width: 100%;
+  }
+
+  .project-actions button {
+    flex: 1 0 auto;
+    min-width: 140px;
+  }
+
+  .table-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 

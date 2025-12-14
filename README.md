@@ -39,8 +39,3 @@ Dentro de cada proyecto, cualquier miembro podrá **crear tareas**, asignarlas a
 
 ✅ **Funciones en verde (🟢)** → públicas: pueden hacerse sin login.  
 🔒 **Funciones en rojo (🔴)** → requieren autenticación previa.
-
-
-Estilos compartidos: `TaskGroup/mockup/assets/styles.css`.
-
-Nota: Los botones de eliminación (F9 y F11) aparecen deshabilitados al ser un mockup sin funcionalidad.

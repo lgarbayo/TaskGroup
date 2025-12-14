@@ -1,30 +1,56 @@
-<section class="stack-md">
-  <article class="card pad stack-md">
-    <div>
-      <p class="subtitle">{{ 'contact.subtitle' | translate }}</p>
-      <h1 class="title">{{ 'contact.title' | translate }}</h1>
-      <p>{{ 'contact.description' | translate }}</p>
+<section class="stack-lg contact-layout">
+  <article class="card pad stack-md contact-card">
+    <div class="contact-hero">
+      <div>
+        <p class="subtitle">{{ 'contact.subtitle' | translate }}</p>
+        <h1 class="title contact-title">{{ 'contact.title' | translate }}</h1>
+        <p class="muted">{{ 'contact.description' | translate }}</p>
+      </div>
+      <div class="contact-actions">
+        <a class="btn primary" href="mailto:lugarbayo@alumnado.uvigo.gal">
+          {{ 'contact.contactUs' | translate }}
+        </a>
+        <a class="btn ghost" href="tel:+34988123456">+34 988 123 456</a>
+      </div>
     </div>
-    <ul class="stack-sm contact-info">
+
+    <ul class="contact-info">
       <li>
-        <strong>{{ 'contact.email' | translate }}</strong>
-        <a href="mailto:lugarbayo@alumnado.uvigo.gal">lugarbayo@alumnado.uvigo.gal</a>
+        <span class="contact-icon">✉️</span>
+        <div>
+          <p class="contact-label">{{ 'contact.email' | translate }}</p>
+          <a href="mailto:lugarbayo@alumnado.uvigo.gal">lugarbayo@alumnado.uvigo.gal</a>
+        </div>
       </li>
       <li>
-        <strong>{{ 'contact.phone' | translate }}</strong>
-        <a href="tel:+34988123456">+34 988 123 456</a>
+        <span class="contact-icon">📞</span>
+        <div>
+          <p class="contact-label">{{ 'contact.phone' | translate }}</p>
+          <a href="tel:+34988123456">+34 988 123 456</a>
+        </div>
       </li>
       <li>
-        <strong>{{ 'contact.schedule' | translate }}</strong>
-        <span>{{ 'contact.schedule.value' | translate }}</span>
+        <span class="contact-icon">🕘</span>
+        <div>
+          <p class="contact-label">{{ 'contact.schedule' | translate }}</p>
+          <span>{{ 'contact.schedule.value' | translate }}</span>
+        </div>
       </li>
     </ul>
+  </article>
 
-    <section class="team-card">
+  <article class="card pad contact-card contact-profile-card">
+    <div class="team-card">
       <img src="/me.jpg" alt="Luis Garbayo" class="team-photo" loading="lazy" />
-      <div>
+      <div class="team-content">
+        <p class="muted">{{ 'contact.profile.role' | translate }}</p>
         <h3 class="title">{{ 'contact.profile.name' | translate }}</h3>
-        <p class="subtitle">{{ 'contact.profile.role' | translate }}</p>
         <p>{{ 'contact.profile.description' | translate }}</p>
+        <div class="contact-profile-links">
+          <a class="btn ghost" href="mailto:lugarbayo@alumnado.uvigo.gal">{{ 'contact.email' | translate }}</a>
+          <a class="btn ghost" href="tel:+34988123456">{{ 'contact.phone' | translate }}</a>
+        </div>
       </div>
-    </section>
+    </div>
+  </article>
+</section>

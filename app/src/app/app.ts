@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { AuthPanel } from './component/auth/auth-panel/auth-panel';
@@ -16,18 +16,13 @@ export class App {
   private document = inject(DOCUMENT);
   private authService = inject(AuthService);
   private translation = inject(TranslationService);
-  private readonly flagMap: Record<LanguageCode, string> = {
-    es: '/esp.svg',
-    en: '/uk.svg',
-    gl: '/gal.svg',
-  };
-
   protected readonly title = signal('TaskGroup');
   protected readonly theme = signal<'light' | 'dark'>(App.loadTheme());
   protected readonly user = this.authService.user;
   protected readonly isAuthenticated = computed(() => !!this.authService.token());
   protected readonly language = this.translation.language;
   protected readonly languages = this.translation.supportedLanguages;
+  protected readonly languageMenuOpen = signal(false);
 
   constructor() {
     effect(() => {
@@ -50,14 +45,31 @@ export class App {
     this.authService.logout();
   }
 
+  toggleLanguageMenu(): void {
+    this.languageMenuOpen.update((value) => !value);
+  }
+
   changeLanguage(code: string): void {
     const lang = code as LanguageCode;
     if (lang === this.language()) return;
     this.translation.setLanguage(lang);
+    this.languageMenuOpen.set(false);
   }
 
-  flagFor(code: LanguageCode): string {
-    return this.flagMap[code] ?? '/icon.svg';
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent): void {
+    if (!(event.target instanceof Element)) {
+      this.languageMenuOpen.set(false);
+      return;
+    }
+    if (!event.target.closest('.language-dropdown')) {
+      this.languageMenuOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    this.languageMenuOpen.set(false);
   }
 
   private static loadTheme(): 'light' | 'dark' {

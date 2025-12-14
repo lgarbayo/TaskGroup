@@ -1,27 +1,24 @@
-<section class="auth-card card pad stack-md">
+<section class="auth-card stack-md">
   @if (!isAuthenticated()) {
-    <header class="stack-xs">
-      <p class="subtitle">{{ 'auth.title' | translate }}</p>
-      <h2 class="title">{{ 'auth.subtitle' | translate }}</h2>
+    <header class="auth-brand">
+      <img src="/icon.svg" alt="TaskGroup" width="64" height="64" class="auth-logo" />
+      <p class="auth-brand-name">TaskGroup</p>
     </header>
-
-    <div class="tab-bar">
-      <button
-        class="tab"
-        [class.active]="mode() === 'login'"
-        type="button"
-        (click)="switchMode('login')"
-      >
-        {{ 'auth.tab.login' | translate }}
-      </button>
-      <button
-        class="tab"
-        [class.active]="mode() === 'register'"
-        type="button"
-        (click)="switchMode('register')"
-      >
-        {{ 'auth.tab.register' | translate }}
-      </button>
+    <div class="auth-headline stack-xxs">
+      <p class="subtitle">
+        @if (mode() === 'login') {
+          {{ 'auth.hero.login' | translate }}
+        } @else {
+          {{ 'auth.hero.register' | translate }}
+        }
+      </p>
+      <h2 class="title">
+        @if (mode() === 'login') {
+          {{ 'auth.subtitle' | translate }}
+        } @else {
+          {{ 'auth.title' | translate }}
+        }
+      </h2>
     </div>
 
     @if (mode() === 'login') {
@@ -125,6 +122,23 @@
         </button>
       </form>
     }
+
+    <p class="auth-switch">
+      <span>
+        @if (mode() === 'login') {
+          {{ 'auth.prompt.register' | translate }}
+        } @else {
+          {{ 'auth.prompt.login' | translate }}
+        }
+      </span>
+      <button type="button" (click)="switchMode(mode() === 'login' ? 'register' : 'login')">
+        @if (mode() === 'login') {
+          {{ 'auth.switch.register' | translate }}
+        } @else {
+          {{ 'auth.switch.login' | translate }}
+        }
+      </button>
+    </p>
 
     @if (errorMessage(); as error) {
       <p class="error">

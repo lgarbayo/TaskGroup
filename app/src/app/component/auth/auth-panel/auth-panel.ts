@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../service/auth-service';
 import { LoginCommand, RegisterCommand } from '../../../model/auth.model';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth-panel',
@@ -14,6 +15,7 @@ import { TranslatePipe } from '../../../i18n/translate.pipe';
 export class AuthPanel {
   private authService = inject(AuthService);
   private nfb = inject(NonNullableFormBuilder);
+  private router = inject(Router);
 
   readonly user = this.authService.user;
   readonly isAuthenticated = computed(() => !!this.authService.token());
@@ -55,6 +57,7 @@ export class AuthPanel {
       next: () => {
         this.errorMessage.set(null);
         this.loginForm.reset();
+        this.router.navigate(['/list']);
       },
       error: (error) => {
         console.error('Unable to login', error);
@@ -79,6 +82,7 @@ export class AuthPanel {
       next: () => {
         this.errorMessage.set(null);
         this.registerForm.reset();
+        this.router.navigate(['/list']);
       },
       error: (error) => {
         console.error('Unable to register', error);
@@ -97,6 +101,7 @@ export class AuthPanel {
     this.errorMessage.set(null);
     this.loginForm.reset();
     this.registerForm.reset();
+    this.router.navigate(['/list']);
   }
 
   private resolveErrorMessage(error: unknown): { key?: string; raw?: string } {

@@ -26,6 +26,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'header.theme.dark': 'Modo oscuro',
     'header.greeting': 'Hola',
     'header.logout': 'Cerrar sesión',
+    'header.login': 'Iniciar sesión',
     'header.noSession': 'Sesión no iniciada',
 
     'auth.title': 'Identifícate para continuar',
@@ -176,7 +177,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'contact.form.placeholder.email': 'tu@email.com',
     'contact.form.placeholder.message': '¿Cómo podemos ayudarte?',
     'contact.contactUs': 'Canales de contacto',
-
+    
     'form.project.title': 'Título',
     'form.project.titleRequired': 'El título es obligatorio.',
     'form.project.description': 'Descripción',
@@ -243,6 +244,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'header.theme.dark': 'Dark mode',
     'header.greeting': 'Hello',
     'header.logout': 'Log out',
+    'header.login': 'Sign in',
     'header.noSession': 'Not signed in',
 
     'auth.title': 'Sign in to continue',
@@ -393,7 +395,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'contact.form.placeholder.email': 'you@email.com',
     'contact.form.placeholder.message': 'How can we help you?',
     'contact.contactUs': 'Contact channels',
-
+    
     'form.project.title': 'Title',
     'form.project.titleRequired': 'Title is required.',
     'form.project.description': 'Description',
@@ -460,6 +462,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'header.theme.dark': 'Modo escuro',
     'header.greeting': 'Ola',
     'header.logout': 'Pechar sesión',
+    'header.login': 'Iniciar sesión',
     'header.noSession': 'Sesión non iniciada',
 
     'auth.title': 'Identifícate para continuar',
@@ -610,7 +613,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'contact.form.placeholder.email': 'ti@correo.com',
     'contact.form.placeholder.message': 'En que podemos axudarche?',
     'contact.contactUs': 'Canles de contacto',
-
+    
     'form.project.title': 'Título',
     'form.project.titleRequired': 'O título é obrigatorio.',
     'form.project.description': 'Descrición',

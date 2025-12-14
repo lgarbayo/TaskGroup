@@ -1,21 +1,24 @@
 import { Component, HostListener, computed, effect, inject, signal } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { AuthPanel } from './component/auth/auth-panel/auth-panel';
 import { AuthService } from './service/auth-service';
 import { TranslatePipe } from './i18n/translate.pipe';
 import { TranslationService } from './i18n/translation.service';
 import { LanguageCode } from './i18n/translations';
+import { LandingPage } from './page/landing-page/landing-page';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, AuthPanel, TranslatePipe],
+  imports: [RouterOutlet, RouterLink, LandingPage, TranslatePipe],
   templateUrl: './app.html'
 })
 export class App {
   private document = inject(DOCUMENT);
   private authService = inject(AuthService);
   private translation = inject(TranslationService);
+  private router = inject(Router);
   protected readonly title = signal('TaskGroup');
   protected readonly theme = signal<'light' | 'dark'>(App.loadTheme());
   protected readonly user = this.authService.user;
@@ -23,6 +26,8 @@ export class App {
   protected readonly language = this.translation.language;
   protected readonly languages = this.translation.supportedLanguages;
   protected readonly languageMenuOpen = signal(false);
+  protected readonly currentUrl = signal(this.router.url);
+  protected readonly isLoginRoute = computed(() => this.currentUrl().startsWith('/login'));
 
   constructor() {
     effect(() => {
@@ -34,6 +39,13 @@ export class App {
         console.warn('Unable to store theme preference', err);
       }
     });
+
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
   }
 
   toggleTheme(): void {
@@ -43,6 +55,7 @@ export class App {
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/list']);
   }
 
   toggleLanguageMenu(): void {

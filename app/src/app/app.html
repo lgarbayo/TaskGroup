@@ -130,19 +130,24 @@
         <button class="btn ghost" type="button" (click)="toggleTheme()" aria-label="{{ 'header.theme.label' | translate }}">
           {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
         </button>
+        @if (!isLoginRoute()) {
+          <a class="btn primary" routerLink="/login">
+            {{ 'header.login' | translate }}
+          </a>
+        }
       </div>
     </div>
   }
 </header>
 
-<main class="container">
-  @if (isAuthenticated()) {
+<main class="container" [class.container--landing]="!isAuthenticated() && !isLoginRoute()">
+  @if (isAuthenticated() || isLoginRoute()) {
     <router-outlet></router-outlet>
   } @else {
-    <app-auth-panel></app-auth-panel>
+    <app-landing-page></app-landing-page>
   }
 </main>
 
-<footer class="footer">
+<footer class="footer" [class.footer--overlay]="!isAuthenticated()">
   © {{ 'common.appName' | translate }} · 2025
 </footer>

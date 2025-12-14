@@ -1,0 +1,20 @@
+<section class="landing landing-simple">
+  <video
+    #bgVideo
+    class="landing-background-video"
+    src="/138556-769988117.mp4"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+  ></video>
+  <div class="landing-video-overlay"></div>
+  <div class="landing-simple-content landing-simple-content--minimal">
+    <h1 class="landing-simple-title" aria-label="{{ 'common.appName' | translate }}">
+      @for (letter of titleLetters; track trackLetter($index); let idx = $index) {
+        <span class="landing-simple-letter" [style.animationDelay]="(idx * 120) + 'ms'">{{ letter }}</span>
+      }
+    </h1>
+  </div>
+</section>

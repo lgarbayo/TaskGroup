@@ -7,6 +7,10 @@ export const routes: Routes = [
         redirectTo: 'list'
     },
     {
+        path: 'login',
+        loadComponent: () => import('./page/auth-page/auth-page').then(c => c.AuthPage)
+    },
+    {
         path: 'list',
         loadComponent: () => import('./page/project-list-page/project-list-page').then(c => c.ProjectListPage)
     },

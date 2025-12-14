@@ -1,16 +1,41 @@
 <section class="stack-lg contact-layout">
+  <article class="card pad contact-card contact-profile-card">
+    <div class="team-card">
+      <img src="/yo.jpg" alt="Luis Garbayo Fernández" class="team-photo" loading="lazy" />
+      <div class="team-content">
+        <p class="muted">{{ 'contact.profile.role' | translate }}</p>
+        <h3 class="title">{{ 'contact.profile.name' | translate }}</h3>
+        <p>{{ 'contact.profile.description' | translate }}</p>
+        <div class="contact-profile-links">
+          <a
+            class="btn ghost contact-social-btn"
+            href="https://github.com/lgarbayo"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <img src="/github-mark.svg" alt="" aria-hidden="true" class="contact-social-icon contact-social-icon--github" />
+          </a>
+          <a
+            class="btn ghost contact-social-btn"
+            href="https://www.linkedin.com/in/luis-garbayo/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <img src="/linkedin-svgrepo-com.svg" alt="" aria-hidden="true" class="contact-social-icon" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
   <article class="card pad stack-md contact-card">
     <div class="contact-hero">
       <div>
         <p class="subtitle">{{ 'contact.subtitle' | translate }}</p>
         <h1 class="title contact-title">{{ 'contact.title' | translate }}</h1>
         <p class="muted">{{ 'contact.description' | translate }}</p>
-      </div>
-      <div class="contact-actions">
-        <a class="btn primary" href="mailto:lugarbayo@alumnado.uvigo.gal">
-          {{ 'contact.contactUs' | translate }}
-        </a>
-        <a class="btn ghost" href="tel:+34988123456">+34 988 123 456</a>
       </div>
     </div>
 
@@ -37,20 +62,5 @@
         </div>
       </li>
     </ul>
-  </article>
-
-  <article class="card pad contact-card contact-profile-card">
-    <div class="team-card">
-      <img src="/yo.jpg" alt="Luis Garbayo" class="team-photo" loading="lazy" />
-      <div class="team-content">
-        <p class="muted">{{ 'contact.profile.role' | translate }}</p>
-        <h3 class="title">{{ 'contact.profile.name' | translate }}</h3>
-        <p>{{ 'contact.profile.description' | translate }}</p>
-        <div class="contact-profile-links">
-          <a class="btn ghost" href="mailto:lugarbayo@alumnado.uvigo.gal">{{ 'contact.email' | translate }}</a>
-          <a class="btn ghost" href="tel:+34988123456">{{ 'contact.phone' | translate }}</a>
-        </div>
-      </div>
-    </div>
   </article>
 </section>

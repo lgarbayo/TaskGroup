@@ -1585,11 +1585,6 @@ textarea {
   margin-bottom: 4px;
 }
 
-.contact-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 
 .contact-info {
   list-style: none;
@@ -1636,6 +1631,7 @@ textarea {
   grid-template-columns: 200px 1fr;
   gap: 28px;
   align-items: center;
+  position: relative;
 }
 
 .team-photo {
@@ -1652,20 +1648,40 @@ textarea {
 
 .contact-profile-links {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 0;
+  position: absolute;
+  top: 16px;
+  right: 24px;
+}
+
+.contact-social-btn {
+  width: 48px;
+  height: 48px;
+  padding: 10px;
+  border-radius: 50%;
+  justify-content: center;
+}
+
+.btn .contact-social-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  object-fit: contain;
+}
+
+.btn .contact-social-icon--github {
+  filter: brightness(0) invert(1);
+}
+
+:root[data-theme="light"] .contact-card .contact-social-icon--github {
+  filter: none;
 }
 
 @media (max-width: 768px) {
   .contact-hero {
     flex-direction: column;
-  }
-
-  .contact-actions {
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
   }
 
   .contact-profile-card .team-card {
@@ -1675,6 +1691,15 @@ textarea {
 
   .team-photo {
     margin: 0 auto;
+  }
+  .team-content {
+    padding-right: 0;
+  }
+
+  .contact-profile-links {
+    position: static;
+    justify-content: center;
+    margin-top: 16px;
   }
 }
 
@@ -1789,4 +1814,8 @@ fieldset textarea.ng-invalid.ng-touched {
 
 :root[data-theme='light'] body.auth-view .auth-headline .title {
   color: #111827;
+}
+.team-content {
+  position: relative;
+  padding-right: 80px;
 }

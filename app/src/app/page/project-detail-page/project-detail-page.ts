@@ -220,13 +220,17 @@ export class ProjectDetailPage {
       return;
     }
     this.milestoneLoading.set(true);
-    this.milestoneService.create(projectUuid, command).subscribe({
+    const editing = this.selectedMilestone();
+    const request$ = editing
+      ? this.milestoneService.update(projectUuid, editing.uuid, command)
+      : this.milestoneService.create(projectUuid, command);
+    request$.subscribe({
       next: () => {
         this.cancelMilestoneEdition();
         this.loadMilestones(projectUuid);
       },
       error: (error) => {
-        console.error('Error creating milestone', error);
+        console.error('Error saving milestone', error);
         this.milestoneError.set('project.milestones.error');
         this.milestoneLoading.set(false);
       },

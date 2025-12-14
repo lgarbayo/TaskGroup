@@ -2,7 +2,6 @@
   @if (!isAuthenticated()) {
     <header class="auth-brand">
       <img src="/icon.svg" alt="TaskGroup" width="64" height="64" class="auth-logo" />
-      <p class="auth-brand-name">TaskGroup</p>
     </header>
     <div class="auth-headline stack-xxs">
       <p class="subtitle">
@@ -20,11 +19,10 @@
         }
       </h2>
     </div>
-
     @if (mode() === 'login') {
       <form class="stack-sm" (ngSubmit)="submitLogin()" [formGroup]="loginForm">
         <label class="stack-xxs">
-          <span>{{ 'auth.field.email' | translate }}</span>
+          <span>{{ 'auth.field.email.login' | translate }}</span>
           <input
             type="email"
             formControlName="email"
@@ -33,7 +31,7 @@
           />
         </label>
         <label class="stack-xxs">
-          <span>{{ 'auth.field.password' | translate }}</span>
+          <span>{{ 'auth.field.password.login' | translate }}</span>
           <div class="password-field">
             <input
               [type]="loginPasswordVisible() ? 'text' : 'password'"
@@ -47,7 +45,12 @@
               (click)="toggleLoginPasswordVisibility()"
               [attr.aria-label]="loginPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)"
             >
-              {{ loginPasswordVisible() ? '🙈' : '👁' }}
+              <img
+                [src]="loginPasswordVisible() ? '/eye-open.svg' : '/eye-closed.svg'"
+                alt=""
+                width="18"
+                height="18"
+              />
             </button>
           </div>
         </label>
@@ -110,7 +113,12 @@
               (click)="toggleRegisterPasswordVisibility()"
               [attr.aria-label]="registerPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)"
             >
-              {{ registerPasswordVisible() ? '🙈' : '👁' }}
+              <img
+                [src]="registerPasswordVisible() ? '/eye-open.svg' : '/eye-closed.svg'"
+                alt=""
+                width="18"
+                height="18"
+              />
             </button>
           </div>
           @if (inputInvalid('password')) {
@@ -120,6 +128,7 @@
         <button class="btn" type="submit" [disabled]="loading()">
           {{ 'auth.submit.register' | translate }}
         </button>
+        <p class="muted auth-required-note">{{ 'auth.form.requiredNote' | translate }}</p>
       </form>
     }
 

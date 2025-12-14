@@ -438,11 +438,11 @@ body.auth-view main.container {
 
 .auth-logo {
   width: 72px;
-  height: 72px;
-  border-radius: 999px;
-  background: rgba(59, 130, 246, 0.15);
-  padding: 14px;
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  height: auto;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  border: none;
 }
 
 .auth-brand-name {
@@ -455,7 +455,13 @@ body.auth-view main.container {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(148, 163, 184, 0.85);
+}
+
+.auth-required-note {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(90, 95, 103, 0.85);
 }
 
 .auth-headline .title {
@@ -465,7 +471,7 @@ body.auth-view main.container {
 }
 
 .auth-card label span {
-  color: currentColor;
+  color: rgba(148, 163, 184, 0.85);
   font-size: 0.85rem;
   display: block;
   text-align: left;
@@ -477,15 +483,15 @@ body.auth-view main.container {
   flex-direction: column;
   gap: 4px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(90, 95, 103, 0.8);
 }
 
 :root[data-theme='light'] body.auth-view .auth-card label span {
-  color: #111827;
+  color: rgba(75, 80, 90, 0.95);
 }
 
 :root[data-theme='light'] body.auth-view .auth-switch {
-  color: rgba(15, 23, 42, 0.7);
+  color: rgba(90, 95, 103, 0.8);
 }
 
 :root[data-theme='light'] body.auth-view .auth-switch button {
@@ -511,41 +517,59 @@ body.auth-view main.container {
 }
 
 .auth-card input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(150, 155, 165, 0.95);
 }
 
 .auth-card .password-field {
+  position: relative;
   display: flex;
   align-items: center;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
 }
 
 .auth-card .password-field input {
-  border: none;
-  background: transparent;
-  flex: 1 1 auto;
-  padding: 0 0 0 10px;
+  width: 100%;
+  padding-right: 48px;
 }
 
 .auth-card .password-field .password-toggle {
+  position: absolute;
+  right: 12px;
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  padding: 0 12px;
+  padding: 4px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+:root[data-theme='dark'] .auth-card .password-field .password-toggle {
+  background: transparent;
+}
+
+.auth-card .password-field .password-toggle img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+:root[data-theme='dark'] .auth-card .password-field .password-toggle img {
+  filter: invert(1);
 }
 
 .auth-card .btn {
-  background: var(--primary);
+  background: #384152;
   border: none;
-  color: #050505;
+  color: #f8fafc;
   font-weight: 700;
   border-radius: 999px;
   padding: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 .auth-card .btn.ghost {
@@ -561,17 +585,22 @@ body.auth-view main.container {
   flex-direction: column;
   gap: 4px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(90, 95, 103, 0.8);
 }
 
 .auth-switch button {
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(90, 95, 103, 0.5);
   background: transparent;
-  color: var(--primary);
+  color: rgba(60, 65, 73, 0.95);
   border-radius: 999px;
   padding: 8px 18px;
   font-weight: 600;
   cursor: pointer;
+}
+
+:root[data-theme='dark'] body.auth-view .auth-switch button {
+  color: rgba(208, 213, 221, 0.95);
+  border-color: rgba(148, 163, 184, 0.5);
 }
 
 .auth-card small.error,
@@ -581,25 +610,17 @@ body.auth-view main.container {
 
 :root[data-theme='light'] body.auth-view .auth-card input,
 :root[data-theme='light'] body.auth-view .auth-card .password-field {
-  border-color: rgba(15, 23, 42, 0.35);
-  color: #0f172a;
-  background: rgba(15, 23, 42, 0.03);
+  border-color: rgba(100, 105, 115, 0.35);
+  color: #1f2933;
+  background: rgba(230, 233, 238, 0.6);
 }
 
 :root[data-theme='light'] body.auth-view .auth-card input::placeholder {
-  color: rgba(15, 23, 42, 0.45);
+  color: rgba(70, 75, 85, 0.95);
 }
 
 :root[data-theme='light'] body.auth-view .auth-card .password-field .password-toggle {
-  color: rgba(15, 23, 42, 0.6);
-}
-
-:root[data-theme='light'] body.auth-view .auth-switch {
-  color: rgba(15, 23, 42, 0.6);
-}
-
-:root[data-theme='light'] body.auth-view .auth-switch button {
-  border-color: rgba(15, 23, 42, 0.2);
+  color: #1f2933;
 }
 
 
@@ -811,6 +832,17 @@ textarea {
 
 .app-header .btn.ghost:hover {
   background: var(--header-button-hover-bg);
+}
+
+:root[data-theme='light'] .app-header .btn.ghost {
+  color: #111827;
+  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:root[data-theme='light'] .app-header .btn.ghost:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(15, 23, 42, 0.2);
 }
 
 .btn.danger {
@@ -1798,6 +1830,10 @@ textarea {
   border: none;
   color: rgba(255, 255, 255, 0.85);
   mix-blend-mode: screen;
+}
+:root[data-theme='light'] main.container:not(.container--landing) + .footer.footer--overlay {
+  color: rgba(15, 23, 42, 0.55);
+  mix-blend-mode: normal;
 }
 
 .field-group,

@@ -1,7 +1,7 @@
 <header class="app-header" [class.app-header--minimal]="!isAuthenticated()" [class.app-header--overlay]="isLandingRoute()">
   @if (isAuthenticated()) {
     <div class="wrap">
-      <a class="brand" routerLink="/">
+      <a class="brand" [routerLink]="isAuthenticated() ? '/list' : '/'">
         <img src="/icon.svg" alt="TaskGroup logo" class="brand-logo" width="48" height="48" loading="eager" />
         <span class="brand-title">{{ 'common.appName' | translate }}</span>
       </a>

@@ -1,4 +1,4 @@
-<header class="app-header" [class.app-header--minimal]="!isAuthenticated()">
+<header class="app-header" [class.app-header--minimal]="!isAuthenticated()" [class.app-header--overlay]="isLandingRoute()">
   @if (isAuthenticated()) {
     <div class="wrap">
       <a class="brand" routerLink="/">
@@ -140,12 +140,8 @@
   }
 </header>
 
-<main class="container" [class.container--landing]="!isAuthenticated() && !isLoginRoute()">
-  @if (isAuthenticated() || isLoginRoute()) {
-    <router-outlet></router-outlet>
-  } @else {
-    <app-landing-page></app-landing-page>
-  }
+<main class="container" [class.container--landing]="isLandingRoute()">
+  <router-outlet></router-outlet>
 </main>
 
 <footer class="footer" [class.footer--overlay]="!isAuthenticated()">

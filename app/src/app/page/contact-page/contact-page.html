@@ -1,4 +1,27 @@
 <section class="stack-lg contact-layout">
+  <article class="card pad contact-card contact-hero-block">
+    <div class="contact-hero-intro">
+      <p class="contact-kicker">{{ 'contact.hero.kicker' | translate }}</p>
+      <h3 class="title contact-title">{{ 'contact.hero.title' | translate }}</h3>
+      <p class="muted">{{ 'contact.hero.description' | translate }}</p>
+    </div>
+    <div class="contact-hero-cards">
+      <article class="contact-hero-card">
+        <span class="contact-hero-icon" aria-hidden="true">
+          <img src="/mission.svg" alt="" />
+        </span>
+        <h3>{{ 'contact.mission.title' | translate }}</h3>
+        <p>{{ 'contact.mission.description' | translate }}</p>
+      </article>
+      <article class="contact-hero-card">
+        <span class="contact-hero-icon" aria-hidden="true">
+          <img src="/purpose.svg" alt="" />
+        </span>
+        <h3>{{ 'contact.vision.title' | translate }}</h3>
+        <p>{{ 'contact.vision.description' | translate }}</p>
+      </article>
+    </div>
+  </article>
   <article class="card pad contact-card contact-profile-card">
     <div class="team-card">
       <img src="/yo.jpg" alt="Luis Garbayo Fernández" class="team-photo" loading="lazy" />
@@ -30,35 +53,25 @@
     </div>
   </article>
 
-  <article class="card pad stack-md contact-card">
-    <div class="contact-hero">
-      <div>
-        <p class="subtitle">{{ 'contact.subtitle' | translate }}</p>
-        <h1 class="title contact-title">{{ 'contact.title' | translate }}</h1>
-        <p class="muted">{{ 'contact.description' | translate }}</p>
-      </div>
+  <article class="card pad stack-md contact-card contact-channel-card">
+    <div>
+      <p class="subtitle">{{ 'contact.subtitle' | translate }}</p>
+      <h2 class="title">{{ 'contact.title' | translate }}</h2>
+      <p class="muted">{{ 'contact.description' | translate }}</p>
     </div>
-
     <ul class="contact-info">
       <li>
-        <span class="contact-icon">✉️</span>
+        <span class="contact-icon" aria-hidden="true">✉️</span>
         <div>
           <p class="contact-label">{{ 'contact.email' | translate }}</p>
           <a href="mailto:lugarbayo@alumnado.uvigo.gal">lugarbayo@alumnado.uvigo.gal</a>
         </div>
       </li>
       <li>
-        <span class="contact-icon">📞</span>
+        <span class="contact-icon" aria-hidden="true">📞</span>
         <div>
           <p class="contact-label">{{ 'contact.phone' | translate }}</p>
           <a href="tel:+34988123456">+34 988 123 456</a>
-        </div>
-      </li>
-      <li>
-        <span class="contact-icon">🕘</span>
-        <div>
-          <p class="contact-label">{{ 'contact.schedule' | translate }}</p>
-          <span>{{ 'contact.schedule.value' | translate }}</span>
         </div>
       </li>
     </ul>

@@ -1,29 +1,91 @@
-<section class="stack-md">
-  <article class="card pad stack-md">
-    <div class="row row-refresh">
+<section class="project-dashboard stack-lg">
+  <header class="project-hero card pad">
+    <div class="project-hero__content">
+      <p class="project-hero__subtitle">{{ 'projects.hero.subtitle' | translate:{ count: activeProjects() } }}</p>
+      <h1 class="project-hero__title">{{ 'projects.hero.title' | translate }}</h1>
+      <p class="project-hero__description">{{ 'projects.hero.description' | translate }}</p>
+      <div class="project-hero__cta">
+        <button class="btn primary" type="button" (click)="openCreateModal()">
+          {{ 'projects.hero.cta' | translate }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="project-metrics">
+    <article class="metric-card metric-card--accent1">
+      <span class="metric-icon" aria-hidden="true"></span>
+      <div class="metric-info">
+        <p class="metric-value">{{ activeProjects() }}</p>
+        <p class="metric-label">{{ 'projects.metrics.active' | translate }}</p>
+      </div>
+    </article>
+    <article class="metric-card metric-card--accent2">
+      <span class="metric-icon" aria-hidden="true"></span>
+      <div class="metric-info">
+        <p class="metric-value">
+          @if (nextStartLabel(); as nextStart) {
+            {{ nextStart }}
+          } @else {
+            {{ 'projects.metrics.nextStart.empty' | translate }}
+          }
+        </p>
+        <p class="metric-label">{{ 'projects.metrics.nextStart' | translate }}</p>
+      </div>
+    </article>
+    <article class="metric-card metric-card--accent3">
+      <span class="metric-icon" aria-hidden="true"></span>
+      <div class="metric-info">
+        <p class="metric-value">
+          @if (lastRefreshLabel(); as lastUpdate) {
+            {{ lastUpdate }}
+          } @else {
+            {{ 'projects.metrics.lastUpdate.never' | translate }}
+          }
+        </p>
+        <p class="metric-label">{{ 'projects.metrics.lastUpdate' | translate }}</p>
+      </div>
+    </article>
+  </div>
+
+  <article class="card pad stack-md project-list-card">
+    <div class="row row-refresh project-list-header">
       <div>
-        <h1 class="title">{{ 'projects.list.title' | translate }}</h1>
+        <h2 class="title">{{ 'projects.list.title' | translate }}</h2>
         <span class="pill">{{ 'projects.list.total' | translate:{ count: projectList().length } }}</span>
       </div>
-      <div class="form-actions">
-        <button
-          class="btn primary icon-only"
-          type="button"
-          (click)="openCreateModal()"
-          aria-label="{{ 'projects.create.title' | translate }}"
-        >
-          <img src="/add.svg" alt="" width="24" height="24" />
-        </button>
-        @if (loading()) {
-          <span class="pill">{{ 'common.loading' | translate }}</span>
-        }
-      </div>
+      @if (loading()) {
+        <span class="pill">{{ 'common.loading' | translate }}</span>
+      }
     </div>
     @if (errorMessage(); as error) {
       <p class="error">{{ error | translate }}</p>
     }
     @if (!loading() && projectList().length === 0) {
-      <p class="note">{{ 'projects.list.empty' | translate }}</p>
+      <div class="project-empty-state">
+        <div class="project-empty-illustration" aria-hidden="true">
+          <svg viewBox="0 0 220 160" role="presentation" focusable="false">
+            <defs>
+              <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#646cff" stop-opacity="0.3" />
+                <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.5" />
+              </linearGradient>
+            </defs>
+            <rect x="20" y="35" width="180" height="90" rx="20" fill="url(#heroGradient)" />
+            <circle cx="70" cy="80" r="26" fill="rgba(255,255,255,0.3)" />
+            <rect x="120" y="60" width="50" height="12" rx="6" fill="rgba(255,255,255,0.5)" />
+            <rect x="120" y="82" width="40" height="12" rx="6" fill="rgba(255,255,255,0.35)" />
+            <rect x="40" y="130" width="140" height="8" rx="4" fill="rgba(99,102,241,0.25)" />
+          </svg>
+        </div>
+        <div class="project-empty-copy">
+          <h3>{{ 'projects.empty.title' | translate }}</h3>
+          <p>{{ 'projects.empty.description' | translate }}</p>
+          <button class="btn primary" type="button" (click)="openCreateModal()">
+            {{ 'projects.hero.cta' | translate }}
+          </button>
+        </div>
+      </div>
     } @else {
       <div class="grid projects">
         @for (project of projectList(); track trackProject($index, project); let idx = $index) {

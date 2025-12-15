@@ -5,13 +5,12 @@ import { AuthService } from './service/auth-service';
 import { TranslatePipe } from './i18n/translate.pipe';
 import { TranslationService } from './i18n/translation.service';
 import { LanguageCode } from './i18n/translations';
-import { LandingPage } from './page/landing-page/landing-page';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, LandingPage, TranslatePipe],
+  imports: [RouterOutlet, RouterLink, TranslatePipe],
   templateUrl: './app.html'
 })
 export class App {
@@ -28,6 +27,7 @@ export class App {
   protected readonly languageMenuOpen = signal(false);
   protected readonly currentUrl = signal(this.router.url);
   protected readonly isLoginRoute = computed(() => this.currentUrl().startsWith('/login'));
+  protected readonly isLandingRoute = computed(() => this.currentUrl() === '/' || this.currentUrl() === '');
 
   constructor() {
     effect(() => {
@@ -55,7 +55,7 @@ export class App {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/list']);
+    this.router.navigate(['/login']);
   }
 
   toggleLanguageMenu(): void {

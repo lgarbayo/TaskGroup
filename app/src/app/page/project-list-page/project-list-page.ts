@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { ProjectService } from '../../service/project-service';
 import { Project, UpsertProjectCommand } from '../../model/project.model';
 import { RouterLink } from '@angular/router';
@@ -6,6 +6,7 @@ import { ProjectForm } from "../../component/project/project-form/project-form";
 import { AuthService } from '../../service/auth-service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { CoreService } from '../../service/core-service';
+import { TranslationService } from '../../i18n/translation.service';
 
 @Component({
   selector: 'app-project-list-page',
@@ -22,12 +23,25 @@ export class ProjectListPage {
   private projectService = inject(ProjectService);
   private authService = inject(AuthService);
   protected core = inject(CoreService);
+  private translation = inject(TranslationService);
   @ViewChild(ProjectForm) projectFormComponent?: ProjectForm;
 
   projectList = signal<Array<Project>>([]);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   showCreateModal = signal(false);
+  private lastUpdatedAt = signal<Date | null>(null);
+
+  protected readonly activeProjects = computed(() => this.projectList().length);
+  protected readonly nextStartLabel = computed(() => {
+    const projects = this.projectList();
+    if (!projects.length) {
+      return '';
+    }
+    const upcoming = [...projects].sort((a, b) => this.toDateValue(a.startDate) - this.toDateValue(b.startDate));
+    return this.core.formatDateLabel(upcoming[0]?.startDate) || '';
+  });
+  protected readonly lastRefreshLabel = computed(() => this.formatTimestamp(this.lastUpdatedAt()));
 
   constructor() {
     effect(() => {
@@ -47,6 +61,7 @@ export class ProjectListPage {
       next: (projects) => {
         this.projectList.set(projects);
         this.errorMessage.set(null);
+        this.lastUpdatedAt.set(new Date());
       },
       error: (error) => {
         console.error('Unable to fetch project list', error);
@@ -95,5 +110,23 @@ export class ProjectListPage {
 
   trackProject(_: number, project: Project): string {
     return project.uuid;
+  }
+
+  private toDateValue(date: Project['startDate'] | Project['endDate'] | undefined): number {
+    if (!date || typeof date.year !== 'number') {
+      return Number.POSITIVE_INFINITY;
+    }
+    const month = typeof date.month === 'number' ? date.month : 0;
+    const week = typeof date.week === 'number' ? date.week : 0;
+    return new Date(date.year, month, 1 + week * 7).getTime();
+  }
+
+  private formatTimestamp(value: Date | null): string {
+    if (!value) {
+      return '';
+    }
+    const lang = this.translation.language();
+    const locale = lang === 'es' ? 'es-ES' : lang === 'gl' ? 'gl-ES' : 'en-US';
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(value);
   }
 }

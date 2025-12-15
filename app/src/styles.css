@@ -2071,6 +2071,22 @@ textarea {
 .contact-icon {
   font-size: 1.5rem;
   line-height: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-icon img {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+:root[data-theme='dark'] .contact-icon img {
+  filter: invert(1);
 }
 
 .contact-label {

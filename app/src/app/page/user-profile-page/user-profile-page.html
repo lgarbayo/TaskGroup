@@ -21,9 +21,11 @@
             <div class="profile-avatar-row">
               <div
                 class="profile-avatar"
-                [style.background-color]="user()?.avatarUrl ? 'transparent' : avatarColor()"
+                [style.background-color]="(avatarPreviewUrl() || user()?.avatarUrl) ? 'transparent' : avatarColor()"
               >
-                @if (user()?.avatarUrl) {
+                @if (avatarPreviewUrl(); as previewUrl) {
+                  <img [src]="previewUrl" alt="" loading="lazy" />
+                } @else if (user()?.avatarUrl) {
                   <img [src]="user()?.avatarUrl!" alt="" loading="lazy" />
                 } @else if (avatarInitials()) {
                   <span>{{ avatarInitials() }}</span>
@@ -32,16 +34,46 @@
                 }
               </div>
               <div class="stack-xxs">
-                <p class="muted">{{ 'profile.avatar.label' | translate }}</p>
-                <label class="stack-xxs" for="avatarFile">
-                  <span class="sr-only">{{ 'profile.avatar.label' | translate }}</span>
-                  <input
-                    id="avatarFile"
-                    type="file"
-                    accept="image/*"
-                    (change)="onAvatarSelected($event)"
-                  />
-                </label>
+                <p>{{ 'profile.avatar.label' | translate }}</p>
+                <button
+                  class="btn ghost sm"
+                  type="button"
+                  (click)="avatarFileInput.click()"
+                  [disabled]="loading()"
+                >
+                  {{ 'profile.avatar.change' | translate }}
+                </button>
+                <input
+                  #avatarFileInput
+                  id="avatarFile"
+                  type="file"
+                  accept="image/*"
+                  (change)="onAvatarSelected($event)"
+                  hidden
+                />
+                @if (avatarPreviewUrl()) {
+                  <p class="muted">
+                    {{ 'profile.avatar.preview' | translate }}
+                  </p>
+                  <div class="row">
+                    <button
+                      class="btn primary sm"
+                      type="button"
+                      (click)="saveAvatar()"
+                      [disabled]="loading()"
+                    >
+                      {{ 'profile.avatar.save' | translate }}
+                    </button>
+                    <button
+                      class="btn ghost sm"
+                      type="button"
+                      (click)="cancelAvatarPreview()"
+                      [disabled]="loading()"
+                    >
+                      {{ 'common.cancel' | translate }}
+                    </button>
+                  </div>
+                }
               </div>
             </div>
 

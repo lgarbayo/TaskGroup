@@ -61,8 +61,20 @@
         {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
       </button>
       @if (user(); as currentUser) {
-        <button class="pill pill-action" type="button" routerLink="/profile">
-          {{ 'header.greeting' | translate }}, {{ currentUser.alias }}
+        <button class="pill pill-action header-user-pill" type="button" routerLink="/profile">
+          <span
+            class="header-user-avatar"
+            [style.background-color]="currentUser.avatarUrl ? 'transparent' : '#0ea5e9'"
+          >
+            @if (currentUser.avatarUrl) {
+              <img [src]="currentUser.avatarUrl!" alt="" loading="lazy" />
+            } @else {
+              <span>{{ (currentUser.name || currentUser.alias || '?').substring(0, 1).toUpperCase() }}</span>
+            }
+          </span>
+          <span class="header-user-label">
+            {{ 'header.greeting' | translate }}, {{ currentUser.alias }}
+          </span>
         </button>
         <button class="btn danger" type="button" (click)="logout()">{{ 'header.logout' | translate }}</button>
       }

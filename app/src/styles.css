@@ -804,6 +804,10 @@ textarea {
   transition: background .15s ease, color .15s ease, border-color .15s ease, transform .2s ease, box-shadow .2s ease;
 }
 
+.profile-page .btn {
+  justify-content: center;
+}
+
 .btn:hover {
   background: var(--button-hover);
 }
@@ -1040,6 +1044,32 @@ textarea {
   color: var(--primary-600);
   font-weight: 600;
   font-size: 0.85rem;
+}
+
+.header-user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.header-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Grid */

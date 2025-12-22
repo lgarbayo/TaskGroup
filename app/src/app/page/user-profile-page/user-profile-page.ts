@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -12,7 +12,7 @@ import { TranslationService } from '../../i18n/translation.service';
   templateUrl: './user-profile-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfilePage {
+export class UserProfilePage implements OnDestroy {
   private auth = inject(AuthService);
   private router = inject(Router);
   private nfb = inject(NonNullableFormBuilder);
@@ -22,6 +22,8 @@ export class UserProfilePage {
   readonly loading = signal(false);
   readonly errorMessage = signal<{ key?: string; raw?: string } | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly avatarPreviewUrl = signal<string | null>(null);
+  readonly avatarPendingFile = signal<File | null>(null);
 
   readonly timezones: string[] = (() => {
     const intl = Intl as unknown as { supportedValuesOf?: (key: string) => readonly string[] };
@@ -78,6 +80,10 @@ export class UserProfilePage {
     });
   }
 
+  ngOnDestroy(): void {
+    this.clearAvatarPreview();
+  }
+
   goBack(): void {
     this.router.navigate(['/list']);
   }
@@ -130,6 +136,31 @@ export class UserProfilePage {
     if (!file || this.loading()) {
       return;
     }
+
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
+    const previousPreview = this.avatarPreviewUrl();
+    if (previousPreview && typeof URL !== 'undefined') {
+      URL.revokeObjectURL(previousPreview);
+    }
+
+    if (typeof URL !== 'undefined') {
+      const previewUrl = URL.createObjectURL(file);
+      this.avatarPreviewUrl.set(previewUrl);
+    } else {
+      this.avatarPreviewUrl.set(null);
+    }
+
+    this.avatarPendingFile.set(file);
+  }
+
+  saveAvatar(): void {
+    const file = this.avatarPendingFile();
+    if (!file || this.loading()) {
+      return;
+    }
+
     this.loading.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
@@ -137,6 +168,7 @@ export class UserProfilePage {
     this.auth.uploadAvatar(file).subscribe({
       next: () => {
         this.successMessage.set('profile.update.success');
+        this.clearAvatarPreview();
       },
       error: (error) => {
         console.error('Unable to upload avatar', error);
@@ -147,6 +179,10 @@ export class UserProfilePage {
         this.loading.set(false);
       },
     });
+  }
+
+  cancelAvatarPreview(): void {
+    this.clearAvatarPreview();
   }
 
   startEmailChange(): void {
@@ -223,6 +259,15 @@ export class UserProfilePage {
       }
     }
     return { key: 'profile.update.error' };
+  }
+
+  private clearAvatarPreview(): void {
+    const currentPreview = this.avatarPreviewUrl();
+    if (currentPreview && typeof URL !== 'undefined') {
+      URL.revokeObjectURL(currentPreview);
+    }
+    this.avatarPreviewUrl.set(null);
+    this.avatarPendingFile.set(null);
   }
 
   private static getInitialTimezone(): string {

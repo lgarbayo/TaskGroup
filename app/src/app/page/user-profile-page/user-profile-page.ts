@@ -23,9 +23,42 @@ export class UserProfilePage {
   readonly errorMessage = signal<{ key?: string; raw?: string } | null>(null);
   readonly successMessage = signal<string | null>(null);
 
+  readonly timezones: string[] = (() => {
+    const intl = Intl as unknown as { supportedValuesOf?: (key: string) => readonly string[] };
+    try {
+      if (typeof intl.supportedValuesOf === 'function') {
+        return [...intl.supportedValuesOf('timeZone')].sort();
+      }
+    } catch {
+      // ignore and fall back
+    }
+    return [
+      'UTC',
+      'Europe/Madrid',
+      'Europe/London',
+      'Europe/Paris',
+      'America/New_York',
+      'America/Chicago',
+      'America/Denver',
+      'America/Los_Angeles',
+      'America/Sao_Paulo',
+      'America/Bogota',
+      'America/Mexico_City',
+      'Asia/Tokyo',
+      'Asia/Shanghai',
+      'Asia/Hong_Kong',
+      'Asia/Singapore',
+      'Asia/Kolkata',
+      'Asia/Dubai',
+      'Australia/Sydney',
+      'Pacific/Auckland',
+    ].sort();
+  })();
+
   readonly form = this.nfb.group({
     alias: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
     name: [''],
+    timezone: [UserProfilePage.getInitialTimezone(), [Validators.required]],
   });
 
   constructor() {
@@ -97,6 +130,12 @@ export class UserProfilePage {
       })
       .subscribe({
         next: () => {
+          const tz = value.timezone;
+          if (tz) {
+            if (typeof window !== 'undefined') {
+              window.localStorage?.setItem('taskgroup_timezone', tz);
+            }
+          }
           this.successMessage.set('profile.update.success');
         },
         error: (error) => {
@@ -132,5 +171,20 @@ export class UserProfilePage {
       }
     }
     return { key: 'profile.update.error' };
+  }
+
+  private static getInitialTimezone(): string {
+    let stored: string | null = null;
+    if (typeof window !== 'undefined') {
+      stored = window.localStorage?.getItem('taskgroup_timezone') ?? null;
+    }
+    if (stored) {
+      return stored;
+    }
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'Europe/Madrid';
+    } catch {
+      return 'Europe/Madrid';
+    }
   }
 }

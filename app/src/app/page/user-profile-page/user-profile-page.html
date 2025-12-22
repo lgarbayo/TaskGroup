@@ -46,6 +46,19 @@
               <strong>{{ 'profile.id' | translate }}</strong>
               <span>#{{ currentUser.id }}</span>
             </p>
+
+            <h3 class="subtitle">
+              {{ 'profile.section.preferences' | translate }}
+            </h3>
+
+            <label class="stack-xxs" for="timezone">
+              <span>{{ 'profile.timezone.label' | translate }}</span>
+              <select id="timezone" formControlName="timezone">
+                @for (tz of timezones; track tz) {
+                  <option [value]="tz">{{ tz }}</option>
+                }
+              </select>
+            </label>
           </section>
 
           @if (errorMessage(); as error) {

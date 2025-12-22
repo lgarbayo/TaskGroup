@@ -3,6 +3,8 @@ export interface AuthUser {
   alias: string;
   email: string;
   name?: string | null;
+  emailVerified?: boolean;
+  updatedAt?: string;
 }
 
 export interface AuthResponse {

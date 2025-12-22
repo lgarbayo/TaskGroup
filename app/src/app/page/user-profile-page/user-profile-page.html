@@ -1,102 +1,135 @@
-<section class="stack-md profile-page">
-  <article class="card pad stack-md">
-    <header class="row row-refresh">
-      <div>
-        <h1 class="title">{{ 'profile.title' | translate }}</h1>
-        <p class="muted">{{ 'profile.subtitle' | translate }}</p>
-      </div>
-      <button class="btn ghost sm" type="button" (click)="goBack()">
-        {{ 'profile.back' | translate }}
-      </button>
-    </header>
+<section class="stack-lg contact-layout profile-page">
+  @if (user(); as currentUser) {
+    <div class="profile-grid">
+      <article class="card pad contact-card stack-md">
+        <header class="row row-refresh">
+          <div>
+            <h1 class="title">{{ 'profile.title' | translate }}</h1>
+            <p class="muted">{{ 'profile.subtitle' | translate }}</p>
+          </div>
+          <button class="btn ghost sm" type="button" (click)="goBack()">
+            {{ 'profile.back' | translate }}
+          </button>
+        </header>
 
-    @if (user(); as currentUser) {
-      <form class="stack-md" [formGroup]="form" (ngSubmit)="submit()">
-        <section class="stack-sm" aria-labelledby="profile-account-heading">
-          <h2 class="subtitle" id="profile-account-heading">
-            {{ 'profile.section.account' | translate }}
-          </h2>
+        <form class="stack-md" [formGroup]="form" (ngSubmit)="submit()">
+          <section class="stack-sm" aria-labelledby="profile-account-heading">
+            <h2 class="subtitle" id="profile-account-heading">
+              {{ 'profile.section.account' | translate }}
+            </h2>
 
-          <label class="stack-xxs" for="alias">
-            <span>{{ 'profile.alias' | translate }}</span>
-            <input
-              id="alias"
-              type="text"
-              formControlName="alias"
-              autocomplete="off"
-            />
-            @if (inputInvalid('alias')) {
-              <small class="error">{{ 'auth.error.aliasRequired' | translate }}</small>
-            }
-          </label>
+            <label class="stack-xxs" for="alias">
+              <span>{{ 'profile.alias' | translate }}</span>
+              <input
+                id="alias"
+                type="text"
+                formControlName="alias"
+                autocomplete="off"
+              />
+              @if (inputInvalid('alias')) {
+                <small class="error">{{ 'auth.error.aliasRequired' | translate }}</small>
+              }
+            </label>
 
-          <label class="stack-xxs" for="email">
-            <span>{{ 'profile.email' | translate }}</span>
+            <label class="stack-xxs" for="name">
+              <span>{{ 'profile.name' | translate }}</span>
+              <input
+                id="name"
+                type="text"
+                formControlName="name"
+                autocomplete="off"
+                [placeholder]="'profile.name.empty' | translate"
+              />
+            </label>
+
+            <p class="muted">
+              <strong>{{ 'profile.id' | translate }}</strong>
+              <span>#{{ currentUser.id }}</span>
+            </p>
+          </section>
+
+          @if (errorMessage(); as error) {
+            <p class="error">
+              @if (error.key) {
+                {{ error.key | translate }}
+              } @else if (error.raw) {
+                {{ error.raw }}
+              }
+            </p>
+          }
+          @if (successMessage()) {
+            <p class="success">{{ successMessage() | translate }}</p>
+          }
+
+          <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
+            {{ 'profile.save' | translate }}
+          </button>
+        </form>
+      </article>
+
+      <div class="profile-grid-secondary">
+        <article class="card pad contact-card stack-md">
+          <section class="stack-sm" aria-labelledby="profile-email-heading">
+            <h2 class="subtitle" id="profile-email-heading">
+              {{ 'profile.section.email' | translate }}
+            </h2>
             <p class="muted">
               <strong>{{ currentUser.email }}</strong>
+              @if (currentUser.emailVerified === false) {
+                <span> · {{ 'profile.email.unverified' | translate }}</span>
+              } @else if (currentUser.emailVerified) {
+                <span> · {{ 'profile.email.verified' | translate }}</span>
+              }
             </p>
-          </label>
-
-          <label class="stack-xxs" for="name">
-            <span>{{ 'profile.name' | translate }}</span>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              autocomplete="off"
-              [placeholder]="'profile.name.empty' | translate"
-            />
-          </label>
-
-          <p class="muted">
-            <strong>{{ 'profile.id' | translate }}</strong>
-            <span>#{{ currentUser.id }}</span>
-          </p>
-        </section>
-
-        <section class="stack-sm" aria-labelledby="profile-email-heading">
-          <h2 class="subtitle" id="profile-email-heading">
-            {{ 'profile.section.email' | translate }}
-          </h2>
-          <p class="muted">
-            {{ 'profile.email.helper' | translate }}
-          </p>
-          <button class="btn ghost" type="button" (click)="startEmailChange()">
-            {{ 'profile.email.change' | translate }}
-          </button>
-        </section>
-
-        <section class="stack-sm" aria-labelledby="profile-security-heading">
-          <h2 class="subtitle" id="profile-security-heading">
-            {{ 'profile.section.security' | translate }}
-          </h2>
-          <p class="muted">
-            {{ 'profile.password.helper' | translate }}
-          </p>
-          <button class="btn ghost" type="button" (click)="startPasswordChange()">
-            {{ 'profile.password.change' | translate }}
-          </button>
-        </section>
-
-        @if (errorMessage(); as error) {
-          <p class="error">
-            @if (error.key) {
-              {{ error.key | translate }}
-            } @else if (error.raw) {
-              {{ error.raw }}
+            <p class="muted">
+              {{ 'profile.email.helper' | translate }}
+            </p>
+            @if (currentUser.emailVerified === false) {
+              <button class="btn ghost sm" type="button" (click)="resendEmailVerification()">
+                {{ 'profile.email.resend' | translate }}
+              </button>
             }
-          </p>
-        }
-        @if (successMessage()) {
-          <p class="success">{{ successMessage() | translate }}</p>
-        }
+            <button class="btn ghost" type="button" (click)="startEmailChange()">
+              {{ 'profile.email.change' | translate }}
+            </button>
+          </section>
+        </article>
 
-        <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
-          {{ 'profile.save' | translate }}
+        <article class="card pad contact-card stack-md">
+          <section class="stack-sm" aria-labelledby="profile-security-heading">
+            <h2 class="subtitle" id="profile-security-heading">
+              {{ 'profile.section.security' | translate }}
+            </h2>
+            <p class="muted">
+              {{ 'profile.password.lastUpdated' | translate }}
+              @if (passwordLastUpdatedLabel()) {
+                <strong> {{ passwordLastUpdatedLabel() }}</strong>
+              } @else {
+                <span> {{ 'profile.password.lastUpdated.unknown' | translate }}</span>
+              }
+            </p>
+            <p class="muted">
+              {{ 'profile.password.helper' | translate }}
+            </p>
+            <button class="btn ghost" type="button" (click)="startPasswordChange()">
+              {{ 'profile.password.change' | translate }}
+            </button>
+          </section>
+        </article>
+      </div>
+    </div>
+  } @else {
+    <article class="card pad contact-card stack-md">
+      <header class="row row-refresh">
+        <div>
+          <h1 class="title">{{ 'profile.title' | translate }}</h1>
+          <p class="muted">{{ 'profile.subtitle' | translate }}</p>
+        </div>
+        <button class="btn ghost sm" type="button" (click)="goBack()">
+          {{ 'profile.back' | translate }}
         </button>
-      </form>
-    } @else {
+      </header>
       <p class="note">{{ 'profile.empty' | translate }}</p>
-    }
-  </article>
+    </article>
+  }
 </section>

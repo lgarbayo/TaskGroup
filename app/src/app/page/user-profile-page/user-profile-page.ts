@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { AuthService } from '../../service/auth-service';
+import { TranslationService } from '../../i18n/translation.service';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -15,6 +16,7 @@ export class UserProfilePage {
   private auth = inject(AuthService);
   private router = inject(Router);
   private nfb = inject(NonNullableFormBuilder);
+  private translation = inject(TranslationService);
 
   user = computed(() => this.auth.user());
   readonly loading = signal(false);
@@ -47,6 +49,21 @@ export class UserProfilePage {
     this.router.navigate(['/list']);
   }
 
+  readonly passwordLastUpdatedLabel = computed(() => {
+    const currentUser = this.user();
+    const raw = currentUser?.updatedAt;
+    if (!raw) {
+      return '';
+    }
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+    const lang = this.translation.language();
+    const locale = lang === 'es' ? 'es-ES' : lang === 'gl' ? 'gl-ES' : 'en-US';
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(date);
+  });
+
   startEmailChange(): void {
     // Placeholder para el flujo de cambio de email
     console.info('Email change flow not implemented yet');
@@ -55,6 +72,11 @@ export class UserProfilePage {
   startPasswordChange(): void {
     // Placeholder para el flujo de cambio de contraseña
     console.info('Password change flow not implemented yet');
+  }
+
+  resendEmailVerification(): void {
+    // Placeholder para reenviar correo de verificación
+    console.info('Resend email verification not implemented yet');
   }
 
   submit(): void {

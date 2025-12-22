@@ -9,6 +9,8 @@ class UserModel
         public readonly string $alias,
         public readonly string $email,
         public readonly ?string $name = null,
+        public readonly bool $emailVerified = false,
+        public readonly ?string $updatedAt = null,
     ) {
     }
 }

@@ -7,6 +7,7 @@ import { TranslationService } from './i18n/translation.service';
 import { LanguageCode } from './i18n/translations';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
+import { getAvatarColor, getAvatarInitial } from './model/auth.model';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,8 @@ export class App {
   protected readonly currentUrl = signal(this.router.url);
   protected readonly isLoginRoute = computed(() => this.currentUrl().startsWith('/login'));
   protected readonly isLandingRoute = computed(() => this.currentUrl() === '/' || this.currentUrl() === '');
+  protected readonly avatarInitial = getAvatarInitial;
+  protected readonly avatarColor = getAvatarColor;
 
   constructor() {
     effect(() => {

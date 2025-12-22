@@ -64,12 +64,12 @@
         <button class="pill pill-action header-user-pill" type="button" routerLink="/profile">
           <span
             class="header-user-avatar"
-            [style.background-color]="currentUser.avatarUrl ? 'transparent' : '#0ea5e9'"
+            [style.background-color]="currentUser.avatarUrl ? 'transparent' : avatarColor(currentUser)"
           >
             @if (currentUser.avatarUrl) {
               <img [src]="currentUser.avatarUrl!" alt="" loading="lazy" />
             } @else {
-              <span>{{ (currentUser.name || currentUser.alias || '?').substring(0, 1).toUpperCase() }}</span>
+              <span>{{ avatarInitial(currentUser) }}</span>
             }
           </span>
           <span class="header-user-label">

@@ -27,10 +27,8 @@
                   <img [src]="previewUrl" alt="" loading="lazy" />
                 } @else if (user()?.avatarUrl) {
                   <img [src]="user()?.avatarUrl!" alt="" loading="lazy" />
-                } @else if (avatarInitials()) {
-                  <span>{{ avatarInitials() }}</span>
                 } @else {
-                  <span>?</span>
+                  <span>{{ avatarInitial() }}</span>
                 }
               </div>
               <div class="stack-xxs">

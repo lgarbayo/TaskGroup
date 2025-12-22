@@ -1,6 +1,6 @@
 <section class="stack-md profile-page">
   <article class="card pad stack-md">
-    <div class="row row-refresh">
+    <header class="row row-refresh">
       <div>
         <h1 class="title">{{ 'profile.title' | translate }}</h1>
         <p class="muted">{{ 'profile.subtitle' | translate }}</p>
@@ -8,26 +8,93 @@
       <button class="btn ghost sm" type="button" (click)="goBack()">
         {{ 'profile.back' | translate }}
       </button>
-    </div>
+    </header>
+
     @if (user(); as currentUser) {
-      <ul class="summary-list">
-        <li>
-          <span>{{ 'profile.alias' | translate }}</span>
-          <strong>{{ currentUser.alias }}</strong>
-        </li>
-        <li>
-          <span>{{ 'profile.email' | translate }}</span>
-          <strong>{{ currentUser.email }}</strong>
-        </li>
-        <li>
-          <span>{{ 'profile.name' | translate }}</span>
-          <strong>{{ currentUser.name || ('profile.name.empty' | translate) }}</strong>
-        </li>
-        <li>
-          <span>{{ 'profile.id' | translate }}</span>
-          <strong>#{{ currentUser.id }}</strong>
-        </li>
-      </ul>
+      <form class="stack-md" [formGroup]="form" (ngSubmit)="submit()">
+        <section class="stack-sm" aria-labelledby="profile-account-heading">
+          <h2 class="subtitle" id="profile-account-heading">
+            {{ 'profile.section.account' | translate }}
+          </h2>
+
+          <label class="stack-xxs" for="alias">
+            <span>{{ 'profile.alias' | translate }}</span>
+            <input
+              id="alias"
+              type="text"
+              formControlName="alias"
+              autocomplete="off"
+            />
+            @if (inputInvalid('alias')) {
+              <small class="error">{{ 'auth.error.aliasRequired' | translate }}</small>
+            }
+          </label>
+
+          <label class="stack-xxs" for="email">
+            <span>{{ 'profile.email' | translate }}</span>
+            <p class="muted">
+              <strong>{{ currentUser.email }}</strong>
+            </p>
+          </label>
+
+          <label class="stack-xxs" for="name">
+            <span>{{ 'profile.name' | translate }}</span>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              autocomplete="off"
+              [placeholder]="'profile.name.empty' | translate"
+            />
+          </label>
+
+          <p class="muted">
+            <strong>{{ 'profile.id' | translate }}</strong>
+            <span>#{{ currentUser.id }}</span>
+          </p>
+        </section>
+
+        <section class="stack-sm" aria-labelledby="profile-email-heading">
+          <h2 class="subtitle" id="profile-email-heading">
+            {{ 'profile.section.email' | translate }}
+          </h2>
+          <p class="muted">
+            {{ 'profile.email.helper' | translate }}
+          </p>
+          <button class="btn ghost" type="button" (click)="startEmailChange()">
+            {{ 'profile.email.change' | translate }}
+          </button>
+        </section>
+
+        <section class="stack-sm" aria-labelledby="profile-security-heading">
+          <h2 class="subtitle" id="profile-security-heading">
+            {{ 'profile.section.security' | translate }}
+          </h2>
+          <p class="muted">
+            {{ 'profile.password.helper' | translate }}
+          </p>
+          <button class="btn ghost" type="button" (click)="startPasswordChange()">
+            {{ 'profile.password.change' | translate }}
+          </button>
+        </section>
+
+        @if (errorMessage(); as error) {
+          <p class="error">
+            @if (error.key) {
+              {{ error.key | translate }}
+            } @else if (error.raw) {
+              {{ error.raw }}
+            }
+          </p>
+        }
+        @if (successMessage()) {
+          <p class="success">{{ successMessage() | translate }}</p>
+        }
+
+        <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
+          {{ 'profile.save' | translate }}
+        </button>
+      </form>
     } @else {
       <p class="note">{{ 'profile.empty' | translate }}</p>
     }

@@ -1,7 +1,7 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthResponse, AuthUser, LoginCommand, RegisterCommand } from '../model/auth.model';
+import { AuthResponse, AuthUser, LoginCommand, RegisterCommand, UpdateProfileCommand } from '../model/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +35,12 @@ export class AuthService {
     );
   }
 
+  updateProfile(command: UpdateProfileCommand): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.authUrl}/me`, command).pipe(
+      tap((user) => this.persistUser(user))
+    );
+  }
+
   logout(): void {
     this.tokenSignal.set(null);
     this.userSignal.set(null);
@@ -51,6 +57,11 @@ export class AuthService {
     this.userSignal.set(response.user);
     this.getStorage()?.setItem(this.tokenStorageKey, response.token);
     this.getStorage()?.setItem(this.userStorageKey, JSON.stringify(response.user));
+  }
+
+  private persistUser(user: AuthUser): void {
+    this.userSignal.set(user);
+    this.getStorage()?.setItem(this.userStorageKey, JSON.stringify(user));
   }
 
   private getStoredToken(): string | null {

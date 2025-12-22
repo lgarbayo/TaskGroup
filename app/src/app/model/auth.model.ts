@@ -21,3 +21,8 @@ export interface RegisterCommand {
   password: string;
   name?: string;
 }
+
+export interface UpdateProfileCommand {
+  alias: string;
+  name?: string | null;
+}

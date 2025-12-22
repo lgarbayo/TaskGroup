@@ -5,6 +5,7 @@ namespace App\Rest\Controller;
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Auth\LoginRequest;
 use App\Rest\Command\Auth\RegisterRequest;
+use App\Rest\Command\Auth\UpdateProfileRequest;
 use App\Business\User\Service\UserService;
 use App\Persistence\User\Mapper\UserMapper;
 use Illuminate\Http\Request;
@@ -61,6 +62,22 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         $userModel = UserMapper::toModel($request->user());
+
+        return response()->json($userModel);
+    }
+
+    public function update(UpdateProfileRequest $request)
+    {
+        $data = $request->validated();
+        $userEntity = $request->user();
+
+        $userEntity->fill([
+            'alias' => $data['alias'],
+            'name' => $data['name'] ?? null,
+        ]);
+        $userEntity->save();
+
+        $userModel = UserMapper::toModel($userEntity);
 
         return response()->json($userModel);
     }

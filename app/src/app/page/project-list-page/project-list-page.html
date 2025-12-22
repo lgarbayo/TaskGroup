@@ -1,4 +1,4 @@
-<section class="project-dashboard stack-lg">
+<section class="project-dashboard stack-lg" #projectsAnchor>
   <header class="project-hero card pad">
     <div class="project-hero__content">
       <p class="project-hero__subtitle">{{ 'projects.hero.subtitle' | translate:{ count: activeProjects() } }}</p>
@@ -115,6 +115,10 @@
       </div>
     }
   </article>
+</section>
+
+<section class="project-contact-panel stack-lg" #contactAnchor>
+  <app-contact-page />
 </section>
 
 @if (showCreateModal()) {

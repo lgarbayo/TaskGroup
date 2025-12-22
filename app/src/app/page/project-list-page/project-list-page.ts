@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { ProjectService } from '../../service/project-service';
 import { Project, UpsertProjectCommand } from '../../model/project.model';
 import { RouterLink } from '@angular/router';
@@ -7,6 +7,8 @@ import { AuthService } from '../../service/auth-service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { CoreService } from '../../service/core-service';
 import { TranslationService } from '../../i18n/translation.service';
+import { ContactPage } from '../contact-page/contact-page';
+import { ContactTransitionService } from '../../service/contact-transition.service';
 
 @Component({
   selector: 'app-project-list-page',
@@ -14,23 +16,28 @@ import { TranslationService } from '../../i18n/translation.service';
   imports: [
     RouterLink,
     ProjectForm,
-    TranslatePipe
+    TranslatePipe,
+    ContactPage
 ],
   templateUrl: './project-list-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProjectListPage {
+export class ProjectListPage implements AfterViewInit, OnDestroy {
   private projectService = inject(ProjectService);
   private authService = inject(AuthService);
   protected core = inject(CoreService);
   private translation = inject(TranslationService);
+  private contactTransition = inject(ContactTransitionService);
   @ViewChild(ProjectForm) projectFormComponent?: ProjectForm;
+  @ViewChild('projectsAnchor') projectsAnchor?: ElementRef<HTMLElement>;
+  @ViewChild('contactAnchor') contactAnchor?: ElementRef<HTMLElement>;
 
   projectList = signal<Array<Project>>([]);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   showCreateModal = signal(false);
   private lastUpdatedAt = signal<Date | null>(null);
+  private viewReady = signal(false);
 
   protected readonly activeProjects = computed(() => this.projectList().length);
   protected readonly nextStartLabel = computed(() => {
@@ -45,6 +52,22 @@ export class ProjectListPage {
 
   constructor() {
     effect(() => {
+      if (!this.viewReady()) {
+        return;
+      }
+      const target = this.contactTransition.section();
+      if (!target) {
+        return;
+      }
+      queueMicrotask(() => {
+        const element =
+          target === 'contact' ? this.contactAnchor?.nativeElement : this.projectsAnchor?.nativeElement;
+        element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.contactTransition.clear();
+      });
+    });
+
+    effect(() => {
       const token = this.authService.token();
       if (token) {
         this.loadProjects();
@@ -53,6 +76,10 @@ export class ProjectListPage {
         this.errorMessage.set(null);
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.viewReady.set(true);
   }
 
   loadProjects(): void {
@@ -128,5 +155,10 @@ export class ProjectListPage {
     const lang = this.translation.language();
     const locale = lang === 'es' ? 'es-ES' : lang === 'gl' ? 'gl-ES' : 'en-US';
     return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(value);
+  }
+
+  ngOnDestroy(): void {
+    this.viewReady.set(false);
+    this.contactTransition.clear();
   }
 }

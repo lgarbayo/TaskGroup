@@ -6,8 +6,12 @@
         <span class="brand-title">{{ 'common.appName' | translate }}</span>
       </a>
       <nav class="nav-links">
-        <a class="nav-link" routerLink="/list" routerLinkActive="active">{{ 'projects.list.title' | translate }}</a>
-        <a class="nav-link" routerLink="/contact" routerLinkActive="active">{{ 'header.nav.contact' | translate }}</a>
+        <a class="nav-link" routerLink="/list" routerLinkActive="active" (click)="handleProjectsLink($event)">
+          {{ 'projects.list.title' | translate }}
+        </a>
+        <button class="nav-link" type="button" (click)="handleContactLink($event)">
+          {{ 'header.nav.contact' | translate }}
+        </button>
       </nav>
       <div class="spacer"></div>
       <div class="language-dropdown" [class.open]="languageMenuOpen()" aria-label="{{ 'header.language.label' | translate }}">

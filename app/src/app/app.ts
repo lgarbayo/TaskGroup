@@ -7,6 +7,7 @@ import { TranslationService } from './i18n/translation.service';
 import { LanguageCode } from './i18n/translations';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
+import { ContactTransitionService } from './service/contact-transition.service';
 import { getAvatarColor, getAvatarInitial } from './model/auth.model';
 
 @Component({
@@ -19,6 +20,7 @@ export class App {
   private authService = inject(AuthService);
   private translation = inject(TranslationService);
   private router = inject(Router);
+  private contactTransition = inject(ContactTransitionService);
   protected readonly title = signal('TaskGroup');
   protected readonly theme = signal<'light' | 'dark'>(App.loadTheme());
   protected readonly user = this.authService.user;
@@ -49,6 +51,21 @@ export class App {
         takeUntilDestroyed()
       )
       .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
+  }
+
+  handleProjectsLink(event: Event): void {
+    if (this.currentUrl().startsWith('/list')) {
+      event.preventDefault();
+      this.contactTransition.showProjects();
+    }
+  }
+
+  handleContactLink(event: Event): void {
+    event.preventDefault();
+    this.contactTransition.showContact();
+    if (!this.currentUrl().startsWith('/list')) {
+      this.router.navigate(['/list']);
+    }
   }
 
   toggleTheme(): void {

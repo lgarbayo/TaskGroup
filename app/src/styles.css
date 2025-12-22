@@ -264,6 +264,12 @@ textarea:focus-visible {
   text-decoration: none;
   padding: 10px 16px;
   border-radius: 999px;
+  background: transparent;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -1956,6 +1962,16 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.project-dashboard {
+  scroll-margin-top: 120px;
+  margin-bottom: clamp(220px, 32vh, 420px);
+}
+
+.project-contact-panel {
+  scroll-margin-top: 120px;
+  margin-top: clamp(160px, 24vh, 360px);
 }
 
 .contact-layout {

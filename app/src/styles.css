@@ -1987,6 +1987,51 @@ textarea {
   display: block;
 }
 
+.profile-stats-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.profile-stats-completion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.profile-stats-completion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.profile-stats-progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.3);
+  overflow: hidden;
+}
+
+.profile-stats-progress-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: #22c55e;
+  transition: width 0.2s ease;
+}
+
 .contact-hero-block {
   display: flex;
   flex-direction: column;

@@ -9,6 +9,7 @@ use App\Rest\Command\Auth\UpdateProfileRequest;
 use App\Rest\Command\Auth\UploadAvatarRequest;
 use App\Business\User\Service\UserService;
 use App\Persistence\User\Mapper\UserMapper;
+use App\Persistence\Project\Entity\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -108,5 +109,33 @@ class AuthController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    public function stats(Request $request)
+    {
+        $user = $request->user();
+
+        $from = now()->subDays(30);
+
+        $assigned = Task::query()
+            ->where('assignee_id', $user->id)
+            ->where('created_at', '>=', $from)
+            ->count();
+
+        $done = Task::query()
+            ->where('assignee_id', $user->id)
+            ->where('created_at', '>=', $from)
+            ->where('status', 'done')
+            ->count();
+
+        $pending = $assigned - $done;
+        $completion = $assigned > 0 ? round(($done / $assigned) * 100, 2) : 0.0;
+
+        return response()->json([
+            'assigned' => $assigned,
+            'done' => $done,
+            'pending' => $pending,
+            'completion' => $completion,
+        ]);
     }
 }

@@ -13,6 +13,13 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
+export interface AuthUserStats {
+  assigned: number;
+  done: number;
+  pending: number;
+  completion: number;
+}
+
 export interface LoginCommand {
   email: string;
   password: string;

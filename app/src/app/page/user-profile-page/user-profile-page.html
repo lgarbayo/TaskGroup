@@ -141,6 +141,54 @@
 
       <div class="profile-grid-secondary">
         <article class="card pad contact-card stack-md">
+          <section class="stack-sm" aria-labelledby="profile-stats-heading">
+            <h2 class="subtitle" id="profile-stats-heading">
+              {{ 'profile.stats.title' | translate }}
+            </h2>
+            @if (statsLoading()) {
+              <p class="muted">{{ 'profile.stats.loading' | translate }}</p>
+            } @else if (statsError()) {
+              <p class="error">{{ 'profile.stats.error' | translate }}</p>
+            } @else if (stats(); as userStats) {
+              @if (userStats.assigned === 0) {
+                <p class="muted">{{ 'profile.stats.empty' | translate }}</p>
+              } @else {
+                <div class="profile-stats-completion">
+                  <div class="profile-stats-completion-header">
+                    <span>{{ 'profile.stats.participation' | translate }}</span>
+                    <strong>{{ userStats.completion }}%</strong>
+                  </div>
+                  <div class="profile-stats-progress">
+                    <div
+                      class="profile-stats-progress-bar"
+                      [style.width.%]="userStats.completion"
+                    ></div>
+                  </div>
+                </div>
+                <ul class="profile-stats-list">
+                  <li class="profile-stats-row">
+                    <span>{{ 'profile.stats.assigned' | translate }}</span>
+                    <strong>{{ userStats.assigned }}</strong>
+                  </li>
+                  <li class="profile-stats-row">
+                    <span>{{ 'profile.stats.done' | translate }}</span>
+                    <strong>{{ userStats.done }}</strong>
+                  </li>
+                  <li class="profile-stats-row">
+                    <span>{{ 'profile.stats.pending' | translate }}</span>
+                    <strong>{{ userStats.pending }}</strong>
+                  </li>
+                  <li class="profile-stats-row">
+                    <span>{{ 'profile.stats.participation' | translate }}</span>
+                    <strong>{{ userStats.completion }}%</strong>
+                  </li>
+                </ul>
+              }
+            }
+          </section>
+        </article>
+
+        <article class="card pad contact-card stack-md">
           <section class="stack-sm" aria-labelledby="profile-email-heading">
             <h2 class="subtitle" id="profile-email-heading">
               {{ 'profile.section.email' | translate }}

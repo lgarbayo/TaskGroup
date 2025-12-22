@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { AuthService } from '../../service/auth-service';
 import { TranslationService } from '../../i18n/translation.service';
+import { AuthUserStats } from '../../model/auth.model';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -24,6 +25,9 @@ export class UserProfilePage implements OnDestroy {
   readonly successMessage = signal<string | null>(null);
   readonly avatarPreviewUrl = signal<string | null>(null);
   readonly avatarPendingFile = signal<File | null>(null);
+  readonly stats = signal<AuthUserStats | null>(null);
+  readonly statsLoading = signal(false);
+  readonly statsError = signal<string | null>(null);
 
   readonly timezones: string[] = (() => {
     const intl = Intl as unknown as { supportedValuesOf?: (key: string) => readonly string[] };
@@ -78,6 +82,8 @@ export class UserProfilePage implements OnDestroy {
         this.form.reset();
       }
     });
+
+    this.loadUserStats();
   }
 
   ngOnDestroy(): void {
@@ -268,6 +274,25 @@ export class UserProfilePage implements OnDestroy {
     }
     this.avatarPreviewUrl.set(null);
     this.avatarPendingFile.set(null);
+  }
+
+  private loadUserStats(): void {
+    this.statsLoading.set(true);
+    this.statsError.set(null);
+
+    this.auth.getUserStats().subscribe({
+      next: (stats) => {
+        this.stats.set(stats);
+      },
+      error: (error) => {
+        console.error('Unable to load user stats', error);
+        this.statsError.set('profile.stats.error');
+        this.statsLoading.set(false);
+      },
+      complete: () => {
+        this.statsLoading.set(false);
+      },
+    });
   }
 
   private static getInitialTimezone(): string {

@@ -18,6 +18,7 @@ Route::prefix('auth')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::put('me', [AuthController::class, 'update']);
         Route::post('avatar', [AuthController::class, 'uploadAvatar']);
+        Route::get('stats', [AuthController::class, 'stats']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });

@@ -16,6 +16,7 @@ class UserMapper
             name: $user->name,
             emailVerified: (bool) $user->email_verified_at,
             updatedAt: $user->updated_at?->toIso8601String(),
+            avatarUrl: $user->avatar_url,
         );
     }
 }

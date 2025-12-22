@@ -97,6 +97,58 @@ export class UserProfilePage {
     return new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(date);
   });
 
+  readonly avatarInitials = computed(() => {
+    const currentUser = this.user();
+    const source = currentUser?.name || currentUser?.alias || '';
+    const parts = source.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) {
+      return '';
+    }
+    const first = parts[0]?.[0] ?? '';
+    const second = parts[1]?.[0] ?? '';
+    return (first + second).toUpperCase();
+  });
+
+  readonly avatarColor = computed(() => {
+    const currentUser = this.user();
+    const key = currentUser?.alias || currentUser?.email || '';
+    if (!key) {
+      return '#64748b';
+    }
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash * 31 + key.charCodeAt(i)) | 0;
+    }
+    const colors = ['#0ea5e9', '#22c55e', '#a855f7', '#eab308', '#f97316', '#ec4899', '#38bdf8'];
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  });
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+    if (!file || this.loading()) {
+      return;
+    }
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
+    this.auth.uploadAvatar(file).subscribe({
+      next: () => {
+        this.successMessage.set('profile.update.success');
+      },
+      error: (error) => {
+        console.error('Unable to upload avatar', error);
+        this.errorMessage.set(this.resolveErrorMessage(error));
+        this.loading.set(false);
+      },
+      complete: () => {
+        this.loading.set(false);
+      },
+    });
+  }
+
   startEmailChange(): void {
     // Placeholder para el flujo de cambio de email
     console.info('Email change flow not implemented yet');

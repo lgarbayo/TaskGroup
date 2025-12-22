@@ -1906,19 +1906,55 @@ textarea {
   display: grid;
   gap: 20px;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
-  align-items: flex-start;
+  align-items: stretch;
+  grid-auto-rows: 1fr;
+}
+
+.profile-grid-main {
+  grid-row: span 2;
+}
+
+.profile-grid > .contact-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 900px) {
   .profile-grid {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+
+  .profile-grid-main {
+    grid-row: auto;
   }
 }
 
-.profile-grid-secondary {
+.profile-avatar-row {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  overflow: hidden;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .contact-hero-block {

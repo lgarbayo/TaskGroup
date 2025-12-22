@@ -35,6 +35,14 @@ export class AuthService {
     );
   }
 
+  uploadAvatar(file: File): Observable<AuthUser> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http.post<AuthUser>(`${this.authUrl}/avatar`, formData).pipe(
+      tap((user) => this.persistUser(user))
+    );
+  }
+
   updateProfile(command: UpdateProfileCommand): Observable<AuthUser> {
     return this.http.put<AuthUser>(`${this.authUrl}/me`, command).pipe(
       tap((user) => this.persistUser(user))

@@ -18,6 +18,33 @@
               {{ 'profile.section.account' | translate }}
             </h2>
 
+            <div class="profile-avatar-row">
+              <div
+                class="profile-avatar"
+                [style.background-color]="avatarColor()"
+              >
+                @if (user()?.avatarUrl) {
+                  <img [src]="user()?.avatarUrl!" alt="" loading="lazy" />
+                } @else if (avatarInitials()) {
+                  <span>{{ avatarInitials() }}</span>
+                } @else {
+                  <span>?</span>
+                }
+              </div>
+              <div class="stack-xxs">
+                <p class="muted">{{ 'profile.avatar.label' | translate }}</p>
+                <label class="stack-xxs" for="avatarFile">
+                  <span class="sr-only">{{ 'profile.avatar.label' | translate }}</span>
+                  <input
+                    id="avatarFile"
+                    type="file"
+                    accept="image/*"
+                    (change)="onAvatarSelected($event)"
+                  />
+                </label>
+              </div>
+            </div>
+
             <label class="stack-xxs" for="alias">
               <span>{{ 'profile.alias' | translate }}</span>
               <input

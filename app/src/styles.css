@@ -676,7 +676,6 @@ main.container::before {
   filter: blur(90px);
   opacity: 0.6;
   pointer-events: none;
-  animation: contactMesh 16s ease-in-out infinite alternate;
 }
 
 main.container::after {
@@ -688,7 +687,6 @@ main.container::after {
   opacity: 0.4;
   mix-blend-mode: screen;
   pointer-events: none;
-  animation: contactGlow 20s linear infinite;
 }
 
 main.container.container--landing::before,

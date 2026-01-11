@@ -106,6 +106,10 @@ export class App {
   }
 
   private static loadTheme(): 'light' | 'dark' {
+    const systemTheme = App.getSystemTheme();
+    if (systemTheme) {
+      return systemTheme;
+    }
     try {
       const value = localStorage.getItem('app-theme');
       if (value === 'dark' || value === 'light') {
@@ -115,5 +119,18 @@ export class App {
       // ignore
     }
     return 'light';
+  }
+
+  private static getSystemTheme(): 'light' | 'dark' | null {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return null;
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return 'light';
+    }
+    return null;
   }
 }

@@ -8,7 +8,7 @@ export class TranslationService {
   readonly supportedLanguages = SUPPORTED_LANGUAGES;
   private readonly storageKey = 'taskgroup_language';
   private readonly languageSignal: WritableSignal<LanguageCode> = signal<LanguageCode>(
-    this.getStoredLanguage()
+    this.getInitialLanguage()
   );
 
   constructor() {}
@@ -43,7 +43,11 @@ export class TranslationService {
     }, template);
   }
 
-  private getStoredLanguage(): LanguageCode {
+  private getInitialLanguage(): LanguageCode {
+    const browserLanguage = this.getBrowserLanguage();
+    if (browserLanguage) {
+      return browserLanguage;
+    }
     const storageValue = this.getStorage()?.getItem(this.storageKey);
     if (storageValue && TRANSLATIONS[storageValue as LanguageCode]) {
       return storageValue as LanguageCode;
@@ -53,5 +57,27 @@ export class TranslationService {
 
   private getStorage(): Storage | null {
     return typeof window === 'undefined' ? null : window.localStorage;
+  }
+
+  private getBrowserLanguage(): LanguageCode | null {
+    if (typeof navigator === 'undefined') {
+      return null;
+    }
+    const supported = new Set(this.supportedLanguages.map((lang) => lang.code));
+    const candidates = navigator.languages && navigator.languages.length
+      ? navigator.languages
+      : [navigator.language];
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+      const normalized = candidate.toLowerCase();
+      const base = normalized.split('-')[0] as LanguageCode;
+      if (supported.has(normalized as LanguageCode)) {
+        return normalized as LanguageCode;
+      }
+      if (supported.has(base)) {
+        return base;
+      }
+    }
+    return null;
   }
 }

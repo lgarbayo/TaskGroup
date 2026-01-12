@@ -102,7 +102,8 @@ class ProjectFacadeImpl implements ProjectFacade
         $tasks = $project->tasks ?? [];
         $total = count($tasks);
         $done = collect($tasks)->filter(fn ($t) => $t->status === 'done')->count();
-        $pending = $total - $done;
+        $inProgress = collect($tasks)->filter(fn ($t) => $t->status === 'in_progress')->count();
+        $pending = collect($tasks)->filter(fn ($t) => $t->status === 'pending')->count();
         $progress = $total > 0 ? round(($done / $total) * 100, 2) : 0;
 
         return [
@@ -111,6 +112,7 @@ class ProjectFacadeImpl implements ProjectFacade
                 'total' => $total,
                 'done' => $done,
                 'pending' => $pending,
+                'in_progress' => $inProgress,
                 'progress' => $progress,
             ],
             'milestones' => $project->milestones ?? [],

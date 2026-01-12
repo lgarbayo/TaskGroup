@@ -25,7 +25,7 @@
           </div>
         </div>
         <p class="muted">{{ projectDetail.description || ('project.summary.description' | translate) }}</p>
-        <div class="summary-grid">
+        <div class="summary-grid summary-grid--stats">
           <div>
             <p class="summary-label">{{ 'project.summary.start' | translate }}</p>
             <p class="summary-value">{{ core.formatDateLabel(projectDetail.startDate) }}</p>
@@ -45,19 +45,16 @@
             <p class="stat-value">{{ taskSummary().pending }}</p>
           </div>
           <div class="stat">
-            <p class="stat-label">{{ 'project.tasks.doneCount' | translate }}</p>
-            <p class="stat-value">{{ taskSummary().done }}</p>
+            <p class="stat-label">{{ 'project.tasks.inProgressCount' | translate }}</p>
+            <p class="stat-value">{{ taskSummary().inProgress }}</p>
           </div>
           <div class="stat">
-            <p class="stat-label">{{ 'project.tasks.progress' | translate }}</p>
-            <p class="stat-value">{{ taskSummary().progress }}%</p>
+            <p class="stat-label">{{ 'project.tasks.doneCount' | translate }}</p>
+            <p class="stat-value">{{ taskSummary().done }}</p>
           </div>
         </div>
         @if (currentUserId() === projectDetail.ownerId) {
           <div class="project-actions-float">
-            <button class="btn primary sm" type="button" (click)="openMemberModal()">
-              {{ 'project.members.add' | translate }}
-            </button>
             <button
               class="btn ghost icon-only sm"
               type="button"
@@ -155,6 +152,52 @@
       (updateTaskTimeline)="onTaskTimelineChange($event)"
     ></app-task-gantt>
 
+    @if (showMemberListModal() && currentUserId() === projectDetail.ownerId) {
+      <div class="modal-backdrop" (click)="closeMemberListModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="title">{{ 'project.members.manage' | translate }}</h2>
+            <div class="row">
+              <button class="btn primary icon-only" type="button" (click)="openMemberModal()" aria-label="{{ 'project.members.add' | translate }}">
+                <img src="/add.svg" alt="" width="22" height="22" />
+              </button>
+              <button class="btn ghost" type="button" (click)="closeMemberListModal()">
+                {{ 'common.cancel' | translate }}
+              </button>
+            </div>
+          </div>
+          <div class="modal-body">
+            @if (projectDetail.members && projectDetail.members.length > 0) {
+              <ul class="member-list">
+                @for (member of projectDetail.members; track trackMember($index, member); let idx = $index) {
+                <li class="animated-item" [style.animationDelay]="(idx * 80) + 'ms'">
+                  <div>
+                    <strong>{{ member.alias }}</strong>
+                    <p class="note">{{ member.email }}</p>
+                    @if (member.role) {
+                      <p class="note">{{ roleLabel(member.role) | translate }}</p>
+                    }
+                  </div>
+                  <div class="row member-actions">
+                    @if (member.id === projectDetail.ownerId) {
+                      <span class="pill">{{ 'project.members.owner' | translate }}</span>
+                    } @else {
+                      <button class="btn danger icon-only" type="button" (click)="removeMember(member.id)" aria-label="{{ 'project.members.remove' | translate }}">
+                        <img src="/trash.svg" alt="" width="20" height="20" />
+                      </button>
+                    }
+                  </div>
+                </li>
+              }
+              </ul>
+            } @else {
+              <p class="note">{{ 'project.members.empty' | translate }}</p>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
     @if (showMemberModal() && currentUserId() === projectDetail.ownerId) {
       <div class="modal-backdrop" (click)="closeMemberModal()">
         <div class="modal" (click)="$event.stopPropagation()">
@@ -181,47 +224,6 @@
                 <p class="success">{{ success | translate }}</p>
               }
             </form>
-          </div>
-        </div>
-      </div>
-    }
-
-    @if (showMemberListModal() && currentUserId() === projectDetail.ownerId) {
-      <div class="modal-backdrop" (click)="closeMemberListModal()">
-        <div class="modal" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h2 class="title">{{ 'project.members.manage' | translate }}</h2>
-            <button class="btn ghost" type="button" (click)="closeMemberListModal()">
-              {{ 'common.cancel' | translate }}
-            </button>
-          </div>
-          <div class="modal-body">
-            @if (projectDetail.members && projectDetail.members.length > 0) {
-              <ul class="member-list">
-                @for (member of projectDetail.members; track trackMember($index, member); let idx = $index) {
-                <li class="animated-item" [style.animationDelay]="(idx * 80) + 'ms'">
-                  <div>
-                    <strong>{{ member.alias }}</strong>
-                    <p class="note">{{ member.email }}</p>
-                    @if (member.role) {
-                      <p class="note">{{ member.role }}</p>
-                    }
-                  </div>
-                  <div class="row">
-                    @if (member.id === projectDetail.ownerId) {
-                      <span class="pill">{{ 'project.members.owner' | translate }}</span>
-                    } @else {
-                      <button class="btn danger icon-only" type="button" (click)="removeMember(member.id)" aria-label="{{ 'project.members.remove' | translate }}">
-                        <img src="/trash.svg" alt="" width="20" height="20" />
-                      </button>
-                    }
-                  </div>
-                </li>
-              }
-              </ul>
-            } @else {
-              <p class="note">{{ 'project.members.empty' | translate }}</p>
-            }
           </div>
         </div>
       </div>

@@ -87,7 +87,8 @@ export class ProjectDetailPage {
     email: ['', [Validators.required, Validators.email]],
   });
 
-  pendingTasks = computed(() => this.tasks().filter((task) => task.status !== 'done'));
+  pendingTasks = computed(() => this.tasks().filter((task) => task.status === 'pending'));
+  inProgressTasks = computed(() => this.tasks().filter((task) => task.status === 'in_progress'));
   doneTasks = computed(() => this.tasks().filter((task) => task.status === 'done'));
   currentUserId = computed(() => this.authService.user()?.id ?? null);
   timelineRange = computed(() => {
@@ -106,9 +107,9 @@ export class ProjectDetailPage {
     const all = this.tasks();
     const total = all.length;
     const done = all.filter((task) => task.status === 'done').length;
-    const pending = total - done;
-    const progress = total > 0 ? Math.round((done / total) * 100) : 0;
-    return { total, done, pending, progress };
+    const inProgress = all.filter((task) => task.status === 'in_progress').length;
+    const pending = all.filter((task) => task.status === 'pending').length;
+    return { total, done, pending, inProgress };
   });
 
   analysisLoading = signal(false);
@@ -496,6 +497,20 @@ export class ProjectDetailPage {
 
   trackMember(_: number, member: { id: number }): number {
     return member.id;
+  }
+
+  roleLabel(role?: string | null): string {
+    if (!role) {
+      return '';
+    }
+    const normalized = role.toLowerCase();
+    if (normalized === 'owner') {
+      return 'project.members.role.owner';
+    }
+    if (normalized === 'member') {
+      return 'project.members.role.member';
+    }
+    return role;
   }
 
   private linearIndex(date: DateType): number {

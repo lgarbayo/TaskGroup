@@ -31,6 +31,7 @@ export class TaskForm implements OnDestroy {
   private formChanges?: Subscription;
   readonly statuses: Array<{ value: TaskStatus; label: string }> = [
     { value: 'pending', label: 'form.task.status.pending' },
+    { value: 'in_progress', label: 'form.task.status.in_progress' },
     { value: 'done', label: 'form.task.status.done' },
   ];
   readonly priorities: Array<{ value: TaskPriority; label: string }> = [

@@ -16,7 +16,7 @@ class UpsertTaskRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:180'],
             'description' => ['nullable', 'string'],
-            'status' => ['sometimes', 'in:pending,done'],
+            'status' => ['sometimes', 'in:pending,in_progress,done'],
             'priority' => ['sometimes', 'in:low,medium,high'],
             'duration_weeks' => ['required', 'integer', 'min:1'],
             'start_date.year' => ['required', 'integer', 'min:0', 'max:9999'],

@@ -15,7 +15,7 @@ export interface Task {
   milestone?: TaskMilestone | null;
 }
 
-export type TaskStatus = 'pending' | 'done';
+export type TaskStatus = 'pending' | 'in_progress' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface TaskAssignee {

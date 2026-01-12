@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('start_week'); // 0-3
             $table->unsignedSmallInteger('start_year');
             $table->unsignedSmallInteger('duration_weeks');
-            $table->enum('status', ['pending', 'done'])->default('pending');
+            $table->enum('status', ['pending', 'in_progress', 'done'])->default('pending');
             $table->timestamps();
 
             $table->index(['project_id', 'status']);

@@ -51,7 +51,7 @@
         <option [value]="member.id">{{ member.alias }} · {{ member.email }}</option>
       }
     </select>
-    @if (form.controls.assigneeIds.value?.length) {
+    @if (form.controls.assigneeIds.value.length) {
       <div class="selected-assignees">
         @for (assigneeId of form.controls.assigneeIds.value; track assigneeId) {
           <span class="pill muted">

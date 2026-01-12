@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -14,7 +14,7 @@ import { ToastService } from '../../service/toast-service';
   templateUrl: './user-profile-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfilePage implements OnDestroy {
+export class UserProfilePage {
   private auth = inject(AuthService);
   private router = inject(Router);
   private nfb = inject(NonNullableFormBuilder);
@@ -25,8 +25,6 @@ export class UserProfilePage implements OnDestroy {
   readonly loading = signal(false);
   readonly errorMessage = signal<{ key?: string; raw?: string } | null>(null);
   readonly successMessage = signal<string | null>(null);
-  readonly avatarPreviewUrl = signal<string | null>(null);
-  readonly avatarPendingFile = signal<File | null>(null);
   readonly stats = signal<AuthUserStats | null>(null);
   readonly statsLoading = signal(false);
   readonly statsError = signal<string | null>(null);
@@ -106,9 +104,6 @@ export class UserProfilePage implements OnDestroy {
     this.loadUserStats();
   }
 
-  ngOnDestroy(): void {
-    this.clearAvatarPreview();
-  }
 
   goBack(): void {
     this.router.navigate(['/list']);
@@ -132,61 +127,6 @@ export class UserProfilePage implements OnDestroy {
   readonly avatarInitial = computed(() => getAvatarInitial(this.user()));
 
   readonly avatarColor = computed(() => getAvatarColor(this.user()));
-
-  onAvatarSelected(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    const file = input?.files?.[0];
-    if (!file || this.loading()) {
-      return;
-    }
-
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
-
-    const previousPreview = this.avatarPreviewUrl();
-    if (previousPreview && typeof URL !== 'undefined') {
-      URL.revokeObjectURL(previousPreview);
-    }
-
-    if (typeof URL !== 'undefined') {
-      const previewUrl = URL.createObjectURL(file);
-      this.avatarPreviewUrl.set(previewUrl);
-    } else {
-      this.avatarPreviewUrl.set(null);
-    }
-
-    this.avatarPendingFile.set(file);
-  }
-
-  saveAvatar(): void {
-    const file = this.avatarPendingFile();
-    if (!file || this.loading()) {
-      return;
-    }
-
-    this.loading.set(true);
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
-
-    this.auth.uploadAvatar(file).subscribe({
-      next: () => {
-        this.successMessage.set('profile.update.success');
-        this.clearAvatarPreview();
-      },
-      error: (error) => {
-        console.error('Unable to upload avatar', error);
-        this.errorMessage.set(this.resolveErrorMessage(error));
-        this.loading.set(false);
-      },
-      complete: () => {
-        this.loading.set(false);
-      },
-    });
-  }
-
-  cancelAvatarPreview(): void {
-    this.clearAvatarPreview();
-  }
 
   startEmailChange(): void {
     const currentEmail = this.user()?.email ?? '';
@@ -367,15 +307,6 @@ export class UserProfilePage implements OnDestroy {
       }
     }
     return { key: fallbackKey };
-  }
-
-  private clearAvatarPreview(): void {
-    const currentPreview = this.avatarPreviewUrl();
-    if (currentPreview && typeof URL !== 'undefined') {
-      URL.revokeObjectURL(currentPreview);
-    }
-    this.avatarPreviewUrl.set(null);
-    this.avatarPendingFile.set(null);
   }
 
   private loadUserStats(): void {

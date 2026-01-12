@@ -551,16 +551,29 @@ export class ProjectDetailPage {
     if (!projectUuid) {
       return;
     }
+    this.analysisError.set(null);
+    this.analysisLoading.set(true);
     this.loadAnalysis(projectUuid, () => {
       const milestone = this.projectAnalysis()
         ?.milestoneList.find((m) => m.taskList.some((task) => task.taskUuid === taskUuid));
       const task = milestone?.taskList.find((item) => item.taskUuid === taskUuid) ?? null;
       if (!task) {
-        this.analysisError.set('project.analysis.taskMissing');
+        const fallbackTask = this.tasks().find((item) => item.uuid === taskUuid);
+        if (!fallbackTask) {
+          this.analysisError.set('project.analysis.taskMissing');
+          this.analysisLoading.set(false);
+          this.showTaskAnalysisModal.set(true);
+          return;
+        }
+        this.selectedMilestoneAnalysis.set(null);
+        this.selectedTaskAnalysis.set(this.buildTaskAnalysis(fallbackTask));
+        this.analysisLoading.set(false);
+        this.showTaskAnalysisModal.set(true);
         return;
       }
       this.selectedMilestoneAnalysis.set(milestone ?? null);
       this.selectedTaskAnalysis.set(task);
+      this.analysisLoading.set(false);
       this.showTaskAnalysisModal.set(true);
     });
   }
@@ -733,6 +746,41 @@ export class ProjectDetailPage {
     const month = value.getMonth();
     const week = Math.min(Math.floor((value.getDate() - 1) / 7), 3);
     return { year, month, week };
+  }
+
+  private buildTaskAnalysis(task: Task): TaskAnalysis {
+    const now = new Date();
+    const initialCompletion = this.taskCompletionAt(task, now);
+    const endCompletion = this.taskCompletionAt(task, this.taskEndDate(task));
+    return {
+      taskUuid: task.uuid,
+      taskTitle: task.title,
+      initialCompletion,
+      endCompletion,
+    };
+  }
+
+  private taskCompletionAt(task: Task, date: Date): number {
+    const start = this.toDate(task.startDate);
+    const end = this.taskEndDate(task);
+    if (date < start) {
+      return 0;
+    }
+    if (date >= end) {
+      return 1;
+    }
+    const totalDays = Math.max(1, Math.floor((end.getTime() - start.getTime()) / 86400000));
+    const elapsedDays = Math.max(0, Math.floor((date.getTime() - start.getTime()) / 86400000));
+    const completion = elapsedDays / totalDays;
+    return Math.max(0, Math.min(1, completion));
+  }
+
+  private taskEndDate(task: Task): Date {
+    const start = this.toDate(task.startDate);
+    const weeks = Math.max(task.durationWeeks ?? 1, 1);
+    const end = new Date(start);
+    end.setDate(end.getDate() + weeks * 7);
+    return end;
   }
 
   private loadProject(projectUuid: string): void {

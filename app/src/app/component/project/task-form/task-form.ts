@@ -147,8 +147,8 @@ export class TaskForm implements OnDestroy {
     if (milestoneId) {
       const milestone = this.milestones().find((m) => m.uuid === milestoneId);
       if (milestone) {
-        const milestoneEnd = this.linearIndex(milestone.date);
-        if (taskEnd > milestoneEnd) {
+        const milestoneStart = this.linearIndex(milestone.date);
+        if (taskStart < milestoneStart) {
           errors = { ...(errors ?? {}), milestoneRange: true };
           valid = false;
         }

@@ -223,14 +223,13 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="memberForm" (ngSubmit)="addMember()" class="member-form">
-          <label>{{ 'project.members.form.email' | translate }} *</label>
+          <label>{{ 'project.members.form.email' | translate }}</label>
           <div class="member-form-controls">
             <input type="email" formControlName="email" placeholder="person@example.com" />
             <button class="btn primary" type="submit">
               {{ 'project.members.form.submit' | translate }}
             </button>
           </div>
-          <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
           @if (memberError(); as error) {
           <p class="error">{{ error | translate }}</p>
           }

@@ -42,6 +42,12 @@ export interface UpdateEmailCommand {
   email: string;
 }
 
+export interface UpdatePasswordCommand {
+  currentPassword: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
 const FALLBACK_COLOR = '#2563eb';
 const AVATAR_COLORS = ['#2563eb'];
 

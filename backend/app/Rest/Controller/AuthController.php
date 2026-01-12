@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Rest\Command\Auth\LoginRequest;
 use App\Rest\Command\Auth\RegisterRequest;
 use App\Rest\Command\Auth\UpdateEmailRequest;
+use App\Rest\Command\Auth\UpdatePasswordRequest;
 use App\Rest\Command\Auth\UpdateProfileRequest;
 use App\Rest\Command\Auth\UploadAvatarRequest;
 use App\Business\User\Service\UserService;
@@ -112,6 +113,25 @@ class AuthController extends Controller
 
         $path = $file->store('avatars', 'public');
         $userEntity->avatar_url = Storage::disk('public')->url($path);
+        $userEntity->save();
+
+        $userModel = UserMapper::toModel($userEntity);
+
+        return response()->json($userModel);
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $data = $request->validated();
+        $userEntity = $request->user();
+
+        if (! Hash::check($data['current_password'], $userEntity->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['La contraseña actual no es correcta.'],
+            ]);
+        }
+
+        $userEntity->password = Hash::make($data['password']);
         $userEntity->save();
 
         $userModel = UserMapper::toModel($userEntity);

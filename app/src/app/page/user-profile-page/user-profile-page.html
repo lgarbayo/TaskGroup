@@ -53,7 +53,7 @@
           </div>
 
           <label class="stack-xxs" for="alias">
-            <span>{{ 'profile.alias' | translate }} *</span>
+            <span>{{ 'profile.alias' | translate }}</span>
             <input id="alias" type="text" formControlName="alias" autocomplete="off" />
             @if (inputInvalid('alias')) {
             <small class="error">{{ 'auth.error.aliasRequired' | translate }}</small>
@@ -76,7 +76,7 @@
           </h3>
 
           <label class="stack-xxs" for="timezone">
-            <span>{{ 'profile.timezone.label' | translate }} *</span>
+            <span>{{ 'profile.timezone.label' | translate }}</span>
             <select id="timezone" formControlName="timezone">
               @for (tz of timezones; track tz) {
               <option [value]="tz">{{ tz }}</option>
@@ -98,7 +98,6 @@
         <p class="success">{{ successMessage() | translate }}</p>
         }
 
-        <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
         <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
           {{ 'profile.save' | translate }}
         </button>
@@ -229,7 +228,7 @@
         <form class="stack-md" [formGroup]="emailForm" (ngSubmit)="submitEmailChange()">
           <p class="muted">{{ 'profile.email.modal.helper' | translate }}</p>
           <label class="stack-xxs" for="profile-email-input">
-            <span>{{ 'profile.email.modal.label' | translate }} *</span>
+            <span>{{ 'profile.email.modal.label' | translate }}</span>
             <input id="profile-email-input" type="email" formControlName="email" autocomplete="email"
               [placeholder]="'auth.placeholder.email' | translate" />
             @if (emailInputInvalid()) {
@@ -255,6 +254,75 @@
               {{ 'profile.email.modal.submit' | translate }}
             </button>
             <button class="btn ghost" type="button" (click)="closeEmailModal()" [disabled]="emailLoading()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  }
+
+  @if (passwordModalOpen()) {
+  <div class="modal-backdrop" (click)="closePasswordModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">{{ 'profile.password.modal.title' | translate }}</h3>
+        <button class="btn ghost sm" type="button" (click)="closePasswordModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="stack-md" [formGroup]="passwordForm" (ngSubmit)="submitPasswordChange()">
+          <p class="muted">{{ 'profile.password.modal.helper' | translate }}</p>
+          <label class="stack-xxs" for="profile-current-password">
+            <span>{{ 'profile.password.modal.current' | translate }}</span>
+            <input id="profile-current-password" type="password" formControlName="currentPassword"
+              autocomplete="current-password" />
+            @if (passwordInputInvalid('currentPassword')) {
+            <small class="error">{{ 'profile.password.modal.current.error' | translate }}</small>
+            }
+          </label>
+          <label class="stack-xxs" for="profile-new-password">
+            <span>{{ 'profile.password.modal.new' | translate }}</span>
+            <input id="profile-new-password" type="password" formControlName="password" autocomplete="new-password" />
+            @if (passwordInputInvalid('password')) {
+            <small class="error">{{ 'profile.password.modal.new.error' | translate }}</small>
+            }
+          </label>
+          <label class="stack-xxs" for="profile-confirm-password">
+            <span>{{ 'profile.password.modal.confirm' | translate }}</span>
+            <input id="profile-confirm-password" type="password" formControlName="passwordConfirmation"
+              autocomplete="new-password" />
+            @if (passwordInputInvalid('passwordConfirmation')) {
+            <small class="error">
+              @if (passwordForm.controls.passwordConfirmation.errors?.['mismatch']) {
+              {{ 'profile.password.modal.confirm.mismatch' | translate }}
+              } @else {
+              {{ 'profile.password.modal.confirm.error' | translate }}
+              }
+            </small>
+            }
+          </label>
+
+          @if (passwordError(); as error) {
+          <p class="error">
+            @if (error.key) {
+            {{ error.key | translate }}
+            } @else if (error.raw) {
+            {{ error.raw }}
+            }
+          </p>
+          }
+          @if (passwordSuccess()) {
+          <p class="success">{{ passwordSuccess() | translate }}</p>
+          }
+
+          <div class="row">
+            <button class="btn primary" type="submit" [disabled]="passwordForm.invalid || passwordLoading()">
+              {{ 'profile.password.modal.submit' | translate }}
+            </button>
+            <button class="btn ghost" type="button" (click)="closePasswordModal()" [disabled]="passwordLoading()">
               {{ 'common.cancel' | translate }}
             </button>
           </div>

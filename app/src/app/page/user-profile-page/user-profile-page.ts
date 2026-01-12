@@ -34,6 +34,10 @@ export class UserProfilePage implements OnDestroy {
   readonly emailLoading = signal(false);
   readonly emailError = signal<{ key?: string; raw?: string } | null>(null);
   readonly emailSuccess = signal<string | null>(null);
+  readonly passwordModalOpen = signal(false);
+  readonly passwordLoading = signal(false);
+  readonly passwordError = signal<{ key?: string; raw?: string } | null>(null);
+  readonly passwordSuccess = signal<string | null>(null);
 
   readonly timezones: string[] = (() => {
     const intl = Intl as unknown as { supportedValuesOf?: (key: string) => readonly string[] };
@@ -75,6 +79,12 @@ export class UserProfilePage implements OnDestroy {
 
   readonly emailForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
+  });
+
+  readonly passwordForm = this.nfb.group({
+    currentPassword: ['', [Validators.required, Validators.minLength(8)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]],
   });
 
   constructor() {
@@ -187,13 +197,61 @@ export class UserProfilePage implements OnDestroy {
   }
 
   startPasswordChange(): void {
-    // Placeholder para el flujo de cambio de contraseña
-    console.info('Password change flow not implemented yet');
+    this.passwordForm.reset({
+      currentPassword: '',
+      password: '',
+      passwordConfirmation: '',
+    });
+    this.passwordError.set(null);
+    this.passwordSuccess.set(null);
+    this.passwordModalOpen.set(true);
   }
 
   resendEmailVerification(): void {
     // Placeholder para reenviar correo de verificación
     console.info('Resend email verification not implemented yet');
+  }
+
+  closePasswordModal(): void {
+    if (this.passwordLoading()) {
+      return;
+    }
+    this.passwordModalOpen.set(false);
+    this.passwordError.set(null);
+    this.passwordSuccess.set(null);
+  }
+
+  submitPasswordChange(): void {
+    if (this.passwordForm.invalid || this.passwordLoading()) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+    const value = this.passwordForm.getRawValue();
+    if (value.password !== value.passwordConfirmation) {
+      this.passwordForm.controls.passwordConfirmation.setErrors({ mismatch: true });
+      this.passwordForm.controls.passwordConfirmation.markAsTouched();
+      return;
+    }
+
+    this.passwordLoading.set(true);
+    this.passwordError.set(null);
+    this.passwordSuccess.set(null);
+
+    this.auth.updatePassword(value).subscribe({
+      next: () => {
+        this.passwordSuccess.set('profile.password.update.success');
+        this.passwordModalOpen.set(false);
+        this.toast.showSuccess('profile.password.update.success');
+      },
+      error: (error) => {
+        console.error('Unable to update password', error);
+        this.passwordError.set(this.resolveErrorMessage(error, 'profile.password.update.error'));
+        this.passwordLoading.set(false);
+      },
+      complete: () => {
+        this.passwordLoading.set(false);
+      },
+    });
   }
 
   closeEmailModal(): void {
@@ -284,6 +342,11 @@ export class UserProfilePage implements OnDestroy {
 
   emailInputInvalid(): boolean {
     const control = this.emailForm.controls.email;
+    return control.invalid && control.touched;
+  }
+
+  passwordInputInvalid(controlName: keyof typeof this.passwordForm.controls): boolean {
+    const control = this.passwordForm.controls[controlName];
     return control.invalid && control.touched;
   }
 

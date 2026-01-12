@@ -163,6 +163,6 @@ export class TaskForm implements OnDestroy {
   }
 
   private linearIndex(date: DateType): number {
-    return date.year * 48 + date.month * 4 + date.week;
+    return Number(date.year) * 48 + Number(date.month) * 4 + Number(date.week ?? 0);
   }
 }

@@ -576,7 +576,8 @@ body.auth-view main.container {
 }
 :root[data-theme='dark'] img[src="/add.svg"],
 :root[data-theme='dark'] img[src="/edit.svg"],
-:root[data-theme='dark'] img[src="/trash.svg"] {
+:root[data-theme='dark'] img[src="/trash.svg"],
+:root[data-theme='dark'] img[src="/eye-open.svg"] {
   filter: invert(1);
 }
 
@@ -1406,7 +1407,14 @@ textarea {
 }
 
 .col-title {
-  width: 160px;
+  width: 100px;
+}
+
+.task-table td:first-child strong {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  display: block;
 }
 
 .col-duration {
@@ -2113,6 +2121,21 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.task-view {
+  display: grid;
+  gap: 12px;
+}
+
+.task-view-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.task-view-value {
+  margin: 0;
 }
 
 /* Helpers */

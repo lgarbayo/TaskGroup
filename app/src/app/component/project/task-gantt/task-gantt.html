@@ -132,6 +132,14 @@
                 <button
                   class="btn ghost icon-only"
                   type="button"
+                  (click)="openTaskView.emit(task)"
+                  aria-label="{{ 'project.tasks.view' | translate }}"
+                >
+                  <img src="/eye-open.svg" alt="" width="20" height="20" />
+                </button>
+                <button
+                  class="btn ghost icon-only"
+                  type="button"
                   (click)="editTask.emit(task)"
                   aria-label="{{ 'project.tasks.edit' | translate }}"
                 >

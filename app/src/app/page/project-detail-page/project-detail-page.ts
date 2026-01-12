@@ -80,6 +80,7 @@ export class ProjectDetailPage {
   memberSuccess = signal<string | null>(null);
   showMeta = signal(false);
   showProjectModal = signal(false);
+  showProjectViewModal = signal(false);
   showMilestoneModal = signal(false);
   showTaskModal = signal(false);
   showMemberModal = signal(false);
@@ -88,6 +89,8 @@ export class ProjectDetailPage {
   showTaskAnalysisModal = signal(false);
   showMemberListModal = signal(false);
   showTaskCommentsModal = signal(false);
+  showTaskViewModal = signal(false);
+  showMilestoneViewModal = signal(false);
 
   memberForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -128,6 +131,8 @@ export class ProjectDetailPage {
   selectedMilestoneAnalysis = signal<MilestoneAnalysis | null>(null);
   selectedTaskAnalysis = signal<TaskAnalysis | null>(null);
   selectedTaskForComments = signal<Task | null>(null);
+  selectedTaskForView = signal<Task | null>(null);
+  selectedMilestoneForView = signal<Milestone | null>(null);
   taskComments = signal<Array<TaskComment>>([]);
   commentLoading = signal(false);
   commentError = signal<string | null>(null);
@@ -170,6 +175,14 @@ export class ProjectDetailPage {
 
   closeProjectModal(): void {
     this.showProjectModal.set(false);
+  }
+
+  openProjectView(): void {
+    this.showProjectViewModal.set(true);
+  }
+
+  closeProjectView(): void {
+    this.showProjectViewModal.set(false);
   }
 
   openMilestoneModal(milestone?: Milestone): void {
@@ -226,6 +239,16 @@ export class ProjectDetailPage {
     this.openMilestoneModal(milestone);
   }
 
+  openMilestoneView(milestone: Milestone): void {
+    this.selectedMilestoneForView.set(milestone);
+    this.showMilestoneViewModal.set(true);
+  }
+
+  closeMilestoneView(): void {
+    this.showMilestoneViewModal.set(false);
+    this.selectedMilestoneForView.set(null);
+  }
+
   saveTask(command: UpsertTaskCommand): void {
     const projectUuid = this.projectUuid();
     if (!projectUuid) {
@@ -273,6 +296,16 @@ export class ProjectDetailPage {
   openTaskModal(task?: Task): void {
     this.selectedTask.set(task ?? null);
     this.showTaskModal.set(true);
+  }
+
+  openTaskView(task: Task): void {
+    this.selectedTaskForView.set(task);
+    this.showTaskViewModal.set(true);
+  }
+
+  closeTaskView(): void {
+    this.showTaskViewModal.set(false);
+    this.selectedTaskForView.set(null);
   }
 
   cancelTaskEdition(): void {
@@ -662,6 +695,10 @@ export class ProjectDetailPage {
     const lang = this.translation.language();
     const locale = lang === 'es' ? 'es-ES' : lang === 'gl' ? 'gl-ES' : 'en-US';
     return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
+  }
+
+  formatTaskAssignees(task: Task): string {
+    return (task.assignees ?? []).map((assignee) => assignee.alias).join(', ');
   }
 
   trackMember(_: number, member: { id: number }): number {

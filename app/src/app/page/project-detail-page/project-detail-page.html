@@ -58,6 +58,14 @@
             <button
               class="btn ghost icon-only sm"
               type="button"
+              (click)="openProjectView()"
+              aria-label="{{ 'project.view' | translate }}"
+            >
+              <img src="/eye-open.svg" alt="" width="22" height="22" />
+            </button>
+            <button
+              class="btn ghost icon-only sm"
+              type="button"
               (click)="openProjectModal()"
               aria-label="{{ 'project.edit.title' | translate }}"
             >
@@ -116,6 +124,14 @@
                     <button
                       class="btn ghost icon-only"
                       type="button"
+                      (click)="openMilestoneView(milestone)"
+                      aria-label="{{ 'project.milestones.view' | translate }}"
+                    >
+                      <img src="/eye-open.svg" alt="" width="20" height="20" />
+                    </button>
+                    <button
+                      class="btn ghost icon-only"
+                      type="button"
                       (click)="editMilestone(milestone)"
                         aria-label="{{ 'project.edit.title' | translate }}"
                       >
@@ -152,6 +168,7 @@
       (updateTaskTimeline)="onTaskTimelineChange($event)"
       (updateTaskStatus)="onTaskStatusChange($event)"
       (openComments)="openTaskComments($event)"
+      (openTaskView)="openTaskView($event)"
     ></app-task-gantt>
 
     @if (showMemberListModal() && currentUserId() === projectDetail.ownerId) {
@@ -195,6 +212,37 @@
             } @else {
               <p class="note">{{ 'project.members.empty' | translate }}</p>
             }
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (showMilestoneViewModal() && selectedMilestoneForView(); as milestoneDetail) {
+      <div class="modal-backdrop" (click)="closeMilestoneView()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="title">{{ 'project.milestones.view' | translate }} · {{ milestoneDetail.title }}</h2>
+            <button class="btn ghost" type="button" (click)="closeMilestoneView()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="task-view">
+              <div>
+                <p class="task-view-label">{{ 'form.milestone.title' | translate }}</p>
+                <p class="task-view-value">{{ milestoneDetail.title }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.milestone.description' | translate }}</p>
+                <p class="task-view-value">
+                  {{ milestoneDetail.description || ('common.description.empty' | translate) }}
+                </p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'project.summary.start' | translate }}</p>
+                <p class="task-view-value">{{ core.formatDateLabel(milestoneDetail.date) }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -264,6 +312,57 @@
           </div>
           <div class="modal-body">
             <app-project-form [data]="projectDetail" (edited)="update($event)" (cancelled)="closeProjectModal()"></app-project-form>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (showProjectViewModal()) {
+      <div class="modal-backdrop" (click)="closeProjectView()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="title">{{ 'project.view' | translate }}</h2>
+            <button class="btn ghost" type="button" (click)="closeProjectView()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="task-view">
+              <div>
+                <p class="task-view-label">{{ 'form.project.title' | translate }}</p>
+                <p class="task-view-value">{{ projectDetail.title }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.project.description' | translate }}</p>
+                <p class="task-view-value">
+                  {{ projectDetail.description || ('project.summary.description' | translate) }}
+                </p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'project.summary.start' | translate }}</p>
+                <p class="task-view-value">{{ core.formatDateLabel(projectDetail.startDate) }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'project.summary.end' | translate }}</p>
+                <p class="task-view-value">{{ core.formatDateLabel(projectDetail.endDate) }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'project.tasks.total' | translate }}</p>
+                <p class="task-view-value">{{ taskSummary().total }}</p>
+              </div>
+              @if (projectDetail.additionalFields && (projectDetail.additionalFields | keyvalue).length) {
+                <div>
+                  <p class="task-view-label">{{ 'project.summary.additional' | translate }}</p>
+                  <div class="stack-sm">
+                    @for (field of projectDetail.additionalFields | keyvalue; track field.key) {
+                      <p class="task-view-value">
+                        <strong>{{ field.key }}:</strong> {{ field.value }}
+                      </p>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -393,6 +492,65 @@
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (showTaskViewModal() && selectedTaskForView(); as taskDetail) {
+      <div class="modal-backdrop" (click)="closeTaskView()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="title">{{ 'project.tasks.view' | translate }} · {{ taskDetail.title }}</h2>
+            <button class="btn ghost" type="button" (click)="closeTaskView()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="task-view">
+              <div>
+                <p class="task-view-label">{{ 'form.task.title' | translate }}</p>
+                <p class="task-view-value">{{ taskDetail.title }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.description' | translate }}</p>
+                <p class="task-view-value">
+                  {{ taskDetail.description || ('common.description.empty' | translate) }}
+                </p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.status' | translate }}</p>
+                <p class="task-view-value">{{ ('form.task.status.' + taskDetail.status) | translate }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.priority' | translate }}</p>
+                <p class="task-view-value">{{ ('form.task.priority.' + taskDetail.priority) | translate }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.duration' | translate }}</p>
+                <p class="task-view-value">{{ taskDetail.durationWeeks }} {{ 'common.weeks' | translate }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.start' | translate }}</p>
+                <p class="task-view-value">{{ core.formatDateLabel(taskDetail.startDate) }}</p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.assignee' | translate }}</p>
+                <p class="task-view-value">
+                  @if (taskDetail.assignees?.length) {
+                    {{ formatTaskAssignees(taskDetail) }}
+                  } @else {
+                    {{ 'form.task.assignee.none' | translate }}
+                  }
+                </p>
+              </div>
+              <div>
+                <p class="task-view-label">{{ 'form.task.milestone' | translate }}</p>
+                <p class="task-view-value">
+                  {{ taskDetail.milestone?.title || ('form.task.milestone.none' | translate) }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

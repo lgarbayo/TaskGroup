@@ -66,6 +66,7 @@ export class TaskGantt implements AfterViewInit {
   updateTaskTimeline = output<{ task: Task; startDate: Date; durationWeeks: number }>();
   updateTaskStatus = output<{ task: Task; status: TaskStatus }>();
   openComments = output<Task>();
+  openTaskView = output<Task>();
 
   @ViewChild('ganttViewport') private ganttViewport?: ElementRef<HTMLDivElement>;
   @ViewChildren('ganttRow') private ganttRows?: QueryList<ElementRef<HTMLDivElement>>;

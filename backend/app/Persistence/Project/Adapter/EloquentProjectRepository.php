@@ -51,7 +51,7 @@ class EloquentProjectRepository implements ProjectRepository
         $project = $query->firstOrFail();
 
         if ($withRelations) {
-            $project->load(['owner', 'members', 'tasks.assignee', 'milestones', 'invitations']);
+            $project->load(['owner', 'members', 'tasks.assignee', 'tasks.assignees', 'tasks.milestone', 'milestones', 'invitations']);
         }
 
         return ProjectMapper::toModel($project, withRelations: $withRelations);
@@ -135,7 +135,38 @@ class EloquentProjectRepository implements ProjectRepository
             throw new DomainException('No puedes eliminar al propietario.');
         }
 
+        $project->tasks()
+            ->where('assignee_id', $memberId)
+            ->update(['assignee_id' => null]);
+        $project->tasks()->each(function ($task) use ($memberId) {
+            $task->assignees()->detach($memberId);
+        });
         $project->members()->detach($memberId);
+
+        return ProjectMapper::toModel($project->fresh(['members']), withRelations: true);
+    }
+
+    public function leaveProject(string $projectUuid, int $userId): ProjectModel
+    {
+        $project = Project::query()
+            ->where('uuid', $projectUuid)
+            ->where(function ($q) use ($userId) {
+                $q->where('owner_id', $userId)
+                    ->orWhereHas('members', fn ($members) => $members->where('user_id', $userId));
+            })
+            ->firstOrFail();
+
+        if ($project->owner_id === $userId) {
+            throw new DomainException('El propietario no puede abandonar su propio proyecto.');
+        }
+
+        $project->tasks()
+            ->where('assignee_id', $userId)
+            ->update(['assignee_id' => null]);
+        $project->tasks()->each(function ($task) use ($userId) {
+            $task->assignees()->detach($userId);
+        });
+        $project->members()->detach($userId);
 
         return ProjectMapper::toModel($project->fresh(['members']), withRelations: true);
     }

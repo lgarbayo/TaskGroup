@@ -20,4 +20,5 @@ interface ProjectRepository
     public function acceptInvitation(string $token, int $userId): ProjectModel;
     public function cancelInvitation(string $projectUuid, int $ownerId, int $invitationId): ProjectModel;
     public function removeMember(string $projectUuid, int $ownerId, int $memberId): ProjectModel;
+    public function leaveProject(string $projectUuid, int $userId): ProjectModel;
 }

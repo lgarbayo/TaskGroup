@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, input, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Task, TaskStatus, UpsertTaskCommand } from '../../../model/task.model';
+import { Task, TaskStatus, TaskPriority, UpsertTaskCommand } from '../../../model/task.model';
 import { TaskService } from '../../../service/task-service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { ProjectMember } from '../../../model/project.model';
@@ -25,13 +25,18 @@ export class TaskForm implements OnDestroy {
   members = input<Array<ProjectMember>>([]);
   milestones = input<Array<Milestone>>([]);
   projectRange = input<{ start: DateType; end: DateType } | null>(null);
-  defaultAssigneeId = input<number | null>(null);
+  defaultAssigneeIds = input<Array<number>>([]);
   submitted = output<UpsertTaskCommand>();
   cancelled = output<void>();
   private formChanges?: Subscription;
   readonly statuses: Array<{ value: TaskStatus; label: string }> = [
     { value: 'pending', label: 'form.task.status.pending' },
     { value: 'done', label: 'form.task.status.done' },
+  ];
+  readonly priorities: Array<{ value: TaskPriority; label: string }> = [
+    { value: 'low', label: 'form.task.priority.low' },
+    { value: 'medium', label: 'form.task.priority.medium' },
+    { value: 'high', label: 'form.task.priority.high' },
   ];
   readonly isEditing = computed(() => !!this.data());
 
@@ -54,6 +59,35 @@ export class TaskForm implements OnDestroy {
     this.submitted.emit(this.form.getRawValue());
   }
 
+  addAssignee(event: Event): void {
+    const select = event.target as HTMLSelectElement | null;
+    const raw = select?.value ?? '';
+    const assigneeId = raw ? Number(raw) : null;
+    if (!assigneeId) {
+      return;
+    }
+    const current = this.form.controls.assigneeIds.value ?? [];
+    if (!current.includes(assigneeId)) {
+      this.form.controls.assigneeIds.setValue([...current, assigneeId]);
+    }
+    if (select) {
+      select.value = '';
+    }
+  }
+
+  removeAssignee(assigneeId: number): void {
+    const current = this.form.controls.assigneeIds.value ?? [];
+    this.form.controls.assigneeIds.setValue(current.filter((id) => id !== assigneeId));
+  }
+
+  assigneeName(assigneeId: number): string {
+    const member = this.members().find((item) => item.id === assigneeId);
+    if (!member) {
+      return String(assigneeId);
+    }
+    return `${member.alias} · ${member.email}`;
+  }
+
   cancelEdit(): void {
     this.resetFormState();
     this.cancelled.emit();
@@ -70,9 +104,9 @@ export class TaskForm implements OnDestroy {
   private resetFormState(task?: Task): void {
     this.form = this.taskService.form(task);
     if (!task) {
-      const defaultAssignee = this.defaultAssigneeId();
-      if (defaultAssignee != null) {
-        this.form.controls.assigneeId.setValue(defaultAssignee);
+      const defaults = this.defaultAssigneeIds();
+      if (defaults.length) {
+        this.form.controls.assigneeIds.setValue(defaults);
       }
     }
     this.formChanges?.unsubscribe();

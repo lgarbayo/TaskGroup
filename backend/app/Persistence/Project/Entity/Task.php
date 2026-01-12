@@ -24,6 +24,7 @@ class Task extends Model
         'start_week',
         'duration_weeks',
         'status',
+        'priority',
     ];
 
     protected static function booted()
@@ -41,6 +42,11 @@ class Task extends Model
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id');
+    }
+
+    public function assignees()
+    {
+        return $this->belongsToMany(User::class, 'task_user')->withTimestamps();
     }
 
     public function milestone()

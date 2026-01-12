@@ -15,6 +15,7 @@ class TaskResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status,
+            'priority' => $this->priority,
             'durationWeeks' => $this->durationWeeks,
             'startDate' => [
                 'year' => $this->startYear,
@@ -22,6 +23,7 @@ class TaskResource extends JsonResource
                 'week' => $this->startWeek,
             ],
             'assignee' => $this->assignee,
+            'assignees' => $this->assignees,
             'milestone' => $this->milestone,
         ];
     }

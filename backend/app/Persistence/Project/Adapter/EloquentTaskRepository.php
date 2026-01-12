@@ -14,7 +14,7 @@ class EloquentTaskRepository implements TaskRepository
     {
         $project = $this->findProjectAccessible($projectUuid, $userId);
 
-        return $project->tasks()->with(['assignee', 'project', 'milestone'])
+        return $project->tasks()->with(['assignee', 'assignees', 'project', 'milestone'])
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn ($task) => TaskMapper::toModel($task))
@@ -24,7 +24,13 @@ class EloquentTaskRepository implements TaskRepository
     public function create(string $projectUuid, int $userId, array $data): TaskModel
     {
         $project = $this->findProjectAccessible($projectUuid, $userId);
-        $task = $project->tasks()->create($data)->load('assignee', 'project', 'milestone');
+        $assigneeIds = $data['assignee_ids'] ?? null;
+        unset($data['assignee_ids']);
+        $task = $project->tasks()->create($data)->load('assignee', 'assignees', 'project', 'milestone');
+        if (is_array($assigneeIds)) {
+            $task->assignees()->sync($assigneeIds);
+            $task->load('assignees');
+        }
 
         return TaskMapper::toModel($task);
     }
@@ -33,15 +39,23 @@ class EloquentTaskRepository implements TaskRepository
     {
         $task = $this->findTaskInProject($projectUuid, $taskUuid, $userId);
 
-        return TaskMapper::toModel($task->load('assignee', 'project', 'milestone'));
+        return TaskMapper::toModel($task->load('assignee', 'assignees', 'project', 'milestone'));
     }
 
     public function update(string $projectUuid, string $taskUuid, int $userId, array $data): TaskModel
     {
         $task = $this->findTaskInProject($projectUuid, $taskUuid, $userId);
+        $assigneeIds = null;
+        if (array_key_exists('assignee_ids', $data)) {
+            $assigneeIds = $data['assignee_ids'];
+            unset($data['assignee_ids']);
+        }
         $task->update($data);
+        if (is_array($assigneeIds)) {
+            $task->assignees()->sync($assigneeIds);
+        }
 
-        return TaskMapper::toModel($task->fresh()->load('assignee', 'project', 'milestone'));
+        return TaskMapper::toModel($task->fresh()->load('assignee', 'assignees', 'project', 'milestone'));
     }
 
     public function delete(string $projectUuid, string $taskUuid, int $userId): void

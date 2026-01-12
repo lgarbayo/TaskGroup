@@ -98,7 +98,18 @@ export class TaskGantt implements AfterViewInit {
   }
 
   protected taskList(): ReadonlyArray<Task> {
-    return this.tasks();
+    return [...this.tasks()].sort((left, right) => {
+      const leftStart = this.toDate(left.startDate).getTime();
+      const rightStart = this.toDate(right.startDate).getTime();
+      if (leftStart !== rightStart) {
+        return leftStart - rightStart;
+      }
+      return left.title.localeCompare(right.title);
+    });
+  }
+
+  protected assigneeNames(task: Task): string {
+    return (task.assignees ?? []).map((assignee) => assignee.alias).join(', ');
   }
 
   protected hasTasks(): boolean {

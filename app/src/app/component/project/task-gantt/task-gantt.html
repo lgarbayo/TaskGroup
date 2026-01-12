@@ -69,6 +69,18 @@
                 <p class="note">
                   {{ task.description || ('common.description.empty' | translate) }}
                 </p>
+                <p class="note">
+                  {{ 'form.task.priority' | translate }}:
+                  {{ ('form.task.priority.' + task.priority) | translate }}
+                </p>
+                <p class="note">
+                  {{ 'form.task.assignee' | translate }}:
+                  @if (task.assignees?.length) {
+                    {{ assigneeNames(task) }}
+                  } @else {
+                    {{ 'form.task.assignee.none' | translate }}
+                  }
+                </p>
               </td>
               <td>{{ task.durationWeeks }} {{ 'common.weeks' | translate }}</td>
               <td class="gantt-cell schedule-col">

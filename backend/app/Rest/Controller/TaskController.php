@@ -31,8 +31,8 @@ class TaskController extends Controller
         $projectModel = $this->facade->getProject($project, $user->id, withRelations: true);
         $data = $request->validated();
 
-        $assigneeId = $data['assignee_id'] ?? $user->id;
-        $this->ensureUserBelongsToProject($projectModel, $assigneeId);
+        $assigneeIds = $this->resolveAssigneeIds($data, [$user->id]);
+        $this->ensureUsersBelongToProject($projectModel, $assigneeIds);
         $milestoneUuid = $data['milestone_uuid'] ?? null;
 
         if ($milestoneUuid) {
@@ -47,7 +47,9 @@ class TaskController extends Controller
             'start_week' => $data['start_date']['week'],
             'duration_weeks' => $data['duration_weeks'],
             'status' => $data['status'] ?? 'pending',
-            'assignee_id' => $assigneeId,
+            'priority' => $data['priority'] ?? 'medium',
+            'assignee_id' => $assigneeIds[0] ?? null,
+            'assignee_ids' => $assigneeIds,
             'milestone_uuid' => $milestoneUuid,
         ]);
 
@@ -71,14 +73,15 @@ class TaskController extends Controller
 
         $data = $request->validated();
         $taskModel = $this->facade->getTask($project, $task, $user->id);
-        $assigneeId = $data['assignee_id'] ?? ($taskModel->assignee['id'] ?? null);
+        $assigneeIds = $this->resolveAssigneeIds(
+            $data,
+            $taskModel->assignees !== [] ? array_column($taskModel->assignees, 'id') : []
+        );
         $milestoneUuid = array_key_exists('milestone_uuid', $data)
             ? $data['milestone_uuid']
             : ($taskModel->milestone['uuid'] ?? null);
 
-        if ($assigneeId) {
-            $this->ensureUserBelongsToProject($projectModel, $assigneeId);
-        }
+        $this->ensureUsersBelongToProject($projectModel, $assigneeIds);
 
         if ($milestoneUuid) {
             $this->ensureMilestoneBelongsToProject($projectModel, $milestoneUuid);
@@ -92,7 +95,9 @@ class TaskController extends Controller
             'start_week' => $data['start_date']['week'],
             'duration_weeks' => $data['duration_weeks'],
             'status' => $data['status'] ?? $taskModel->status,
-            'assignee_id' => $assigneeId,
+            'priority' => $data['priority'] ?? $taskModel->priority,
+            'assignee_id' => $assigneeIds[0] ?? null,
+            'assignee_ids' => $assigneeIds,
             'milestone_uuid' => $milestoneUuid,
         ]);
 
@@ -108,13 +113,32 @@ class TaskController extends Controller
         return response()->noContent();
     }
 
-    protected function ensureUserBelongsToProject($projectModel, int $userId): void
+    protected function ensureUsersBelongToProject($projectModel, array $userIds): void
     {
-        $isMember = $projectModel->ownerId === $userId || collect($projectModel->members)->firstWhere('id', $userId);
-
-        if (! $isMember) {
-            throw new HttpException(422, 'El usuario asignado no pertenece al proyecto.');
+        $userIds = array_values(array_unique(array_filter($userIds, fn ($id) => $id !== null)));
+        if ($userIds === []) {
+            return;
         }
+        $members = collect($projectModel->members)->pluck('id')->all();
+        foreach ($userIds as $userId) {
+            $isMember = $projectModel->ownerId === $userId || in_array($userId, $members, true);
+            if (! $isMember) {
+                throw new HttpException(422, 'El usuario asignado no pertenece al proyecto.');
+            }
+        }
+    }
+
+    protected function resolveAssigneeIds(array $data, array $fallback): array
+    {
+        if (array_key_exists('assignee_ids', $data)) {
+            return array_values(array_filter($data['assignee_ids'] ?? [], fn ($id) => $id !== null));
+        }
+
+        if (array_key_exists('assignee_id', $data) && $data['assignee_id'] !== null) {
+            return [$data['assignee_id']];
+        }
+
+        return $fallback;
     }
 
     protected function ensureMilestoneBelongsToProject($projectModel, string $milestoneUuid): void

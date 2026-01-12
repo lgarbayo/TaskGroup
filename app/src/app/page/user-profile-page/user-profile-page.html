@@ -76,7 +76,7 @@
             </div>
 
             <label class="stack-xxs" for="alias">
-              <span>{{ 'profile.alias' | translate }}</span>
+              <span>{{ 'profile.alias' | translate }} *</span>
               <input
                 id="alias"
                 type="text"
@@ -109,7 +109,7 @@
             </h3>
 
             <label class="stack-xxs" for="timezone">
-              <span>{{ 'profile.timezone.label' | translate }}</span>
+              <span>{{ 'profile.timezone.label' | translate }} *</span>
               <select id="timezone" formControlName="timezone">
                 @for (tz of timezones; track tz) {
                   <option [value]="tz">{{ tz }}</option>
@@ -131,6 +131,7 @@
             <p class="success">{{ successMessage() | translate }}</p>
           }
 
+          <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
           <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
             {{ 'profile.save' | translate }}
           </button>

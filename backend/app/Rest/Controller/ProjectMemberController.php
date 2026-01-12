@@ -56,6 +56,19 @@ class ProjectMemberController extends Controller
         return (new ProjectResource($updated))->response();
     }
 
+    public function leave(Request $request, string $projectId)
+    {
+        try {
+            $updated = $this->projects->leaveProject($projectId, $request->user()->id);
+        } catch (ModelNotFoundException $exception) {
+            throw new HttpException(Response::HTTP_FORBIDDEN, 'No perteneces a este proyecto.');
+        } catch (DomainException $exception) {
+            throw new HttpException(Response::HTTP_CONFLICT, $exception->getMessage());
+        }
+
+        return (new ProjectResource($updated))->response();
+    }
+
     public function invitations(Request $request, string $projectId)
     {
         try {

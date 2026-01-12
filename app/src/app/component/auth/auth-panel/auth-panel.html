@@ -22,7 +22,7 @@
     @if (mode() === 'login') {
       <form class="stack-sm" (ngSubmit)="submitLogin()" [formGroup]="loginForm">
         <label class="stack-xxs">
-          <span>{{ 'auth.field.email.login' | translate }}</span>
+          <span>{{ 'auth.field.email.login' | translate }} *</span>
           <input
             type="email"
             formControlName="email"
@@ -31,7 +31,7 @@
           />
         </label>
         <label class="stack-xxs">
-          <span>{{ 'auth.field.password.login' | translate }}</span>
+          <span>{{ 'auth.field.password.login' | translate }} *</span>
           <div class="password-field">
             <input
               [type]="loginPasswordVisible() ? 'text' : 'password'"
@@ -57,6 +57,7 @@
         <button class="btn" type="submit" [disabled]="loading()">
           {{ 'auth.submit.login' | translate }}
         </button>
+        <p class="muted auth-required-note">{{ 'form.requiredNote' | translate }}</p>
       </form>
     } @else {
       <form class="stack-sm" (ngSubmit)="submitRegister()" [formGroup]="registerForm" novalidate>
@@ -128,7 +129,7 @@
         <button class="btn" type="submit" [disabled]="loading()">
           {{ 'auth.submit.register' | translate }}
         </button>
-        <p class="muted auth-required-note">{{ 'auth.form.requiredNote' | translate }}</p>
+        <p class="muted auth-required-note">{{ 'form.requiredNote' | translate }}</p>
       </form>
     }
 

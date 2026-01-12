@@ -26,6 +26,20 @@ class ProjectMapper
             ])->all();
 
             $tasks = $project->tasks->map(function ($task) {
+                $assignees = $task->assignees?->map(fn ($assignee) => [
+                    'id' => $assignee->id,
+                    'alias' => $assignee->alias,
+                    'email' => $assignee->email,
+                ])->values()->all() ?? [];
+
+                if ($assignees === [] && $task->assignee) {
+                    $assignees = [[
+                        'id' => $task->assignee->id,
+                        'alias' => $task->assignee->alias,
+                        'email' => $task->assignee->email,
+                    ]];
+                }
+
                 return new TaskModel(
                     uuid: $task->uuid,
                     projectUuid: $task->project->uuid,
@@ -36,10 +50,16 @@ class ProjectMapper
                     startWeek: $task->start_week,
                     durationWeeks: $task->duration_weeks,
                     status: $task->status,
+                    priority: $task->priority ?? 'medium',
                     assignee: $task->assignee ? [
                         'id' => $task->assignee->id,
                         'alias' => $task->assignee->alias,
                         'email' => $task->assignee->email,
+                    ] : null,
+                    assignees: $assignees,
+                    milestone: $task->milestone ? [
+                        'uuid' => $task->milestone->uuid,
+                        'title' => $task->milestone->title,
                     ] : null,
                 );
             })->all();

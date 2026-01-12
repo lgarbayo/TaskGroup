@@ -116,13 +116,21 @@ class AuthController extends Controller
         $user = $request->user();
 
         $assigned = Task::query()
-            ->where('assignee_id', $user->id)
-            ->count();
+            ->where(function ($q) use ($user) {
+                $q->where('assignee_id', $user->id)
+                    ->orWhereHas('assignees', fn ($assignees) => $assignees->where('users.id', $user->id));
+            })
+            ->distinct('tasks.id')
+            ->count('tasks.id');
 
         $done = Task::query()
-            ->where('assignee_id', $user->id)
             ->where('status', 'done')
-            ->count();
+            ->where(function ($q) use ($user) {
+                $q->where('assignee_id', $user->id)
+                    ->orWhereHas('assignees', fn ($assignees) => $assignees->where('users.id', $user->id));
+            })
+            ->distinct('tasks.id')
+            ->count('tasks.id');
 
         $pending = $assigned - $done;
         $completion = $assigned > 0 ? round(($done / $assigned) * 100, 2) : 0.0;

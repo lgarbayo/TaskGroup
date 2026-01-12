@@ -9,11 +9,14 @@ export interface Task {
   durationWeeks: number;
   startDate: DateType;
   status: TaskStatus;
+  priority: TaskPriority;
   assignee?: TaskAssignee | null;
+  assignees?: Array<TaskAssignee>;
   milestone?: TaskMilestone | null;
 }
 
 export type TaskStatus = 'pending' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface TaskAssignee {
   id: number;
@@ -32,7 +35,8 @@ export interface UpsertTaskCommand {
   durationWeeks: number;
   startDate: DateType;
   status: TaskStatus;
-  assigneeId?: number | null;
+  priority: TaskPriority;
+  assigneeIds?: Array<number>;
   milestoneUuid?: string | null;
 }
 
@@ -42,6 +46,7 @@ export type UpsertTaskCommandForm = FormGroup<{
   durationWeeks: FormControl<number>;
   startDate: DateTypeForm;
   status: FormControl<TaskStatus>;
-  assigneeId: FormControl<number | null>;
+  priority: FormControl<TaskPriority>;
+  assigneeIds: FormControl<Array<number>>;
   milestoneUuid: FormControl<string | null>;
 }>;

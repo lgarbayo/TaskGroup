@@ -55,4 +55,9 @@ class ProjectService
     {
         return $this->projects->removeMember($projectUuid, $ownerId, $memberId);
     }
+
+    public function leaveProject(string $projectUuid, int $userId): ProjectModel
+    {
+        return $this->projects->leaveProject($projectUuid, $userId);
+    }
 }

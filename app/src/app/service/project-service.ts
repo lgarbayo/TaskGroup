@@ -71,6 +71,12 @@ export class ProjectService {
       .pipe(map((response) => response.data));
   }
 
+  leaveProject(projectUuid: string): Observable<Project> {
+    return this.http
+      .delete<{ data: Project }>(`${this.resourceUrl}/${projectUuid}/members/self`)
+      .pipe(map((response) => response.data));
+  }
+
   projectForm(project?: Project): UpsertProjectCommandForm {
     return this.nfb.group({
       title: [project?.title ?? '', [trimmedRequired]],

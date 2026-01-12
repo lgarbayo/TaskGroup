@@ -14,7 +14,9 @@ class TaskModel
         public readonly int $startWeek,
         public readonly int $durationWeeks,
         public readonly string $status,
+        public readonly string $priority,
         public readonly ?array $assignee = null,
+        public readonly array $assignees = [],
         public readonly ?array $milestone = null,
     ) {
     }

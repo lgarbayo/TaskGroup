@@ -49,13 +49,16 @@ export class TaskService {
   }
 
   form(task?: Task): UpsertTaskCommandForm {
+    const assigneeIds = task?.assignees?.map((assignee) => assignee.id)
+      ?? (task?.assignee ? [task.assignee.id] : []);
     return this.nfb.group({
       title: [task?.title ?? '', [trimmedRequired]],
       description: task?.description ?? '',
       durationWeeks: [task?.durationWeeks ?? 1, [Validators.required, Validators.min(1)]],
       startDate: this.coreService.dateTypeForm(task?.startDate),
       status: [task?.status ?? 'pending', [Validators.required]],
-      assigneeId: new FormControl<number | null>(task?.assignee?.id ?? null),
+      priority: [task?.priority ?? 'medium', [Validators.required]],
+      assigneeIds: new FormControl<Array<number>>(assigneeIds, { nonNullable: true }),
       milestoneUuid: new FormControl<string | null>(task?.milestone?.uuid ?? null),
     });
   }
@@ -67,7 +70,8 @@ export class TaskService {
       duration_weeks: command.durationWeeks,
       start_date: command.startDate,
       status: command.status,
-      assignee_id: command.assigneeId ?? null,
+      priority: command.priority,
+      assignee_ids: (command.assigneeIds ?? []).map((id) => Number(id)),
       milestone_uuid: command.milestoneUuid ?? null,
     };
   }

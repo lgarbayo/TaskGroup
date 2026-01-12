@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { ProjectService } from '../../service/project-service';
 import { Project, UpsertProjectCommand } from '../../model/project.model';
@@ -40,6 +40,7 @@ import { DateType } from '../../model/core.model';
 })
 export class ProjectDetailPage {
   private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
   private projectService = inject(ProjectService);
   private milestoneService = inject(MilestoneService);
   private taskService = inject(TaskService);
@@ -278,7 +279,8 @@ export class ProjectDetailPage {
       durationWeeks: updatedTask.durationWeeks,
       startDate: updatedStart,
       status: updatedTask.status,
-      assigneeId: updatedTask.assignee?.id ?? null,
+      priority: updatedTask.priority,
+      assigneeIds: updatedTask.assignees?.map((assignee) => assignee.id) ?? [],
       milestoneUuid: updatedTask.milestone?.uuid ?? null,
     };
     this.taskService.update(projectUuid, updatedTask.uuid, command).subscribe({
@@ -422,6 +424,27 @@ export class ProjectDetailPage {
         console.error('Unable to remove member', error);
         this.memberError.set('project.members.removeError');
         this.memberSuccess.set(null);
+        this.memberLoading.set(false);
+      },
+      complete: () => this.memberLoading.set(false),
+    });
+  }
+
+  leaveProject(): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    this.memberLoading.set(true);
+    this.memberError.set(null);
+    this.memberSuccess.set(null);
+    this.projectService.leaveProject(projectUuid).subscribe({
+      next: () => {
+        this.router.navigate(['/list']);
+      },
+      error: (error) => {
+        console.error('Unable to leave project', error);
+        this.memberError.set('project.members.leaveError');
         this.memberLoading.set(false);
       },
       complete: () => this.memberLoading.set(false),

@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <fieldset>
-    <legend>{{ 'form.project.title' | translate }}</legend>
+    <legend>{{ 'form.project.title' | translate }} *</legend>
     <input
       formControlName="title"
       [placeholder]="'form.project.title' | translate"
@@ -104,7 +104,7 @@
     <div class="additional-controls" [formGroup]="additionalFieldForm">
       <div class="additional-field">
         <input
-          [placeholder]="'form.project.additional.key' | translate"
+          [placeholder]="('form.project.additional.key' | translate) + ' *'"
           formControlName="key"
           [class.invalid]="additionalFieldForm.controls.key.invalid && additionalFieldForm.controls.key.touched"
         />
@@ -114,7 +114,7 @@
       </div>
       <div class="additional-field">
         <input
-          [placeholder]="'form.project.additional.value' | translate"
+          [placeholder]="('form.project.additional.value' | translate) + ' *'"
           formControlName="value"
           [class.invalid]="additionalFieldForm.controls.value.invalid && additionalFieldForm.controls.value.touched"
         />
@@ -142,6 +142,7 @@
     </div>
   </fieldset>
 
+  <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
   <div class="form-actions">
     <button class="btn primary" type="submit">{{ 'form.project.submit' | translate }}</button>
     <button class="btn ghost" type="button" (click)="cancelProjectEdition()">{{ 'common.cancel' | translate }}</button>

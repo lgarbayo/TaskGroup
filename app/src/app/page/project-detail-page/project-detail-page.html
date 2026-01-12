@@ -17,6 +17,10 @@
               <button class="btn ghost sm" type="button" (click)="openMemberListModal()">
                 {{ 'project.members.manage' | translate }}
               </button>
+            } @else {
+              <button class="btn danger sm" type="button" (click)="leaveProject()">
+                {{ 'project.members.leave' | translate }}
+              </button>
             }
           </div>
         </div>
@@ -310,7 +314,7 @@
               [members]="projectDetail.members ?? []"
               [milestones]="milestones()"
               [projectRange]="{ start: projectDetail.startDate, end: projectDetail.endDate }"
-              [defaultAssigneeId]="currentUserId()"
+              [defaultAssigneeIds]="currentUserId() ? [currentUserId()!] : []"
               (submitted)="saveTask($event)"
               (cancelled)="cancelTaskEdition()"
             ></app-task-form>

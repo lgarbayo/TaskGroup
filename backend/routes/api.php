@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
 
     Route::post('/projects/{project}/members', [ProjectMemberController::class, 'store']);
+    Route::delete('/projects/{project}/members/self', [ProjectMemberController::class, 'leave']);
     Route::delete('/projects/{project}/members/{member}', [ProjectMemberController::class, 'destroy']);
     Route::get('/projects/{project}/invitations', [ProjectMemberController::class, 'invitations']);
     Route::delete('/projects/{project}/invitations/{invitation}', [ProjectMemberController::class, 'cancelInvitation']);

@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="save()">
   <div class="field-group">
-    <label>{{ 'form.task.title' | translate }}</label>
+    <label>{{ 'form.task.title' | translate }} *</label>
     <input formControlName="title" [class.invalid]="form.controls.title.invalid && form.controls.title.touched" />
     @if (form.controls.title.invalid && form.controls.title.touched) {
       <small>⚠️ {{ 'form.task.titleRequired' | translate }}</small>
@@ -13,7 +13,7 @@
   </div>
 
   <div class="field-group">
-    <label>{{ 'form.task.duration' | translate }}</label>
+    <label>{{ 'form.task.duration' | translate }} *</label>
     <input
       type="number"
       min="1"
@@ -26,7 +26,7 @@
   </div>
 
   <div class="field-group">
-    <label>{{ 'form.task.status' | translate }}</label>
+    <label>{{ 'form.task.status' | translate }} *</label>
     <select formControlName="status">
       @for (status of statuses; track status.value) {
         <option [value]="status.value">{{ status.label | translate }}</option>
@@ -35,13 +35,34 @@
   </div>
 
   <div class="field-group">
-    <label>{{ 'form.task.assignee' | translate }}</label>
-    <select formControlName="assigneeId">
-      <option [ngValue]="null">{{ 'form.task.assignee.none' | translate }}</option>
-      @for (member of members(); track member.id) {
-        <option [ngValue]="member.id">{{ member.alias }} · {{ member.email }}</option>
+    <label>{{ 'form.task.priority' | translate }} *</label>
+    <select formControlName="priority">
+      @for (priority of priorities; track priority.value) {
+        <option [value]="priority.value">{{ priority.label | translate }}</option>
       }
     </select>
+  </div>
+
+  <div class="field-group">
+    <label>{{ 'form.task.assignee' | translate }}</label>
+    <select (change)="addAssignee($event)">
+      <option value="">{{ 'form.task.assignee.none' | translate }}</option>
+      @for (member of members(); track member.id) {
+        <option [value]="member.id">{{ member.alias }} · {{ member.email }}</option>
+      }
+    </select>
+    @if (form.controls.assigneeIds.value?.length) {
+      <div class="selected-assignees">
+        @for (assigneeId of form.controls.assigneeIds.value; track assigneeId) {
+          <span class="pill muted">
+            {{ assigneeName(assigneeId) }}
+            <button class="btn ghost icon-only sm" type="button" (click)="removeAssignee(assigneeId)">
+              <img src="/trash.svg" alt="" width="14" height="14" />
+            </button>
+          </span>
+        }
+      </div>
+    }
   </div>
 
   <div class="field-group">
@@ -97,6 +118,7 @@
     }
   </fieldset>
 
+  <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
   <div class="form-actions">
     <button class="btn primary" type="submit">
       @if (isEditing()) {

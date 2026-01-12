@@ -115,16 +115,12 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        $from = now()->subDays(30);
-
         $assigned = Task::query()
             ->where('assignee_id', $user->id)
-            ->where('created_at', '>=', $from)
             ->count();
 
         $done = Task::query()
             ->where('assignee_id', $user->id)
-            ->where('created_at', '>=', $from)
             ->where('status', 'done')
             ->count();
 

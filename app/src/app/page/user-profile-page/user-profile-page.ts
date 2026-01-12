@@ -5,6 +5,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 import { AuthService } from '../../service/auth-service';
 import { TranslationService } from '../../i18n/translation.service';
 import { AuthUserStats, getAvatarColor, getAvatarInitial } from '../../model/auth.model';
+import { ToastService } from '../../service/toast-service';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -18,6 +19,7 @@ export class UserProfilePage implements OnDestroy {
   private router = inject(Router);
   private nfb = inject(NonNullableFormBuilder);
   private translation = inject(TranslationService);
+  private toast = inject(ToastService);
 
   user = computed(() => this.auth.user());
   readonly loading = signal(false);
@@ -28,6 +30,10 @@ export class UserProfilePage implements OnDestroy {
   readonly stats = signal<AuthUserStats | null>(null);
   readonly statsLoading = signal(false);
   readonly statsError = signal<string | null>(null);
+  readonly emailModalOpen = signal(false);
+  readonly emailLoading = signal(false);
+  readonly emailError = signal<{ key?: string; raw?: string } | null>(null);
+  readonly emailSuccess = signal<string | null>(null);
 
   readonly timezones: string[] = (() => {
     const intl = Intl as unknown as { supportedValuesOf?: (key: string) => readonly string[] };
@@ -65,6 +71,10 @@ export class UserProfilePage implements OnDestroy {
     alias: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
     name: [''],
     timezone: [UserProfilePage.getInitialTimezone(), [Validators.required]],
+  });
+
+  readonly emailForm = this.nfb.group({
+    email: ['', [Validators.required, Validators.email]],
   });
 
   constructor() {
@@ -169,8 +179,11 @@ export class UserProfilePage implements OnDestroy {
   }
 
   startEmailChange(): void {
-    // Placeholder para el flujo de cambio de email
-    console.info('Email change flow not implemented yet');
+    const currentEmail = this.user()?.email ?? '';
+    this.emailForm.reset({ email: currentEmail });
+    this.emailError.set(null);
+    this.emailSuccess.set(null);
+    this.emailModalOpen.set(true);
   }
 
   startPasswordChange(): void {
@@ -181,6 +194,50 @@ export class UserProfilePage implements OnDestroy {
   resendEmailVerification(): void {
     // Placeholder para reenviar correo de verificación
     console.info('Resend email verification not implemented yet');
+  }
+
+  closeEmailModal(): void {
+    if (this.emailLoading()) {
+      return;
+    }
+    this.emailModalOpen.set(false);
+    this.emailError.set(null);
+    this.emailSuccess.set(null);
+  }
+
+  submitEmailChange(): void {
+    if (this.emailForm.invalid || this.emailLoading()) {
+      this.emailForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.emailForm.getRawValue();
+    const email = value.email.trim().toLowerCase();
+    if (!email) {
+      this.emailForm.controls.email.setValue('');
+      this.emailForm.markAllAsTouched();
+      return;
+    }
+
+    this.emailLoading.set(true);
+    this.emailError.set(null);
+    this.emailSuccess.set(null);
+
+    this.auth.updateEmail({ email }).subscribe({
+      next: () => {
+        this.emailSuccess.set('profile.email.update.success');
+        this.emailModalOpen.set(false);
+        this.toast.showSuccess('profile.email.update.success');
+      },
+      error: (error) => {
+        console.error('Unable to update email', error);
+        this.emailError.set(this.resolveErrorMessage(error, 'profile.email.update.error'));
+        this.emailLoading.set(false);
+      },
+      complete: () => {
+        this.emailLoading.set(false);
+      },
+    });
   }
 
   submit(): void {
@@ -225,7 +282,12 @@ export class UserProfilePage implements OnDestroy {
     return control.invalid && control.touched;
   }
 
-  private resolveErrorMessage(error: unknown): { key?: string; raw?: string } {
+  emailInputInvalid(): boolean {
+    const control = this.emailForm.controls.email;
+    return control.invalid && control.touched;
+  }
+
+  private resolveErrorMessage(error: unknown, fallbackKey = 'profile.update.error'): { key?: string; raw?: string } {
     if (typeof error === 'string') {
       return { raw: error };
     }
@@ -241,7 +303,7 @@ export class UserProfilePage implements OnDestroy {
         }
       }
     }
-    return { key: 'profile.update.error' };
+    return { key: fallbackKey };
   }
 
   private clearAvatarPreview(): void {

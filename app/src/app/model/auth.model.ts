@@ -38,6 +38,10 @@ export interface UpdateProfileCommand {
   avatarUrl?: string | null;
 }
 
+export interface UpdateEmailCommand {
+  email: string;
+}
+
 const FALLBACK_COLOR = '#2563eb';
 const AVATAR_COLORS = ['#2563eb'];
 

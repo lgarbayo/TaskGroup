@@ -18,6 +18,7 @@ Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::put('me', [AuthController::class, 'update']);
+        Route::put('email', [AuthController::class, 'updateEmail']);
         Route::post('avatar', [AuthController::class, 'uploadAvatar']);
         Route::get('stats', [AuthController::class, 'stats']);
         Route::post('logout', [AuthController::class, 'logout']);

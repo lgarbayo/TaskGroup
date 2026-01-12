@@ -1,7 +1,7 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthResponse, AuthUser, AuthUserStats, LoginCommand, RegisterCommand, UpdateProfileCommand } from '../model/auth.model';
+import { AuthResponse, AuthUser, AuthUserStats, LoginCommand, RegisterCommand, UpdateEmailCommand, UpdateProfileCommand } from '../model/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +45,12 @@ export class AuthService {
 
   updateProfile(command: UpdateProfileCommand): Observable<AuthUser> {
     return this.http.put<AuthUser>(`${this.authUrl}/me`, command).pipe(
+      tap((user) => this.persistUser(user))
+    );
+  }
+
+  updateEmail(command: UpdateEmailCommand): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.authUrl}/email`, command).pipe(
       tap((user) => this.persistUser(user))
     );
   }

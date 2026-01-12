@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 import { ContactTransitionService } from './service/contact-transition.service';
 import { getAvatarColor, getAvatarInitial } from './model/auth.model';
+import { ToastService } from './service/toast-service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,7 @@ export class App {
   private translation = inject(TranslationService);
   private router = inject(Router);
   private contactTransition = inject(ContactTransitionService);
+  private toastService = inject(ToastService);
   protected readonly title = signal('TaskGroup');
   protected readonly theme = signal<'light' | 'dark'>(App.loadTheme());
   protected readonly user = this.authService.user;
@@ -33,6 +35,11 @@ export class App {
   protected readonly isLandingRoute = computed(() => this.currentUrl() === '/' || this.currentUrl() === '');
   protected readonly avatarInitial = getAvatarInitial;
   protected readonly avatarColor = getAvatarColor;
+  protected readonly toast = this.toastService.toast;
+
+  dismissToast(): void {
+    this.toastService.dismiss();
+  }
 
   constructor() {
     effect(() => {

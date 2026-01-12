@@ -5,6 +5,7 @@ namespace App\Rest\Controller;
 use App\Http\Controllers\Controller;
 use App\Rest\Command\Auth\LoginRequest;
 use App\Rest\Command\Auth\RegisterRequest;
+use App\Rest\Command\Auth\UpdateEmailRequest;
 use App\Rest\Command\Auth\UpdateProfileRequest;
 use App\Rest\Command\Auth\UploadAvatarRequest;
 use App\Business\User\Service\UserService;
@@ -80,6 +81,24 @@ class AuthController extends Controller
             'avatar_url' => $data['avatar_url'] ?? $userEntity->avatar_url,
         ]);
         $userEntity->save();
+
+        $userModel = UserMapper::toModel($userEntity);
+
+        return response()->json($userModel);
+    }
+
+    public function updateEmail(UpdateEmailRequest $request)
+    {
+        $data = $request->validated();
+        $userEntity = $request->user();
+
+        $normalizedEmail = strtolower($data['email']);
+
+        if ($userEntity->email !== $normalizedEmail) {
+            $userEntity->email = $normalizedEmail;
+            $userEntity->email_verified_at = null;
+            $userEntity->save();
+        }
 
         $userModel = UserMapper::toModel($userEntity);
 

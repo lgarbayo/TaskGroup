@@ -150,6 +150,18 @@
   <router-outlet></router-outlet>
 </main>
 
+@if (toast(); as currentToast) {
+  <div class="toast-host">
+    <div class="toast toast--{{ currentToast.kind }}" (click)="dismissToast()">
+      @if (currentToast.key) {
+        <span>{{ currentToast.key | translate }}</span>
+      } @else if (currentToast.message) {
+        <span>{{ currentToast.message }}</span>
+      }
+    </div>
+  </div>
+}
+
 <footer class="footer" [class.footer--overlay]="!isAuthenticated()">
   © {{ 'common.appName' | translate }} · 2025
 </footer>

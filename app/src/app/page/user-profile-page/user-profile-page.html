@@ -251,4 +251,57 @@
       <p class="note">{{ 'profile.empty' | translate }}</p>
     </article>
   }
+
+  @if (emailModalOpen()) {
+    <div class="modal-backdrop" (click)="closeEmailModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3 class="modal-title">{{ 'profile.email.modal.title' | translate }}</h3>
+          <button class="btn ghost sm" type="button" (click)="closeEmailModal()">
+            {{ 'common.cancel' | translate }}
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="stack-md" [formGroup]="emailForm" (ngSubmit)="submitEmailChange()">
+            <p class="muted">{{ 'profile.email.modal.helper' | translate }}</p>
+            <label class="stack-xxs" for="profile-email-input">
+              <span>{{ 'profile.email.modal.label' | translate }} *</span>
+              <input
+                id="profile-email-input"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                [placeholder]="'auth.placeholder.email' | translate"
+              />
+              @if (emailInputInvalid()) {
+                <small class="error">{{ 'auth.error.email' | translate }}</small>
+              }
+            </label>
+
+            @if (emailError(); as error) {
+              <p class="error">
+                @if (error.key) {
+                  {{ error.key | translate }}
+                } @else if (error.raw) {
+                  {{ error.raw }}
+                }
+              </p>
+            }
+            @if (emailSuccess()) {
+              <p class="success">{{ emailSuccess() | translate }}</p>
+            }
+
+            <div class="row">
+              <button class="btn primary" type="submit" [disabled]="emailForm.invalid || emailLoading()">
+                {{ 'profile.email.modal.submit' | translate }}
+              </button>
+              <button class="btn ghost" type="button" (click)="closeEmailModal()" [disabled]="emailLoading()">
+                {{ 'common.cancel' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
 </section>

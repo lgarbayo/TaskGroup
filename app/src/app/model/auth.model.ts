@@ -5,7 +5,6 @@ export interface AuthUser {
   name?: string | null;
   emailVerified?: boolean;
   updatedAt?: string;
-  avatarUrl?: string | null;
 }
 
 export interface AuthResponse {
@@ -35,7 +34,6 @@ export interface RegisterCommand {
 export interface UpdateProfileCommand {
   alias: string;
   name?: string | null;
-  avatarUrl?: string | null;
 }
 
 export interface UpdateEmailCommand {

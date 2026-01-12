@@ -11,7 +11,6 @@ class UserModel
         public readonly ?string $name = null,
         public readonly bool $emailVerified = false,
         public readonly ?string $updatedAt = null,
-        public readonly ?string $avatarUrl = null,
     ) {
     }
 }

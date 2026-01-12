@@ -8,13 +8,11 @@ use App\Rest\Command\Auth\RegisterRequest;
 use App\Rest\Command\Auth\UpdateEmailRequest;
 use App\Rest\Command\Auth\UpdatePasswordRequest;
 use App\Rest\Command\Auth\UpdateProfileRequest;
-use App\Rest\Command\Auth\UploadAvatarRequest;
 use App\Business\User\Service\UserService;
 use App\Persistence\User\Mapper\UserMapper;
 use App\Persistence\Project\Entity\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -79,7 +77,6 @@ class AuthController extends Controller
         $userEntity->fill([
             'alias' => $data['alias'],
             'name' => $data['name'] ?? null,
-            'avatar_url' => $data['avatar_url'] ?? $userEntity->avatar_url,
         ]);
         $userEntity->save();
 
@@ -100,20 +97,6 @@ class AuthController extends Controller
             $userEntity->email_verified_at = null;
             $userEntity->save();
         }
-
-        $userModel = UserMapper::toModel($userEntity);
-
-        return response()->json($userModel);
-    }
-
-    public function uploadAvatar(UploadAvatarRequest $request)
-    {
-        $userEntity = $request->user();
-        $file = $request->file('avatar');
-
-        $path = $file->store('avatars', 'public');
-        $userEntity->avatar_url = Storage::disk('public')->url($path);
-        $userEntity->save();
 
         $userModel = UserMapper::toModel($userEntity);
 

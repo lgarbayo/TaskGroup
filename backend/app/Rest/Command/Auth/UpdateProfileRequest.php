@@ -25,7 +25,6 @@ class UpdateProfileRequest extends FormRequest
                 Rule::unique('users', 'alias')->ignore($userId),
             ],
             'name' => ['nullable', 'string', 'max:255'],
-            'avatar_url' => ['nullable', 'string', 'max:2048'],
         ];
     }
 }

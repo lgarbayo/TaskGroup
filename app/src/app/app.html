@@ -1,27 +1,80 @@
-<header class="app-header" [class.app-header--minimal]="!isAuthenticated()" [class.app-header--overlay]="isLandingRoute()">
+<header class="app-header" [class.app-header--minimal]="!isAuthenticated()"
+  [class.app-header--overlay]="isLandingRoute()">
   @if (isAuthenticated()) {
-    <div class="wrap">
-      <a class="brand" [routerLink]="isAuthenticated() ? '/list' : '/'">
-        <img src="/icon.svg" alt="TaskGroup logo" class="brand-logo" width="48" height="48" loading="eager" />
-        <span class="brand-title">{{ 'common.appName' | translate }}</span>
+  <div class="wrap">
+    <a class="brand" [routerLink]="isAuthenticated() ? '/list' : '/'">
+      <img src="/icon.svg" alt="TaskGroup logo" class="brand-logo" width="48" height="48" loading="eager" />
+      <span class="brand-title">{{ 'common.appName' | translate }}</span>
+    </a>
+    <nav class="nav-links">
+      <a class="nav-link" routerLink="/list" routerLinkActive="active" (click)="handleProjectsLink($event)">
+        {{ 'projects.list.title' | translate }}
       </a>
-      <nav class="nav-links">
-        <a class="nav-link" routerLink="/list" routerLinkActive="active" (click)="handleProjectsLink($event)">
-          {{ 'projects.list.title' | translate }}
-        </a>
-        <button class="nav-link" type="button" (click)="handleContactLink($event)">
-          {{ 'header.nav.contact' | translate }}
-        </button>
-      </nav>
-      <div class="spacer"></div>
-      <div class="language-dropdown" [class.open]="languageMenuOpen()" aria-label="{{ 'header.language.label' | translate }}">
-        <button
-          type="button"
-          class="language-dropdown__trigger"
-          aria-haspopup="listbox"
-          [attr.aria-expanded]="languageMenuOpen()"
-          (click)="toggleLanguageMenu()"
-        >
+      <button class="nav-link" type="button" (click)="handleContactLink($event)">
+        {{ 'header.nav.contact' | translate }}
+      </button>
+    </nav>
+    <div class="spacer"></div>
+    <div class="language-dropdown" [class.open]="languageMenuOpen()"
+      aria-label="{{ 'header.language.label' | translate }}">
+      <button type="button" class="language-dropdown__trigger" aria-haspopup="listbox"
+        [attr.aria-expanded]="languageMenuOpen()" (click)="toggleLanguageMenu()">
+        <span class="language-dropdown__icon" aria-hidden="true">
+          <img src="/globe.svg" alt="" width="20" height="20" decoding="async" />
+        </span>
+        <span class="language-dropdown__value">{{ language().toUpperCase() }}</span>
+        <span class="language-dropdown__caret" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M6 9l6 6 6-6"></path>
+          </svg>
+        </span>
+      </button>
+      @if (languageMenuOpen()) {
+      <div class="language-dropdown__menu" role="menu">
+        <ul class="language-dropdown__list" role="listbox">
+          @for (lang of languages; track lang.code) {
+          <li>
+            <button type="button" class="language-dropdown__option" role="option"
+              [class.active]="language() === lang.code" [attr.aria-selected]="language() === lang.code"
+              (click)="changeLanguage(lang.code)">
+              <span class="language-dropdown__option-code">{{ lang.code.toUpperCase() }}</span>
+              <span class="language-dropdown__option-label">{{ lang.labelKey | translate }}</span>
+              @if (language() === lang.code) {
+              <span class="language-dropdown__option-check" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 13l4 4L19 7"></path>
+                </svg>
+              </span>
+              }
+            </button>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+    <button class="btn ghost" type="button" (click)="toggleTheme()" aria-label="{{ 'header.theme.label' | translate }}">
+      {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
+    </button>
+    @if (user(); as currentUser) {
+    <button class="pill pill-action header-user-pill" type="button" routerLink="/profile">
+      <span class="header-user-avatar" [style.background-color]="avatarColor(currentUser)">
+        <span>{{ avatarInitial(currentUser) }}</span>
+      </span>
+      <span class="header-user-label">
+        {{ 'header.greeting' | translate }}, {{ currentUser.alias }}
+      </span>
+    </button>
+    <button class="btn danger" type="button" (click)="logout()">{{ 'header.logout' | translate }}</button>
+    }
+  </div>
+  } @else {
+  <div class="wrap auth-header-minimal">
+    <div class="auth-header-actions">
+      <div class="language-dropdown" [class.open]="languageMenuOpen()"
+        aria-label="{{ 'header.language.label' | translate }}">
+        <button type="button" class="language-dropdown__trigger" aria-haspopup="listbox"
+          [attr.aria-expanded]="languageMenuOpen()" (click)="toggleLanguageMenu()">
           <span class="language-dropdown__icon" aria-hidden="true">
             <img src="/globe.svg" alt="" width="20" height="20" decoding="async" />
           </span>
@@ -33,116 +86,40 @@
           </span>
         </button>
         @if (languageMenuOpen()) {
-          <div class="language-dropdown__menu" role="menu">
-            <ul class="language-dropdown__list" role="listbox">
-              @for (lang of languages; track lang.code) {
-                <li>
-                  <button
-                    type="button"
-                    class="language-dropdown__option"
-                    role="option"
-                    [class.active]="language() === lang.code"
-                    [attr.aria-selected]="language() === lang.code"
-                    (click)="changeLanguage(lang.code)"
-                  >
-                    <span class="language-dropdown__option-code">{{ lang.code.toUpperCase() }}</span>
-                    <span class="language-dropdown__option-label">{{ lang.labelKey | translate }}</span>
-                    @if (language() === lang.code) {
-                      <span class="language-dropdown__option-check" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M5 13l4 4L19 7"></path>
-                        </svg>
-                      </span>
-                    }
-                  </button>
-                </li>
-              }
-            </ul>
-          </div>
+        <div class="language-dropdown__menu" role="menu">
+          <ul class="language-dropdown__list" role="listbox">
+            @for (lang of languages; track lang.code) {
+            <li>
+              <button type="button" class="language-dropdown__option" role="option"
+                [class.active]="language() === lang.code" [attr.aria-selected]="language() === lang.code"
+                (click)="changeLanguage(lang.code)">
+                <span class="language-dropdown__option-code">{{ lang.code.toUpperCase() }}</span>
+                <span class="language-dropdown__option-label">{{ lang.labelKey | translate }}</span>
+                @if (language() === lang.code) {
+                <span class="language-dropdown__option-check" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </span>
+                }
+              </button>
+            </li>
+            }
+          </ul>
+        </div>
         }
       </div>
-      <button class="btn ghost" type="button" (click)="toggleTheme()" aria-label="{{ 'header.theme.label' | translate }}">
+      <button class="btn ghost" type="button" (click)="toggleTheme()"
+        aria-label="{{ 'header.theme.label' | translate }}">
         {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
       </button>
-      @if (user(); as currentUser) {
-        <button class="pill pill-action header-user-pill" type="button" routerLink="/profile">
-          <span
-            class="header-user-avatar"
-            [style.background-color]="currentUser.avatarUrl ? 'transparent' : avatarColor(currentUser)"
-          >
-            @if (currentUser.avatarUrl) {
-              <img [src]="currentUser.avatarUrl!" alt="" loading="lazy" />
-            } @else {
-              <span>{{ avatarInitial(currentUser) }}</span>
-            }
-          </span>
-          <span class="header-user-label">
-            {{ 'header.greeting' | translate }}, {{ currentUser.alias }}
-          </span>
-        </button>
-        <button class="btn danger" type="button" (click)="logout()">{{ 'header.logout' | translate }}</button>
+      @if (!isLoginRoute()) {
+      <a class="btn primary" routerLink="/login">
+        {{ 'header.login' | translate }}
+      </a>
       }
     </div>
-  } @else {
-    <div class="wrap auth-header-minimal">
-      <div class="auth-header-actions">
-        <div class="language-dropdown" [class.open]="languageMenuOpen()" aria-label="{{ 'header.language.label' | translate }}">
-          <button
-            type="button"
-            class="language-dropdown__trigger"
-            aria-haspopup="listbox"
-            [attr.aria-expanded]="languageMenuOpen()"
-            (click)="toggleLanguageMenu()"
-          >
-            <span class="language-dropdown__icon" aria-hidden="true">
-              <img src="/globe.svg" alt="" width="20" height="20" decoding="async" />
-            </span>
-            <span class="language-dropdown__value">{{ language().toUpperCase() }}</span>
-            <span class="language-dropdown__caret" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M6 9l6 6 6-6"></path>
-              </svg>
-            </span>
-          </button>
-          @if (languageMenuOpen()) {
-            <div class="language-dropdown__menu" role="menu">
-              <ul class="language-dropdown__list" role="listbox">
-                @for (lang of languages; track lang.code) {
-                  <li>
-                    <button
-                      type="button"
-                      class="language-dropdown__option"
-                      role="option"
-                      [class.active]="language() === lang.code"
-                      [attr.aria-selected]="language() === lang.code"
-                      (click)="changeLanguage(lang.code)"
-                    >
-                      <span class="language-dropdown__option-code">{{ lang.code.toUpperCase() }}</span>
-                      <span class="language-dropdown__option-label">{{ lang.labelKey | translate }}</span>
-                      @if (language() === lang.code) {
-                        <span class="language-dropdown__option-check" aria-hidden="true">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </span>
-                      }
-                    </button>
-                  </li>
-                }
-              </ul>
-            </div>
-          }
-        </div>
-        <button class="btn ghost" type="button" (click)="toggleTheme()" aria-label="{{ 'header.theme.label' | translate }}">
-          {{ theme() === 'dark' ? ('header.theme.light' | translate) : ('header.theme.dark' | translate) }}
-        </button>
-        @if (!isLoginRoute()) {
-          <a class="btn primary" routerLink="/login">
-            {{ 'header.login' | translate }}
-          </a>
-        }
-      </div>
-    </div>
+  </div>
   }
 </header>
 
@@ -151,15 +128,15 @@
 </main>
 
 @if (toast(); as currentToast) {
-  <div class="toast-host">
-    <div class="toast toast--{{ currentToast.kind }}" (click)="dismissToast()">
-      @if (currentToast.key) {
-        <span>{{ currentToast.key | translate }}</span>
-      } @else if (currentToast.message) {
-        <span>{{ currentToast.message }}</span>
-      }
-    </div>
+<div class="toast-host">
+  <div class="toast toast--{{ currentToast.kind }}" (click)="dismissToast()">
+    @if (currentToast.key) {
+    <span>{{ currentToast.key | translate }}</span>
+    } @else if (currentToast.message) {
+    <span>{{ currentToast.message }}</span>
+    }
   </div>
+</div>
 }
 
 <footer class="footer" [class.footer--overlay]="!isAuthenticated()">

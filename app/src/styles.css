@@ -171,6 +171,7 @@ textarea:focus-visible {
 :root[data-theme='dark'] .app-header .wrap {
   background: rgba(5, 5, 5, 0.5);
 }
+
 :root[data-theme='dark'] .app-header--overlay .wrap,
 .app-header--overlay .wrap {
   background: transparent;
@@ -574,6 +575,7 @@ body.auth-view main.container {
 :root[data-theme='dark'] .auth-card .password-field .password-toggle img {
   filter: invert(1);
 }
+
 :root[data-theme='dark'] img[src="/add.svg"],
 :root[data-theme='dark'] img[src="/edit.svg"],
 :root[data-theme='dark'] img[src="/trash.svg"],
@@ -612,9 +614,11 @@ body.auth-view main.container {
   font-size: 0.9rem;
   color: rgba(90, 95, 103, 0.8);
 }
+
 :root[data-theme='light'] body.auth-view .auth-switch {
   color: rgba(90, 95, 103, 0.8);
 }
+
 :root[data-theme='dark'] body.auth-view .auth-switch {
   color: rgba(208, 213, 221, 0.85);
 }
@@ -628,6 +632,7 @@ body.auth-view main.container {
   font-weight: 600;
   cursor: pointer;
 }
+
 :root[data-theme='light'] body.auth-view .auth-switch button {
   border-color: rgba(15, 23, 42, 0.3);
 }
@@ -911,6 +916,7 @@ textarea {
   background: rgba(185, 28, 28, 0.25);
   color: #7f1d1d;
 }
+
 .btn.danger.icon-only,
 .btn.danger.icon-only:hover,
 .btn.danger.icon-only:focus-visible {
@@ -918,6 +924,7 @@ textarea {
   border-color: transparent;
   box-shadow: none;
 }
+
 :root[data-theme='dark'] .btn.danger.icon-only,
 :root[data-theme='dark'] .btn.danger.icon-only:hover,
 :root[data-theme='dark'] .btn.danger.icon-only:focus-visible {
@@ -925,6 +932,7 @@ textarea {
   border-color: transparent;
   box-shadow: none;
 }
+
 .btn.danger:focus-visible {
   outline-color: rgba(185, 28, 28, 0.8);
 }
@@ -1572,21 +1580,33 @@ textarea {
   width: 14px;
   height: 14px;
   transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   cursor: ew-resize;
   color: #fff;
   font-size: 0.6rem;
   line-height: 14px;
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   touch-action: none;
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
-.gantt-bar .gantt-handle.start { left: 8px; }
-.gantt-bar .gantt-handle.end { left: calc(100% - 8px); }
-.gantt-bar .gantt-handle::before { content: '\2194'; }
-.gantt-bar .gantt-handle:hover { background: rgba(0,0,0,0.45); }
+
+.gantt-bar .gantt-handle.start {
+  left: 8px;
+}
+
+.gantt-bar .gantt-handle.end {
+  left: calc(100% - 8px);
+}
+
+.gantt-bar .gantt-handle::before {
+  content: '\2194';
+}
+
+.gantt-bar .gantt-handle:hover {
+  background: rgba(0, 0, 0, 0.45);
+}
 
 .gantt-bar .gantt-tooltip {
   position: absolute;
@@ -1750,11 +1770,12 @@ textarea {
   margin-top: 8px;
 }
 
-/* Avatar upload mobile phone */
+/* Header layout on small screens */
 @media (max-width: 640px) {
   :root {
     --app-header-offset: 104px;
   }
+
   .app-header .wrap {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -2271,7 +2292,7 @@ textarea {
   grid-row: span 2;
 }
 
-.profile-grid > .contact-card {
+.profile-grid>.contact-card {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -2375,7 +2396,7 @@ textarea {
   gap: 12px;
 }
 
-.contact-hero-intro > * {
+.contact-hero-intro>* {
   margin: 0;
 }
 
@@ -2437,10 +2458,12 @@ textarea {
     transform: translate3d(0, 0, 0) scale(1);
     opacity: 0.55;
   }
+
   50% {
     transform: translate3d(-20px, 25px, 0) scale(1.05);
     opacity: 0.7;
   }
+
   100% {
     transform: translate3d(15px, -15px, 0) scale(0.95);
     opacity: 0.5;
@@ -2452,14 +2475,17 @@ textarea {
     opacity: 0.25;
     transform: rotate(0deg);
   }
+
   50% {
     opacity: 0.4;
   }
+
   100% {
     opacity: 0.25;
     transform: rotate(360deg);
   }
 }
+
 .contact-card {
   background: linear-gradient(145deg, rgba(15, 15, 18, 0.85), rgba(15, 15, 18, 0.95));
   border: 1px solid rgba(63, 63, 70, 0.6);
@@ -2614,6 +2640,7 @@ textarea {
   .team-photo {
     margin: 0 auto;
   }
+
   .team-content {
     padding-right: 0;
   }
@@ -2630,14 +2657,17 @@ textarea {
   border: 1px solid rgba(148, 163, 184, 0.4);
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
 }
+
 :root[data-theme="light"] .contact-hero-card {
   background: rgba(255, 255, 255, 0.92);
   border-color: rgba(148, 163, 184, 0.35);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
 }
+
 :root[data-theme="light"] .contact-hero-card p {
   color: rgba(71, 85, 105, 0.85);
 }
+
 :root[data-theme="dark"] .contact-hero-card {
   background: rgba(10, 15, 25, 0.9);
   border-color: rgba(59, 130, 246, 0.25);
@@ -2677,20 +2707,24 @@ textarea {
   color: rgba(255, 255, 255, 0.85);
   mix-blend-mode: screen;
 }
-:root[data-theme='light'] main.container + .footer.footer--overlay {
+
+:root[data-theme='light'] main.container+.footer.footer--overlay {
   color: rgba(15, 23, 42, 0.6);
   mix-blend-mode: normal;
 }
-:root[data-theme='light'] main.container.container--landing + .footer.footer--overlay,
-main.container.container--landing + .footer.footer--overlay {
+
+:root[data-theme='light'] main.container.container--landing+.footer.footer--overlay,
+main.container.container--landing+.footer.footer--overlay {
   color: rgba(255, 255, 255, 0.9);
   mix-blend-mode: normal;
 }
+
 :root[data-theme='dark'] .footer {
   background: rgba(5, 5, 5, 0.5);
 }
+
 :root[data-theme='dark'] .footer.footer--overlay,
-main.container.container--landing + .footer.footer--overlay {
+main.container.container--landing+.footer.footer--overlay {
   background: transparent;
   mix-blend-mode: normal;
   backdrop-filter: none;
@@ -2768,6 +2802,7 @@ fieldset textarea.ng-invalid.ng-touched {
     transform: translateY(0);
   }
 }
+
 :root[data-theme='light'] body.auth-view .auth-headline .subtitle {
   color: rgba(15, 23, 42, 0.6);
 }
@@ -2775,6 +2810,7 @@ fieldset textarea.ng-invalid.ng-touched {
 :root[data-theme='light'] body.auth-view .auth-headline .title {
   color: #111827;
 }
+
 .team-content {
   position: relative;
   padding-right: 80px;
@@ -2909,14 +2945,17 @@ app-landing-page {
     transform: translateY(0) scale(1);
   }
 }
+
 :root[data-theme="light"] .contact-hero-card {
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(148, 163, 184, 0.3);
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
 }
+
 :root[data-theme="light"] .contact-hero-card p {
   color: rgba(71, 85, 105, 0.85);
 }
+
 :root[data-theme='dark'] .contact-hero-card {
   background: rgba(10, 15, 25, 0.85);
   border-color: rgba(59, 130, 246, 0.25);
@@ -2925,7 +2964,8 @@ app-landing-page {
 .contact-channel-card {
   min-height: 100%;
 }
-.contact-body-grid > article {
+
+.contact-body-grid>article {
   height: 100%;
 }
 
@@ -2938,6 +2978,7 @@ app-landing-page {
 .contact-title {
   margin-bottom: 4px;
 }
+
 .language-dropdown__icon img {
   display: block;
 }

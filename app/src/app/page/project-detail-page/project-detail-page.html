@@ -150,6 +150,7 @@
       (editTask)="editTask($event)"
       (removeTask)="removeTask($event)"
       (updateTaskTimeline)="onTaskTimelineChange($event)"
+      (updateTaskStatus)="onTaskStatusChange($event)"
     ></app-task-gantt>
 
     @if (showMemberListModal() && currentUserId() === projectDetail.ownerId) {

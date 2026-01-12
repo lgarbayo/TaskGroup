@@ -6,7 +6,7 @@ import { Project, UpsertProjectCommand } from '../../model/project.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { KeyValuePipe, DecimalPipe } from '@angular/common';
 import { Milestone, UpsertMilestoneCommand } from '../../model/milestone.model';
-import { Task, UpsertTaskCommand } from '../../model/task.model';
+import { Task, TaskStatus, UpsertTaskCommand } from '../../model/task.model';
 import { MilestoneService } from '../../service/milestone-service';
 import { TaskService } from '../../service/task-service';
 import { ProjectForm } from "../../component/project/project-form/project-form";
@@ -292,6 +292,40 @@ export class ProjectDetailPage {
       },
       error: (error) => {
         console.error('Error updating task', error);
+        this.taskError.set('project.tasks.error');
+        this.loadTasks(projectUuid);
+      },
+    });
+  }
+
+  onTaskStatusChange(change: { task: Task; status: TaskStatus }): void {
+    const projectUuid = this.projectUuid();
+    if (!projectUuid) {
+      return;
+    }
+    const updatedTask: Task = {
+      ...change.task,
+      status: change.status,
+    };
+    this.tasks.update((list) => list.map((task) => (task.uuid === updatedTask.uuid ? updatedTask : task)));
+    const command: UpsertTaskCommand = {
+      title: updatedTask.title,
+      description: updatedTask.description,
+      durationWeeks: updatedTask.durationWeeks,
+      startDate: updatedTask.startDate,
+      status: updatedTask.status,
+      priority: updatedTask.priority,
+      assigneeIds: updatedTask.assignees?.map((assignee) => assignee.id) ?? [],
+      milestoneUuid: updatedTask.milestone?.uuid ?? null,
+    };
+    this.taskService.update(projectUuid, updatedTask.uuid, command).subscribe({
+      next: () => {
+        this.taskError.set(null);
+        this.loadTasks(projectUuid);
+        this.loadAnalysis(projectUuid);
+      },
+      error: (error) => {
+        console.error('Error updating task status', error);
         this.taskError.set('project.tasks.error');
         this.loadTasks(projectUuid);
       },

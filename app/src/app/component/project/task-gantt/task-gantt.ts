@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoreService } from '../../../service/core-service';
-import { Task } from '../../../model/task.model';
+import { Task, TaskStatus } from '../../../model/task.model';
 import { Milestone } from '../../../model/milestone.model';
 import { ProjectAnalysis, TaskAnalysis } from '../../../model/analysis.model';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
@@ -64,6 +64,7 @@ export class TaskGantt implements AfterViewInit {
   editTask = output<Task>();
   removeTask = output<string>();
   updateTaskTimeline = output<{ task: Task; startDate: Date; durationWeeks: number }>();
+  updateTaskStatus = output<{ task: Task; status: TaskStatus }>();
 
   @ViewChild('ganttViewport') private ganttViewport?: ElementRef<HTMLDivElement>;
   @ViewChildren('ganttRow') private ganttRows?: QueryList<ElementRef<HTMLDivElement>>;
@@ -112,6 +113,10 @@ export class TaskGantt implements AfterViewInit {
     return (task.assignees ?? []).map((assignee) => assignee.alias).join(', ');
   }
 
+  protected priorityClass(priority: Task['priority']): string {
+    return `meta-chip--${priority}`;
+  }
+
   protected hasTasks(): boolean {
     return this.tasks().length > 0;
   }
@@ -158,6 +163,15 @@ export class TaskGantt implements AfterViewInit {
     return completion !== null
       ? `${start} → ${end} · ${(completion * 100).toFixed(0)}%`
       : `${start} → ${end}`;
+  }
+
+  protected setStatus(task: Task, status: TaskStatus, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (task.status === status) {
+      return;
+    }
+    this.updateTaskStatus.emit({ task, status });
   }
 
   protected onGanttScroll(event: Event): void {

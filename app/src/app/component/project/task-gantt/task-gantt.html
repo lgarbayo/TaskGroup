@@ -28,14 +28,12 @@
       <table class="data-table task-table">
         <colgroup>
           <col class="col-title" />
-          <col class="col-duration" />
           <col class="col-schedule" />
           <col class="col-actions" />
         </colgroup>
         <thead>
           <tr>
             <th>{{ 'form.task.title' | translate }}</th>
-            <th>{{ 'form.task.duration' | translate }}</th>
             <th class="gantt-header schedule-col">
               <div class="gantt-scroll" #ganttViewport (scroll)="onGanttScroll($event)">
                 <div class="gantt-content" [style.width.px]="timelineWidth()">
@@ -66,23 +64,13 @@
             <tr>
               <td>
                 <strong>{{ task.title }}</strong>
-                <p class="note">
-                  {{ task.description || ('common.description.empty' | translate) }}
-                </p>
-                <p class="note">
-                  {{ 'form.task.priority' | translate }}:
-                  {{ ('form.task.priority.' + task.priority) | translate }}
-                </p>
-                <p class="note">
-                  {{ 'form.task.assignee' | translate }}:
-                  @if (task.assignees?.length) {
-                    {{ assigneeNames(task) }}
-                  } @else {
-                    {{ 'form.task.assignee.none' | translate }}
-                  }
-                </p>
+                <div class="task-meta-chips">
+                  <span class="meta-chip" [class]="priorityClass(task.priority)">
+                    {{ 'form.task.priority' | translate }}:
+                    {{ ('form.task.priority.' + task.priority) | translate }}
+                  </span>
+                </div>
               </td>
-              <td>{{ task.durationWeeks }} {{ 'common.weeks' | translate }}</td>
               <td class="gantt-cell schedule-col">
                 <div class="gantt-scroll gantt-scroll--row" #ganttRow (scroll)="onGanttScroll($event)">
                   <div class="gantt-content" [style.width.px]="timelineWidth()">
@@ -106,6 +94,35 @@
                 </div>
               </td>
               <td class="table-actions">
+                <div class="status-chips" role="group" [attr.aria-label]="'form.task.status' | translate">
+                  <button
+                    class="status-chip status-chip--pending"
+                    [class.active]="task.status === 'pending'"
+                    type="button"
+                    (click)="setStatus(task, 'pending', $event)"
+                    [attr.aria-pressed]="task.status === 'pending'"
+                  >
+                    {{ 'form.task.status.pending' | translate }}
+                  </button>
+                  <button
+                    class="status-chip status-chip--in-progress"
+                    [class.active]="task.status === 'in_progress'"
+                    type="button"
+                    (click)="setStatus(task, 'in_progress', $event)"
+                    [attr.aria-pressed]="task.status === 'in_progress'"
+                  >
+                    {{ 'form.task.status.in_progress' | translate }}
+                  </button>
+                  <button
+                    class="status-chip status-chip--done"
+                    [class.active]="task.status === 'done'"
+                    type="button"
+                    (click)="setStatus(task, 'done', $event)"
+                    [attr.aria-pressed]="task.status === 'done'"
+                  >
+                    {{ 'form.task.status.done' | translate }}
+                  </button>
+                </div>
                 <button class="btn ghost" type="button" (click)="analyseTask.emit(task.uuid)">
                   {{ 'project.analysis.button' | translate }}
                 </button>

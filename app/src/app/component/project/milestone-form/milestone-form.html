@@ -3,7 +3,7 @@
     <label>{{ 'form.milestone.title' | translate }} *</label>
     <input formControlName="title" [class.invalid]="form.controls.title.invalid && form.controls.title.touched" />
     @if (form.controls.title.invalid && form.controls.title.touched) {
-      <small>⚠️ {{ 'form.milestone.titleRequired' | translate }}</small>
+    <small>⚠️ {{ 'form.milestone.titleRequired' | translate }}</small>
     }
   </div>
 
@@ -17,29 +17,22 @@
     <div class="fieldset-grid">
       <div>
         <label>{{ 'form.project.year' | translate }}</label>
-        <input
-          type="number"
-          formControlName="year"
-          [class.invalid]="form.controls.date.controls.year.invalid && form.controls.date.controls.year.touched"
-        />
+        <input type="number" formControlName="year"
+          [class.invalid]="form.controls.date.controls.year.invalid && form.controls.date.controls.year.touched" />
       </div>
       <div>
         <label>{{ 'form.project.month' | translate }}</label>
-        <select
-          formControlName="month"
-          [class.invalid]="form.controls.date.controls.month.invalid && form.controls.date.controls.month.touched"
-        >
-        @for (month of core.monthNames(); track month; let idx = $index) {
+        <select formControlName="month"
+          [class.invalid]="form.controls.date.controls.month.invalid && form.controls.date.controls.month.touched">
+          @for (month of core.monthNames(); track month; let idx = $index) {
           <option [value]="idx">{{ month }}</option>
-        }
+          }
         </select>
       </div>
       <div>
         <label>{{ 'form.project.week' | translate }}</label>
-        <select
-          formControlName="week"
-          [class.invalid]="form.controls.date.controls.week.invalid && form.controls.date.controls.week.touched"
-        >
+        <select formControlName="week"
+          [class.invalid]="form.controls.date.controls.week.invalid && form.controls.date.controls.week.touched">
           <option [value]="0">1</option>
           <option [value]="1">2</option>
           <option [value]="2">3</option>
@@ -48,7 +41,7 @@
       </div>
     </div>
     @if (form.controls.date.controls.year.errors?.['min'] && form.controls.date.controls.year.touched) {
-      <small>⚠️ {{ 'form.project.yearMin' | translate }}</small>
+    <small>⚠️ {{ 'form.project.yearMin' | translate }}</small>
     }
   </fieldset>
 

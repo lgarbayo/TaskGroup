@@ -2,162 +2,128 @@
   <div class="row row-refresh">
     <h2 class="title">{{ 'project.tasks.title' | translate }}</h2>
     <div class="row">
-      <button
-        class="btn primary icon-only"
-        type="button"
-        (click)="addTask.emit()"
-        aria-label="{{ 'form.task.submit' | translate }}"
-      >
+      <button class="btn primary icon-only" type="button" (click)="addTask.emit()"
+        aria-label="{{ 'form.task.submit' | translate }}">
         <img src="/add.svg" alt="" width="24" height="24" />
       </button>
     </div>
   </div>
 
   @if (loading()) {
-    <p class="note">{{ 'project.tasks.loading' | translate }}</p>
+  <p class="note">{{ 'project.tasks.loading' | translate }}</p>
   }
 
   @if (error(); as taskError) {
-    <p class="error">{{ taskError | translate }}</p>
+  <p class="error">{{ taskError | translate }}</p>
   }
 
   @if (!loading() && !hasTasks()) {
-    <p class="note">{{ 'project.tasks.empty' | translate }}</p>
+  <p class="note">{{ 'project.tasks.empty' | translate }}</p>
   } @else {
-    <div class="table-wrapper">
-      <table class="data-table task-table">
-        <colgroup>
-          <col class="col-title" />
-          <col class="col-schedule" />
-          <col class="col-actions" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>{{ 'form.task.title' | translate }}</th>
-            <th class="gantt-header schedule-col">
-              <div class="gantt-scroll" #ganttViewport (scroll)="onGanttScroll($event)">
-                <div class="gantt-content" [style.width.px]="timelineWidth()">
-                  <div class="gantt-scale">
-                    <div class="gantt-month-row">
-                      @for (month of timelineMonths(); track month.start) {
-                        <span class="gantt-month" [style.width.%]="monthWidth(month)">
-                          {{ month.label }}
-                        </span>
-                      }
-                    </div>
-                    <div class="gantt-week-row">
-                      @for (week of timelineWeeks(); track week.start) {
-                        <span class="gantt-week-label" [style.left.%]="weekMarkerPosition(week)">
-                          {{ week.label }}
-                        </span>
-                      }
-                    </div>
+  <div class="table-wrapper">
+    <table class="data-table task-table">
+      <colgroup>
+        <col class="col-title" />
+        <col class="col-schedule" />
+        <col class="col-actions" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>{{ 'form.task.title' | translate }}</th>
+          <th class="gantt-header schedule-col">
+            <div class="gantt-scroll" #ganttViewport (scroll)="onGanttScroll($event)">
+              <div class="gantt-content" [style.width.px]="timelineWidth()">
+                <div class="gantt-scale">
+                  <div class="gantt-month-row">
+                    @for (month of timelineMonths(); track month.start) {
+                    <span class="gantt-month" [style.width.%]="monthWidth(month)">
+                      {{ month.label }}
+                    </span>
+                    }
+                  </div>
+                  <div class="gantt-week-row">
+                    @for (week of timelineWeeks(); track week.start) {
+                    <span class="gantt-week-label" [style.left.%]="weekMarkerPosition(week)">
+                      {{ week.label }}
+                    </span>
+                    }
                   </div>
                 </div>
               </div>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (task of taskList(); track task.uuid) {
-            <tr>
-              <td>
-                <strong>{{ task.title }}</strong>
-                <div class="task-meta-chips">
-                  <span class="meta-chip" [class]="priorityClass(task.priority)">
-                    {{ 'form.task.priority' | translate }}:
-                    {{ ('form.task.priority.' + task.priority) | translate }}
+            </div>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (task of taskList(); track task.uuid) {
+        <tr>
+          <td>
+            <strong>{{ task.title }}</strong>
+            <div class="task-meta-chips">
+              <span class="meta-chip" [class]="priorityClass(task.priority)">
+                {{ 'form.task.priority' | translate }}:
+                {{ ('form.task.priority.' + task.priority) | translate }}
+              </span>
+            </div>
+          </td>
+          <td class="gantt-cell schedule-col">
+            <div class="gantt-scroll gantt-scroll--row" #ganttRow (scroll)="onGanttScroll($event)">
+              <div class="gantt-content" [style.width.px]="timelineWidth()">
+                <div class="gantt-track">
+                  @for (week of timelineWeeks(); track week.start) {
+                  <span class="gantt-division" [style.left.%]="weekMarkerPosition(week)"></span>
+                  }
+                  <span class="gantt-bar" [style.left.%]="taskStartOffset(task)"
+                    [style.width.%]="taskDurationPercent(task)" [class.dragging]="isDragging(task.uuid)"
+                    (pointerdown)="startDrag($event, task, 'move')">
+                    <span class="gantt-handle start" (pointerdown)="startDrag($event, task, 'resize-start')"></span>
+                    <span class="gantt-handle end" (pointerdown)="startDrag($event, task, 'resize-end')"></span>
+                    <span class="gantt-tooltip">{{ taskTooltip(task) }}</span>
                   </span>
                 </div>
-              </td>
-              <td class="gantt-cell schedule-col">
-                <div class="gantt-scroll gantt-scroll--row" #ganttRow (scroll)="onGanttScroll($event)">
-                  <div class="gantt-content" [style.width.px]="timelineWidth()">
-                    <div class="gantt-track">
-                      @for (week of timelineWeeks(); track week.start) {
-                        <span class="gantt-division" [style.left.%]="weekMarkerPosition(week)"></span>
-                      }
-                      <span
-                        class="gantt-bar"
-                        [style.left.%]="taskStartOffset(task)"
-                        [style.width.%]="taskDurationPercent(task)"
-                        [class.dragging]="isDragging(task.uuid)"
-                        (pointerdown)="startDrag($event, task, 'move')"
-                      >
-                        <span class="gantt-handle start" (pointerdown)="startDrag($event, task, 'resize-start')"></span>
-                        <span class="gantt-handle end" (pointerdown)="startDrag($event, task, 'resize-end')"></span>
-                        <span class="gantt-tooltip">{{ taskTooltip(task) }}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="table-actions">
-                <div class="status-chips" role="group" [attr.aria-label]="'form.task.status' | translate">
-                  <button
-                    class="status-chip status-chip--pending"
-                    [class.active]="task.status === 'pending'"
-                    type="button"
-                    (click)="setStatus(task, 'pending', $event)"
-                    [attr.aria-pressed]="task.status === 'pending'"
-                  >
-                    {{ 'form.task.status.pending' | translate }}
-                  </button>
-                  <button
-                    class="status-chip status-chip--in-progress"
-                    [class.active]="task.status === 'in_progress'"
-                    type="button"
-                    (click)="setStatus(task, 'in_progress', $event)"
-                    [attr.aria-pressed]="task.status === 'in_progress'"
-                  >
-                    {{ 'form.task.status.in_progress' | translate }}
-                  </button>
-                  <button
-                    class="status-chip status-chip--done"
-                    [class.active]="task.status === 'done'"
-                    type="button"
-                    (click)="setStatus(task, 'done', $event)"
-                    [attr.aria-pressed]="task.status === 'done'"
-                  >
-                    {{ 'form.task.status.done' | translate }}
-                  </button>
-                </div>
-                <button class="btn ghost" type="button" (click)="openComments.emit(task)">
-                  {{ 'project.tasks.comments.button' | translate }}
-                </button>
-                <button class="btn ghost" type="button" (click)="analyseTask.emit(task.uuid)">
-                  {{ 'project.analysis.button' | translate }}
-                </button>
-                <button
-                  class="btn ghost icon-only"
-                  type="button"
-                  (click)="openTaskView.emit(task)"
-                  aria-label="{{ 'project.tasks.view' | translate }}"
-                >
-                  <img src="/eye-open.svg" alt="" width="20" height="20" />
-                </button>
-                <button
-                  class="btn ghost icon-only"
-                  type="button"
-                  (click)="editTask.emit(task)"
-                  aria-label="{{ 'project.tasks.edit' | translate }}"
-                >
-                  <img src="/edit.svg" alt="" width="20" height="20" />
-                </button>
-                <button
-                  class="btn danger icon-only"
-                  type="button"
-                  (click)="removeTask.emit(task.uuid)"
-                  aria-label="{{ 'common.delete' | translate }}"
-                >
-                  <img src="/trash.svg" alt="" width="20" height="20" />
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+              </div>
+            </div>
+          </td>
+          <td class="table-actions">
+            <div class="status-chips" role="group" [attr.aria-label]="'form.task.status' | translate">
+              <button class="status-chip status-chip--pending" [class.active]="task.status === 'pending'" type="button"
+                (click)="setStatus(task, 'pending', $event)" [attr.aria-pressed]="task.status === 'pending'">
+                {{ 'form.task.status.pending' | translate }}
+              </button>
+              <button class="status-chip status-chip--in-progress" [class.active]="task.status === 'in_progress'"
+                type="button" (click)="setStatus(task, 'in_progress', $event)"
+                [attr.aria-pressed]="task.status === 'in_progress'">
+                {{ 'form.task.status.in_progress' | translate }}
+              </button>
+              <button class="status-chip status-chip--done" [class.active]="task.status === 'done'" type="button"
+                (click)="setStatus(task, 'done', $event)" [attr.aria-pressed]="task.status === 'done'">
+                {{ 'form.task.status.done' | translate }}
+              </button>
+            </div>
+            <button class="btn ghost" type="button" (click)="openComments.emit(task)">
+              {{ 'project.tasks.comments.button' | translate }}
+            </button>
+            <button class="btn ghost" type="button" (click)="analyseTask.emit(task.uuid)">
+              {{ 'project.analysis.button' | translate }}
+            </button>
+            <button class="btn ghost icon-only" type="button" (click)="openTaskView.emit(task)"
+              aria-label="{{ 'project.tasks.view' | translate }}">
+              <img src="/eye-open.svg" alt="" width="20" height="20" />
+            </button>
+            <button class="btn ghost icon-only" type="button" (click)="editTask.emit(task)"
+              aria-label="{{ 'project.tasks.edit' | translate }}">
+              <img src="/edit.svg" alt="" width="20" height="20" />
+            </button>
+            <button class="btn danger icon-only" type="button" (click)="removeTask.emit(task.uuid)"
+              aria-label="{{ 'common.delete' | translate }}">
+              <img src="/trash.svg" alt="" width="20" height="20" />
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 </article>

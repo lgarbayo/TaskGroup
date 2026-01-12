@@ -221,7 +221,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'contact.profile.name': 'Luis Garbayo Fernández',
     'contact.profile.role': 'Coordinador del proyecto',
     'contact.profile.description': 'Soy Luis Garbayo Fernández, coordinador del proyecto y tu punto de contacto dentro de TaskGroup. Apasionado por la tecnología, la innovación, la inteligencia artificial y los datos. Combino Ingeniería Informática, desarrollo de software y docencia STEM para crear soluciones útiles con impacto social.',
-    
+
     'form.project.title': 'Título',
     'form.project.titleRequired': 'El título es obligatorio.',
     'form.project.description': 'Descripción',
@@ -485,7 +485,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'contact.profile.name': 'Luis Garbayo Fernández',
     'contact.profile.role': 'Project coordinator',
     'contact.profile.description': 'I\'m Luis Garbayo Fernández, the project coordinator and your point of contact inside TaskGroup. Passionate about technology, innovation, artificial intelligence, and data. I blend Computer Engineering, software development, and STEM teaching to deliver useful solutions with social impact.',
-    
+
     'form.project.title': 'Title',
     'form.project.titleRequired': 'Title is required.',
     'form.project.description': 'Description',
@@ -749,7 +749,7 @@ export const TRANSLATIONS: Record<LanguageCode, TranslationDictionary> = {
     'contact.profile.name': 'Luis Garbayo Fernández',
     'contact.profile.role': 'Coordinador do proxecto',
     'contact.profile.description': 'Son Luis Garbayo Fernández, coordinador do proxecto e o teu punto de contacto dentro de TaskGroup. Apaixóname a tecnoloxía, a innovación, a intelixencia artificial e os datos. Combino Enxeñaría Informática, desenvolvemento e docencia STEM para crear solucións útiles con impacto social.',
-    
+
     'form.project.title': 'Título',
     'form.project.titleRequired': 'O título é obrigatorio.',
     'form.project.description': 'Descrición',

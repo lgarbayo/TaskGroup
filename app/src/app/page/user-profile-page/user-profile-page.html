@@ -1,243 +1,6 @@
 <section class="stack-lg contact-layout profile-page">
   @if (user(); as currentUser) {
-    <div class="profile-grid">
-      <article class="card pad contact-card stack-md">
-        <header class="row row-refresh">
-          <div>
-            <h1 class="title">{{ 'profile.title' | translate }}</h1>
-            <p class="muted">{{ 'profile.subtitle' | translate }}</p>
-          </div>
-          <button class="btn ghost sm" type="button" (click)="goBack()">
-            {{ 'profile.back' | translate }}
-          </button>
-        </header>
-
-        <form class="stack-md" [formGroup]="form" (ngSubmit)="submit()">
-          <section class="stack-sm" aria-labelledby="profile-account-heading">
-            <h2 class="subtitle" id="profile-account-heading">
-              {{ 'profile.section.account' | translate }}
-            </h2>
-
-            <div class="profile-avatar-row">
-              <div
-                class="profile-avatar"
-                [style.background-color]="(avatarPreviewUrl() || user()?.avatarUrl) ? 'transparent' : avatarColor()"
-              >
-                @if (avatarPreviewUrl(); as previewUrl) {
-                  <img [src]="previewUrl" alt="" loading="lazy" />
-                } @else if (user()?.avatarUrl) {
-                  <img [src]="user()?.avatarUrl!" alt="" loading="lazy" />
-                } @else {
-                  <span>{{ avatarInitial() }}</span>
-                }
-              </div>
-              <div class="stack-xxs">
-                <p>{{ 'profile.avatar.label' | translate }}</p>
-                <button
-                  class="btn ghost sm"
-                  type="button"
-                  (click)="avatarFileInput.click()"
-                  [disabled]="loading()"
-                >
-                  {{ 'profile.avatar.change' | translate }}
-                </button>
-                <input
-                  #avatarFileInput
-                  id="avatarFile"
-                  type="file"
-                  accept="image/*"
-                  (change)="onAvatarSelected($event)"
-                  hidden
-                />
-                @if (avatarPreviewUrl()) {
-                  <p class="muted">
-                    {{ 'profile.avatar.preview' | translate }}
-                  </p>
-                  <div class="row">
-                    <button
-                      class="btn primary sm"
-                      type="button"
-                      (click)="saveAvatar()"
-                      [disabled]="loading()"
-                    >
-                      {{ 'profile.avatar.save' | translate }}
-                    </button>
-                    <button
-                      class="btn ghost sm"
-                      type="button"
-                      (click)="cancelAvatarPreview()"
-                      [disabled]="loading()"
-                    >
-                      {{ 'common.cancel' | translate }}
-                    </button>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <label class="stack-xxs" for="alias">
-              <span>{{ 'profile.alias' | translate }} *</span>
-              <input
-                id="alias"
-                type="text"
-                formControlName="alias"
-                autocomplete="off"
-              />
-              @if (inputInvalid('alias')) {
-                <small class="error">{{ 'auth.error.aliasRequired' | translate }}</small>
-              }
-            </label>
-
-            <label class="stack-xxs" for="name">
-              <span>{{ 'profile.name' | translate }}</span>
-              <input
-                id="name"
-                type="text"
-                formControlName="name"
-                autocomplete="off"
-                [placeholder]="'profile.name.empty' | translate"
-              />
-            </label>
-
-            <p class="muted">
-              <strong>{{ 'profile.id' | translate }}</strong>
-              <span>#{{ currentUser.id }}</span>
-            </p>
-
-            <h3 class="subtitle">
-              {{ 'profile.section.preferences' | translate }}
-            </h3>
-
-            <label class="stack-xxs" for="timezone">
-              <span>{{ 'profile.timezone.label' | translate }} *</span>
-              <select id="timezone" formControlName="timezone">
-                @for (tz of timezones; track tz) {
-                  <option [value]="tz">{{ tz }}</option>
-                }
-              </select>
-            </label>
-          </section>
-
-          @if (errorMessage(); as error) {
-            <p class="error">
-              @if (error.key) {
-                {{ error.key | translate }}
-              } @else if (error.raw) {
-                {{ error.raw }}
-              }
-            </p>
-          }
-          @if (successMessage()) {
-            <p class="success">{{ successMessage() | translate }}</p>
-          }
-
-          <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
-          <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
-            {{ 'profile.save' | translate }}
-          </button>
-        </form>
-      </article>
-
-      <div class="profile-grid-secondary">
-        <article class="card pad contact-card stack-md">
-          <section class="stack-sm" aria-labelledby="profile-stats-heading">
-            <h2 class="subtitle" id="profile-stats-heading">
-              {{ 'profile.stats.title' | translate }}
-            </h2>
-            @if (statsLoading()) {
-              <p class="muted">{{ 'profile.stats.loading' | translate }}</p>
-            } @else if (statsError()) {
-              <p class="error">{{ 'profile.stats.error' | translate }}</p>
-            } @else if (stats(); as userStats) {
-              @if (userStats.assigned === 0) {
-                <p class="muted">{{ 'profile.stats.empty' | translate }}</p>
-              } @else {
-                <div class="profile-stats-completion">
-                  <div class="profile-stats-completion-header">
-                    <span>{{ 'profile.stats.participation' | translate }}</span>
-                    <strong>{{ userStats.completion }}%</strong>
-                  </div>
-                  <div class="profile-stats-progress">
-                    <div
-                      class="profile-stats-progress-bar"
-                      [style.width.%]="userStats.completion"
-                    ></div>
-                  </div>
-                </div>
-                <ul class="profile-stats-list">
-                  <li class="profile-stats-row">
-                    <span>{{ 'profile.stats.assigned' | translate }}</span>
-                    <strong>{{ userStats.assigned }}</strong>
-                  </li>
-                  <li class="profile-stats-row">
-                    <span>{{ 'profile.stats.done' | translate }}</span>
-                    <strong>{{ userStats.done }}</strong>
-                  </li>
-                  <li class="profile-stats-row">
-                    <span>{{ 'profile.stats.pending' | translate }}</span>
-                    <strong>{{ userStats.pending }}</strong>
-                  </li>
-                  <li class="profile-stats-row">
-                    <span>{{ 'profile.stats.participation' | translate }}</span>
-                    <strong>{{ userStats.completion }}%</strong>
-                  </li>
-                </ul>
-              }
-            }
-          </section>
-        </article>
-
-        <article class="card pad contact-card stack-md">
-          <section class="stack-sm" aria-labelledby="profile-email-heading">
-            <h2 class="subtitle" id="profile-email-heading">
-              {{ 'profile.section.email' | translate }}
-            </h2>
-            <p class="muted">
-              <strong>{{ currentUser.email }}</strong>
-              @if (currentUser.emailVerified === false) {
-                <span> · {{ 'profile.email.unverified' | translate }}</span>
-              } @else if (currentUser.emailVerified) {
-                <span> · {{ 'profile.email.verified' | translate }}</span>
-              }
-            </p>
-            <p class="muted">
-              {{ 'profile.email.helper' | translate }}
-            </p>
-            @if (currentUser.emailVerified === false) {
-              <button class="btn ghost sm" type="button" (click)="resendEmailVerification()">
-                {{ 'profile.email.resend' | translate }}
-              </button>
-            }
-            <button class="btn ghost" type="button" (click)="startEmailChange()">
-              {{ 'profile.email.change' | translate }}
-            </button>
-          </section>
-        </article>
-
-        <article class="card pad contact-card stack-md">
-          <section class="stack-sm" aria-labelledby="profile-security-heading">
-            <h2 class="subtitle" id="profile-security-heading">
-              {{ 'profile.section.security' | translate }}
-            </h2>
-            <p class="muted">
-              {{ 'profile.password.lastUpdated' | translate }}
-              @if (passwordLastUpdatedLabel()) {
-                <strong> {{ passwordLastUpdatedLabel() }}</strong>
-              } @else {
-                <span> {{ 'profile.password.lastUpdated.unknown' | translate }}</span>
-              }
-            </p>
-            <p class="muted">
-              {{ 'profile.password.helper' | translate }}
-            </p>
-            <button class="btn ghost" type="button" (click)="startPasswordChange()">
-              {{ 'profile.password.change' | translate }}
-            </button>
-          </section>
-        </article>
-      </div>
-    </div>
-  } @else {
+  <div class="profile-grid">
     <article class="card pad contact-card stack-md">
       <header class="row row-refresh">
         <div>
@@ -248,60 +11,256 @@
           {{ 'profile.back' | translate }}
         </button>
       </header>
-      <p class="note">{{ 'profile.empty' | translate }}</p>
+
+      <form class="stack-md" [formGroup]="form" (ngSubmit)="submit()">
+        <section class="stack-sm" aria-labelledby="profile-account-heading">
+          <h2 class="subtitle" id="profile-account-heading">
+            {{ 'profile.section.account' | translate }}
+          </h2>
+
+          <div class="profile-avatar-row">
+            <div class="profile-avatar"
+              [style.background-color]="(avatarPreviewUrl() || user()?.avatarUrl) ? 'transparent' : avatarColor()">
+              @if (avatarPreviewUrl(); as previewUrl) {
+              <img [src]="previewUrl" alt="" loading="lazy" />
+              } @else if (user()?.avatarUrl) {
+              <img [src]="user()?.avatarUrl!" alt="" loading="lazy" />
+              } @else {
+              <span>{{ avatarInitial() }}</span>
+              }
+            </div>
+            <div class="stack-xxs">
+              <p>{{ 'profile.avatar.label' | translate }}</p>
+              <button class="btn ghost sm" type="button" (click)="avatarFileInput.click()" [disabled]="loading()">
+                {{ 'profile.avatar.change' | translate }}
+              </button>
+              <input #avatarFileInput id="avatarFile" type="file" accept="image/*" (change)="onAvatarSelected($event)"
+                hidden />
+              @if (avatarPreviewUrl()) {
+              <p class="muted">
+                {{ 'profile.avatar.preview' | translate }}
+              </p>
+              <div class="row">
+                <button class="btn primary sm" type="button" (click)="saveAvatar()" [disabled]="loading()">
+                  {{ 'profile.avatar.save' | translate }}
+                </button>
+                <button class="btn ghost sm" type="button" (click)="cancelAvatarPreview()" [disabled]="loading()">
+                  {{ 'common.cancel' | translate }}
+                </button>
+              </div>
+              }
+            </div>
+          </div>
+
+          <label class="stack-xxs" for="alias">
+            <span>{{ 'profile.alias' | translate }} *</span>
+            <input id="alias" type="text" formControlName="alias" autocomplete="off" />
+            @if (inputInvalid('alias')) {
+            <small class="error">{{ 'auth.error.aliasRequired' | translate }}</small>
+            }
+          </label>
+
+          <label class="stack-xxs" for="name">
+            <span>{{ 'profile.name' | translate }}</span>
+            <input id="name" type="text" formControlName="name" autocomplete="off"
+              [placeholder]="'profile.name.empty' | translate" />
+          </label>
+
+          <p class="muted">
+            <strong>{{ 'profile.id' | translate }}</strong>
+            <span>#{{ currentUser.id }}</span>
+          </p>
+
+          <h3 class="subtitle">
+            {{ 'profile.section.preferences' | translate }}
+          </h3>
+
+          <label class="stack-xxs" for="timezone">
+            <span>{{ 'profile.timezone.label' | translate }} *</span>
+            <select id="timezone" formControlName="timezone">
+              @for (tz of timezones; track tz) {
+              <option [value]="tz">{{ tz }}</option>
+              }
+            </select>
+          </label>
+        </section>
+
+        @if (errorMessage(); as error) {
+        <p class="error">
+          @if (error.key) {
+          {{ error.key | translate }}
+          } @else if (error.raw) {
+          {{ error.raw }}
+          }
+        </p>
+        }
+        @if (successMessage()) {
+        <p class="success">{{ successMessage() | translate }}</p>
+        }
+
+        <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
+        <button class="btn primary" type="submit" [disabled]="form.invalid || loading()">
+          {{ 'profile.save' | translate }}
+        </button>
+      </form>
     </article>
+
+    <div class="profile-grid-secondary">
+      <article class="card pad contact-card stack-md">
+        <section class="stack-sm" aria-labelledby="profile-stats-heading">
+          <h2 class="subtitle" id="profile-stats-heading">
+            {{ 'profile.stats.title' | translate }}
+          </h2>
+          @if (statsLoading()) {
+          <p class="muted">{{ 'profile.stats.loading' | translate }}</p>
+          } @else if (statsError()) {
+          <p class="error">{{ 'profile.stats.error' | translate }}</p>
+          } @else if (stats(); as userStats) {
+          @if (userStats.assigned === 0) {
+          <p class="muted">{{ 'profile.stats.empty' | translate }}</p>
+          } @else {
+          <div class="profile-stats-completion">
+            <div class="profile-stats-completion-header">
+              <span>{{ 'profile.stats.participation' | translate }}</span>
+              <strong>{{ userStats.completion }}%</strong>
+            </div>
+            <div class="profile-stats-progress">
+              <div class="profile-stats-progress-bar" [style.width.%]="userStats.completion"></div>
+            </div>
+          </div>
+          <ul class="profile-stats-list">
+            <li class="profile-stats-row">
+              <span>{{ 'profile.stats.assigned' | translate }}</span>
+              <strong>{{ userStats.assigned }}</strong>
+            </li>
+            <li class="profile-stats-row">
+              <span>{{ 'profile.stats.done' | translate }}</span>
+              <strong>{{ userStats.done }}</strong>
+            </li>
+            <li class="profile-stats-row">
+              <span>{{ 'profile.stats.pending' | translate }}</span>
+              <strong>{{ userStats.pending }}</strong>
+            </li>
+            <li class="profile-stats-row">
+              <span>{{ 'profile.stats.participation' | translate }}</span>
+              <strong>{{ userStats.completion }}%</strong>
+            </li>
+          </ul>
+          }
+          }
+        </section>
+      </article>
+
+      <article class="card pad contact-card stack-md">
+        <section class="stack-sm" aria-labelledby="profile-email-heading">
+          <h2 class="subtitle" id="profile-email-heading">
+            {{ 'profile.section.email' | translate }}
+          </h2>
+          <p class="muted">
+            <strong>{{ currentUser.email }}</strong>
+            @if (currentUser.emailVerified === false) {
+            <span> · {{ 'profile.email.unverified' | translate }}</span>
+            } @else if (currentUser.emailVerified) {
+            <span> · {{ 'profile.email.verified' | translate }}</span>
+            }
+          </p>
+          <p class="muted">
+            {{ 'profile.email.helper' | translate }}
+          </p>
+          @if (currentUser.emailVerified === false) {
+          <button class="btn ghost sm" type="button" (click)="resendEmailVerification()">
+            {{ 'profile.email.resend' | translate }}
+          </button>
+          }
+          <button class="btn ghost" type="button" (click)="startEmailChange()">
+            {{ 'profile.email.change' | translate }}
+          </button>
+        </section>
+      </article>
+
+      <article class="card pad contact-card stack-md">
+        <section class="stack-sm" aria-labelledby="profile-security-heading">
+          <h2 class="subtitle" id="profile-security-heading">
+            {{ 'profile.section.security' | translate }}
+          </h2>
+          <p class="muted">
+            {{ 'profile.password.lastUpdated' | translate }}
+            @if (passwordLastUpdatedLabel()) {
+            <strong> {{ passwordLastUpdatedLabel() }}</strong>
+            } @else {
+            <span> {{ 'profile.password.lastUpdated.unknown' | translate }}</span>
+            }
+          </p>
+          <p class="muted">
+            {{ 'profile.password.helper' | translate }}
+          </p>
+          <button class="btn ghost" type="button" (click)="startPasswordChange()">
+            {{ 'profile.password.change' | translate }}
+          </button>
+        </section>
+      </article>
+    </div>
+  </div>
+  } @else {
+  <article class="card pad contact-card stack-md">
+    <header class="row row-refresh">
+      <div>
+        <h1 class="title">{{ 'profile.title' | translate }}</h1>
+        <p class="muted">{{ 'profile.subtitle' | translate }}</p>
+      </div>
+      <button class="btn ghost sm" type="button" (click)="goBack()">
+        {{ 'profile.back' | translate }}
+      </button>
+    </header>
+    <p class="note">{{ 'profile.empty' | translate }}</p>
+  </article>
   }
 
   @if (emailModalOpen()) {
-    <div class="modal-backdrop" (click)="closeEmailModal()">
-      <div class="modal" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h3 class="modal-title">{{ 'profile.email.modal.title' | translate }}</h3>
-          <button class="btn ghost sm" type="button" (click)="closeEmailModal()">
-            {{ 'common.cancel' | translate }}
-          </button>
-        </div>
-        <div class="modal-body">
-          <form class="stack-md" [formGroup]="emailForm" (ngSubmit)="submitEmailChange()">
-            <p class="muted">{{ 'profile.email.modal.helper' | translate }}</p>
-            <label class="stack-xxs" for="profile-email-input">
-              <span>{{ 'profile.email.modal.label' | translate }} *</span>
-              <input
-                id="profile-email-input"
-                type="email"
-                formControlName="email"
-                autocomplete="email"
-                [placeholder]="'auth.placeholder.email' | translate"
-              />
-              @if (emailInputInvalid()) {
-                <small class="error">{{ 'auth.error.email' | translate }}</small>
-              }
-            </label>
-
-            @if (emailError(); as error) {
-              <p class="error">
-                @if (error.key) {
-                  {{ error.key | translate }}
-                } @else if (error.raw) {
-                  {{ error.raw }}
-                }
-              </p>
+  <div class="modal-backdrop" (click)="closeEmailModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">{{ 'profile.email.modal.title' | translate }}</h3>
+        <button class="btn ghost sm" type="button" (click)="closeEmailModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="stack-md" [formGroup]="emailForm" (ngSubmit)="submitEmailChange()">
+          <p class="muted">{{ 'profile.email.modal.helper' | translate }}</p>
+          <label class="stack-xxs" for="profile-email-input">
+            <span>{{ 'profile.email.modal.label' | translate }} *</span>
+            <input id="profile-email-input" type="email" formControlName="email" autocomplete="email"
+              [placeholder]="'auth.placeholder.email' | translate" />
+            @if (emailInputInvalid()) {
+            <small class="error">{{ 'auth.error.email' | translate }}</small>
             }
-            @if (emailSuccess()) {
-              <p class="success">{{ emailSuccess() | translate }}</p>
-            }
+          </label>
 
-            <div class="row">
-              <button class="btn primary" type="submit" [disabled]="emailForm.invalid || emailLoading()">
-                {{ 'profile.email.modal.submit' | translate }}
-              </button>
-              <button class="btn ghost" type="button" (click)="closeEmailModal()" [disabled]="emailLoading()">
-                {{ 'common.cancel' | translate }}
-              </button>
-            </div>
-          </form>
-        </div>
+          @if (emailError(); as error) {
+          <p class="error">
+            @if (error.key) {
+            {{ error.key | translate }}
+            } @else if (error.raw) {
+            {{ error.raw }}
+            }
+          </p>
+          }
+          @if (emailSuccess()) {
+          <p class="success">{{ emailSuccess() | translate }}</p>
+          }
+
+          <div class="row">
+            <button class="btn primary" type="submit" [disabled]="emailForm.invalid || emailLoading()">
+              {{ 'profile.email.modal.submit' | translate }}
+            </button>
+            <button class="btn ghost" type="button" (click)="closeEmailModal()" [disabled]="emailLoading()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
   }
 </section>

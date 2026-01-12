@@ -1,174 +1,133 @@
 <section class="auth-card stack-md">
   @if (!isAuthenticated()) {
-    <header class="auth-brand">
-      <img src="/icon.svg" alt="TaskGroup" width="64" height="64" class="auth-logo" />
-    </header>
-    <div class="auth-headline stack-xxs">
-      <p class="subtitle">
-        @if (mode() === 'login') {
-          {{ 'auth.hero.login' | translate }}
-        } @else {
-          {{ 'auth.hero.register' | translate }}
-        }
-      </p>
-      <h2 class="title">
-        @if (mode() === 'login') {
-          {{ 'auth.subtitle' | translate }}
-        } @else {
-          {{ 'auth.title' | translate }}
-        }
-      </h2>
-    </div>
-    @if (mode() === 'login') {
-      <form class="stack-sm" (ngSubmit)="submitLogin()" [formGroup]="loginForm">
-        <label class="stack-xxs">
-          <span>{{ 'auth.field.email.login' | translate }} *</span>
-          <input
-            type="email"
-            formControlName="email"
-            [placeholder]="'auth.placeholder.email' | translate"
-            [class.invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
-          />
-        </label>
-        <label class="stack-xxs">
-          <span>{{ 'auth.field.password.login' | translate }} *</span>
-          <div class="password-field">
-            <input
-              [type]="loginPasswordVisible() ? 'text' : 'password'"
-              formControlName="password"
-              [placeholder]="'auth.placeholder.password' | translate"
-              [class.invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
-            />
-            <button
-              type="button"
-              class="password-toggle"
-              (click)="toggleLoginPasswordVisibility()"
-              [attr.aria-label]="loginPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)"
-            >
-              <img
-                [src]="loginPasswordVisible() ? '/eye-open.svg' : '/eye-closed.svg'"
-                alt=""
-                width="18"
-                height="18"
-              />
-            </button>
-          </div>
-        </label>
-        <button class="btn" type="submit" [disabled]="loading()">
-          {{ 'auth.submit.login' | translate }}
-        </button>
-        <p class="muted auth-required-note">{{ 'form.requiredNote' | translate }}</p>
-      </form>
-    } @else {
-      <form class="stack-sm" (ngSubmit)="submitRegister()" [formGroup]="registerForm" novalidate>
-        <label class="stack-xxs">
-          <span>{{ 'auth.field.alias' | translate }}</span>
-          <input
-            type="text"
-            formControlName="alias"
-            [placeholder]="'auth.placeholder.alias' | translate"
-            [class.invalid]="inputInvalid('alias')"
-          />
-          @if (inputInvalid('alias')) {
-            <small class="error">
-              @if (registerForm.controls.alias.errors?.['pattern']) {
-                {{ 'auth.error.aliasPattern' | translate }}
-              } @else {
-                {{ 'auth.error.aliasRequired' | translate }}
-              }
-            </small>
-          }
-        </label>
-        <label class="stack-xxs">
-          <span>{{ 'auth.field.name' | translate }}</span>
-          <input
-            type="text"
-            formControlName="name"
-            [placeholder]="'auth.placeholder.name' | translate"
-          />
-        </label>
-        <label class="stack-xxs">
-          <span>{{ 'auth.field.email' | translate }}</span>
-          <input
-            type="email"
-            formControlName="email"
-            [placeholder]="'auth.placeholder.email' | translate"
-            [class.invalid]="inputInvalid('email')"
-          />
-          @if (inputInvalid('email')) {
-            <small class="error">{{ 'auth.error.email' | translate }}</small>
-          }
-        </label>
-        <label class="stack-xxs">
-          <span>{{ 'auth.field.password' | translate }}</span>
-          <div class="password-field">
-            <input
-              [type]="registerPasswordVisible() ? 'text' : 'password'"
-              formControlName="password"
-              [placeholder]="'auth.placeholder.password' | translate"
-              [class.invalid]="inputInvalid('password')"
-            />
-            <button
-              type="button"
-              class="password-toggle"
-              (click)="toggleRegisterPasswordVisibility()"
-              [attr.aria-label]="registerPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)"
-            >
-              <img
-                [src]="registerPasswordVisible() ? '/eye-open.svg' : '/eye-closed.svg'"
-                alt=""
-                width="18"
-                height="18"
-              />
-            </button>
-          </div>
-          @if (inputInvalid('password')) {
-            <small class="error">{{ 'auth.error.password' | translate }}</small>
-          }
-        </label>
-        <button class="btn" type="submit" [disabled]="loading()">
-          {{ 'auth.submit.register' | translate }}
-        </button>
-        <p class="muted auth-required-note">{{ 'form.requiredNote' | translate }}</p>
-      </form>
-    }
-
-    <p class="auth-switch">
-      <span>
-        @if (mode() === 'login') {
-          {{ 'auth.prompt.register' | translate }}
-        } @else {
-          {{ 'auth.prompt.login' | translate }}
-        }
-      </span>
-      <button type="button" (click)="switchMode(mode() === 'login' ? 'register' : 'login')">
-        @if (mode() === 'login') {
-          {{ 'auth.switch.register' | translate }}
-        } @else {
-          {{ 'auth.switch.login' | translate }}
-        }
-      </button>
+  <header class="auth-brand">
+    <img src="/icon.svg" alt="TaskGroup" width="64" height="64" class="auth-logo" />
+  </header>
+  <div class="auth-headline stack-xxs">
+    <p class="subtitle">
+      @if (mode() === 'login') {
+      {{ 'auth.hero.login' | translate }}
+      } @else {
+      {{ 'auth.hero.register' | translate }}
+      }
     </p>
-
-    @if (errorMessage(); as error) {
-      <p class="error">
-        @if (error.key) {
-          {{ error.key | translate:error.params }}
-        } @else if (error.raw) {
-          {{ error.raw }}
-        }
-      </p>
-    }
-  } @else {
-    @if (user(); as currentUser) {
-      <div class="stack-sm">
-        <p class="subtitle">{{ 'auth.logged.title' | translate }}</p>
-        <h2 class="title">{{ 'auth.logged.subtitle' | translate:{ name: currentUser.alias } }}</h2>
-        <p class="muted">{{ 'auth.logged.email' | translate:{ email: currentUser.email } }}</p>
-        <button class="btn ghost" type="button" (click)="logout()">
-          {{ 'auth.logged.logout' | translate }}
+    <h2 class="title">
+      @if (mode() === 'login') {
+      {{ 'auth.subtitle' | translate }}
+      } @else {
+      {{ 'auth.title' | translate }}
+      }
+    </h2>
+  </div>
+  @if (mode() === 'login') {
+  <form class="stack-sm" (ngSubmit)="submitLogin()" [formGroup]="loginForm">
+    <label class="stack-xxs">
+      <span>{{ 'auth.field.email.login' | translate }} *</span>
+      <input type="email" formControlName="email" [placeholder]="'auth.placeholder.email' | translate"
+        [class.invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched" />
+    </label>
+    <label class="stack-xxs">
+      <span>{{ 'auth.field.password.login' | translate }} *</span>
+      <div class="password-field">
+        <input [type]="loginPasswordVisible() ? 'text' : 'password'" formControlName="password"
+          [placeholder]="'auth.placeholder.password' | translate"
+          [class.invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched" />
+        <button type="button" class="password-toggle" (click)="toggleLoginPasswordVisibility()"
+          [attr.aria-label]="loginPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)">
+          <img [src]="loginPasswordVisible() ? '/eye-open.svg' : '/eye-closed.svg'" alt="" width="18" height="18" />
         </button>
       </div>
+    </label>
+    <button class="btn" type="submit" [disabled]="loading()">
+      {{ 'auth.submit.login' | translate }}
+    </button>
+    <p class="muted auth-required-note">{{ 'form.requiredNote' | translate }}</p>
+  </form>
+  } @else {
+  <form class="stack-sm" (ngSubmit)="submitRegister()" [formGroup]="registerForm" novalidate>
+    <label class="stack-xxs">
+      <span>{{ 'auth.field.alias' | translate }}</span>
+      <input type="text" formControlName="alias" [placeholder]="'auth.placeholder.alias' | translate"
+        [class.invalid]="inputInvalid('alias')" />
+      @if (inputInvalid('alias')) {
+      <small class="error">
+        @if (registerForm.controls.alias.errors?.['pattern']) {
+        {{ 'auth.error.aliasPattern' | translate }}
+        } @else {
+        {{ 'auth.error.aliasRequired' | translate }}
+        }
+      </small>
+      }
+    </label>
+    <label class="stack-xxs">
+      <span>{{ 'auth.field.name' | translate }}</span>
+      <input type="text" formControlName="name" [placeholder]="'auth.placeholder.name' | translate" />
+    </label>
+    <label class="stack-xxs">
+      <span>{{ 'auth.field.email' | translate }}</span>
+      <input type="email" formControlName="email" [placeholder]="'auth.placeholder.email' | translate"
+        [class.invalid]="inputInvalid('email')" />
+      @if (inputInvalid('email')) {
+      <small class="error">{{ 'auth.error.email' | translate }}</small>
+      }
+    </label>
+    <label class="stack-xxs">
+      <span>{{ 'auth.field.password' | translate }}</span>
+      <div class="password-field">
+        <input [type]="registerPasswordVisible() ? 'text' : 'password'" formControlName="password"
+          [placeholder]="'auth.placeholder.password' | translate" [class.invalid]="inputInvalid('password')" />
+        <button type="button" class="password-toggle" (click)="toggleRegisterPasswordVisibility()"
+          [attr.aria-label]="registerPasswordVisible() ? ('auth.password.hide' | translate) : ('auth.password.show' | translate)">
+          <img [src]="registerPasswordVisible() ? '/eye-open.svg' : '/eye-closed.svg'" alt="" width="18" height="18" />
+        </button>
+      </div>
+      @if (inputInvalid('password')) {
+      <small class="error">{{ 'auth.error.password' | translate }}</small>
+      }
+    </label>
+    <button class="btn" type="submit" [disabled]="loading()">
+      {{ 'auth.submit.register' | translate }}
+    </button>
+    <p class="muted auth-required-note">{{ 'form.requiredNote' | translate }}</p>
+  </form>
+  }
+
+  <p class="auth-switch">
+    <span>
+      @if (mode() === 'login') {
+      {{ 'auth.prompt.register' | translate }}
+      } @else {
+      {{ 'auth.prompt.login' | translate }}
+      }
+    </span>
+    <button type="button" (click)="switchMode(mode() === 'login' ? 'register' : 'login')">
+      @if (mode() === 'login') {
+      {{ 'auth.switch.register' | translate }}
+      } @else {
+      {{ 'auth.switch.login' | translate }}
+      }
+    </button>
+  </p>
+
+  @if (errorMessage(); as error) {
+  <p class="error">
+    @if (error.key) {
+    {{ error.key | translate:error.params }}
+    } @else if (error.raw) {
+    {{ error.raw }}
     }
+  </p>
+  }
+  } @else {
+  @if (user(); as currentUser) {
+  <div class="stack-sm">
+    <p class="subtitle">{{ 'auth.logged.title' | translate }}</p>
+    <h2 class="title">{{ 'auth.logged.subtitle' | translate:{ name: currentUser.alias } }}</h2>
+    <p class="muted">{{ 'auth.logged.email' | translate:{ email: currentUser.email } }}</p>
+    <button class="btn ghost" type="button" (click)="logout()">
+      {{ 'auth.logged.logout' | translate }}
+    </button>
+  </div>
+  }
   }
 </section>

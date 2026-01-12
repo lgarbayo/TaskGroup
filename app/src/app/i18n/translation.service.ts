@@ -11,7 +11,7 @@ export class TranslationService {
     this.getInitialLanguage()
   );
 
-  constructor() {}
+  constructor() { }
 
   language = this.languageSignal.asReadonly();
 

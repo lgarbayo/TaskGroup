@@ -80,7 +80,6 @@ export class ProjectDetailPage {
   showProjectAnalysisModal = signal(false);
   showMilestoneAnalysisModal = signal(false);
   showTaskAnalysisModal = signal(false);
-  showSparklineModal = signal(false);
   showMemberListModal = signal(false);
 
   memberForm = this.nfb.group({
@@ -126,57 +125,6 @@ export class ProjectDetailPage {
         this.loadTasks(projectUuid);
       }
     });
-  }
-
-  taskSparklineStyle(task: Task): { left: string; width: string } {
-    const range = this.timelineRange();
-    if (!range || !task.startDate) {
-      return { left: '0%', width: '0%' };
-    }
-    const offset = Math.max(this.linearIndex(task.startDate) - range.start, 0);
-    const duration = Math.max(task.durationWeeks ?? 1, 1);
-    const leftPercent = Math.min(100, (offset / range.total) * 100);
-    const widthPercent = Math.min(100 - leftPercent, (duration / range.total) * 100);
-    return {
-      left: `${leftPercent}%`,
-      width: `${Math.max(widthPercent, 2)}%`,
-    };
-  }
-
-  taskEndLabel(task: Task): string {
-    if (!task.startDate) {
-      return '—';
-    }
-    const startDate = this.toDate(task.startDate);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + Math.max(task.durationWeeks ?? 1, 1) * 7);
-    return this.core.formatDateLabel(this.fromDate(endDate));
-  }
-
-  taskStartLabel(task: Task): string {
-    return task.startDate ? this.core.formatDateLabel(task.startDate) : '—';
-  }
-
-  taskProgressValue(task: Task): number {
-    if (!task.startDate) {
-      return 0;
-    }
-    const today = new Date();
-    const startDate = this.toDate(task.startDate);
-    const durationWeeks = Math.max(task.durationWeeks ?? 1, 1);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + durationWeeks * 7);
-
-    if (today >= endDate) {
-      return 100;
-    }
-    if (today <= startDate) {
-      return 0;
-    }
-
-    const elapsedMs = today.getTime() - startDate.getTime();
-    const totalMs = endDate.getTime() - startDate.getTime();
-    return Math.min(100, Math.round((elapsedMs / totalMs) * 100));
   }
 
   update(data: UpsertProjectCommand): void {
@@ -429,14 +377,6 @@ export class ProjectDetailPage {
     this.showTaskAnalysisModal.set(false);
     this.selectedTaskAnalysis.set(null);
     this.selectedMilestoneAnalysis.set(null);
-  }
-
-  openSparkline(): void {
-    this.showSparklineModal.set(true);
-  }
-
-  closeSparkline(): void {
-    this.showSparklineModal.set(false);
   }
 
   addMember(): void {

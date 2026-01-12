@@ -64,7 +64,6 @@ export class TaskGantt implements AfterViewInit {
   editTask = output<Task>();
   removeTask = output<string>();
   updateTaskTimeline = output<{ task: Task; startDate: Date; durationWeeks: number }>();
-  viewSparkline = output<void>();
 
   @ViewChild('ganttViewport') private ganttViewport?: ElementRef<HTMLDivElement>;
   @ViewChildren('ganttRow') private ganttRows?: QueryList<ElementRef<HTMLDivElement>>;

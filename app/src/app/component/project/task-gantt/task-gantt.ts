@@ -145,7 +145,9 @@ export class TaskGantt implements AfterViewInit {
     const start = this.formatTooltipDate(this.toDate(task.startDate));
     const end = this.formatTooltipDate(this.computeTaskEnd(task));
     const completion = this.taskCompletionPercent(task);
-    return completion !== null ? `${start} → ${end} · ${completion.toFixed(0)}%` : `${start} → ${end}`;
+    return completion !== null
+      ? `${start} → ${end} · ${(completion * 100).toFixed(0)}%`
+      : `${start} → ${end}`;
   }
 
   protected onGanttScroll(event: Event): void {

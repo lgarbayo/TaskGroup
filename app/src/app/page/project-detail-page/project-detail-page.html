@@ -163,13 +163,14 @@
           </div>
           <div class="modal-body">
             <form [formGroup]="memberForm" (ngSubmit)="addMember()" class="member-form">
-              <label>{{ 'project.members.form.email' | translate }}</label>
+              <label>{{ 'project.members.form.email' | translate }} *</label>
               <div class="member-form-controls">
                 <input type="email" formControlName="email" placeholder="person@example.com" />
                 <button class="btn primary" type="submit">
                   {{ 'project.members.form.submit' | translate }}
                 </button>
               </div>
+              <p class="muted required-note">{{ 'form.requiredNote' | translate }}</p>
               @if (memberError(); as error) {
                 <p class="error">{{ error | translate }}</p>
               }
@@ -354,14 +355,14 @@
                         <div class="analysis-metrics">
                           <span class="analysis-chip">
                             {{ 'project.analysis.initial' | translate }}:
-                            {{ milestone.initialCompletion | number:'1.0-0' }}%
+                            {{ milestone.initialCompletion * 100 | number:'1.0-0' }}%
                           </span>
                           <span
                             class="analysis-chip"
                             [class.analysis-chip--down]="milestone.endCompletion < milestone.initialCompletion"
                           >
                             {{ 'project.analysis.final' | translate }}:
-                            {{ milestone.endCompletion | number:'1.0-0' }}%
+                            {{ milestone.endCompletion * 100 | number:'1.0-0' }}%
                           </span>
                         </div>
                       </li>
@@ -398,14 +399,14 @@
                 <div class="analysis-metrics">
                   <span class="analysis-chip">
                     {{ 'project.analysis.initial' | translate }}:
-                    {{ milestoneAnalysis.initialCompletion | number:'1.0-0' }}%
+                    {{ milestoneAnalysis.initialCompletion * 100 | number:'1.0-0' }}%
                   </span>
                   <span
                     class="analysis-chip"
                     [class.analysis-chip--down]="milestoneAnalysis.endCompletion < milestoneAnalysis.initialCompletion"
                   >
                     {{ 'project.analysis.final' | translate }}:
-                    {{ milestoneAnalysis.endCompletion | number:'1.0-0' }}%
+                    {{ milestoneAnalysis.endCompletion * 100 | number:'1.0-0' }}%
                   </span>
                 </div>
                 @if (milestoneAnalysis.taskList.length === 0) {
@@ -418,14 +419,14 @@
                         <div class="analysis-metrics">
                           <span class="analysis-chip">
                             {{ 'project.analysis.initial' | translate }}:
-                            {{ task.initialCompletion | number:'1.0-0' }}%
+                            {{ task.initialCompletion * 100 | number:'1.0-0' }}%
                           </span>
                           <span
                             class="analysis-chip"
                             [class.analysis-chip--down]="task.endCompletion < task.initialCompletion"
                           >
                             {{ 'project.analysis.final' | translate }}:
-                            {{ task.endCompletion | number:'1.0-0' }}%
+                            {{ task.endCompletion * 100 | number:'1.0-0' }}%
                           </span>
                         </div>
                       </li>
@@ -467,14 +468,14 @@
                 <div class="analysis-metrics">
                   <span class="analysis-chip">
                     {{ 'project.analysis.initial' | translate }}:
-                    {{ taskAnalysis.initialCompletion | number:'1.0-0' }}%
+                    {{ taskAnalysis.initialCompletion * 100 | number:'1.0-0' }}%
                   </span>
                   <span
                     class="analysis-chip"
                     [class.analysis-chip--down]="taskAnalysis.endCompletion < taskAnalysis.initialCompletion"
                   >
                     {{ 'project.analysis.final' | translate }}:
-                    {{ taskAnalysis.endCompletion | number:'1.0-0' }}%
+                    {{ taskAnalysis.endCompletion * 100 | number:'1.0-0' }}%
                   </span>
                 </div>
               </div>

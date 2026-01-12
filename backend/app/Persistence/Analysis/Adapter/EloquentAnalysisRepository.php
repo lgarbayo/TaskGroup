@@ -39,60 +39,169 @@ class EloquentAnalysisRepository implements AnalysisRepository
     private function buildMilestoneAnalysis(ProjectModel $project): array
     {
         $milestones = collect($project->milestones)
-            ->sortBy(fn (MilestoneModel $milestone) => $this->dateToIndex($milestone->dateYear, $milestone->dateMonth, $milestone->dateWeek))
+            ->sortBy(fn (MilestoneModel $milestone) => $this->dateToIndex(
+                $milestone->dateYear,
+                $milestone->dateMonth,
+                $milestone->dateWeek
+            ))
             ->values();
 
-        $tasks = collect($project->tasks);
+        if ($milestones->isEmpty()) {
+            return [];
+        }
+
+        $tasks = collect($project->tasks)
+            ->sortBy(fn (TaskModel $task) => $this->dateToIndex(
+                $task->startYear,
+                $task->startMonth,
+                $task->startWeek
+            ))
+            ->values();
+
+        $tasksByMilestone = [];
+        foreach ($milestones as $milestone) {
+            $tasksByMilestone[$milestone->uuid] = [];
+        }
+
+        foreach ($tasks as $task) {
+            $targetMilestone = $this->resolveTargetMilestone($milestones, $task);
+            if ($targetMilestone) {
+                $tasksByMilestone[$targetMilestone->uuid][] = $task;
+            }
+        }
+
+        $analysisDate = new \DateTimeImmutable('now');
         $segments = [];
 
         foreach ($milestones as $milestone) {
-            $assignedTasks = $tasks->filter(fn (TaskModel $task) => ($task->milestone['uuid'] ?? null) === $milestone->uuid);
-            $segments[] = $this->createAssignedSegment($project, $milestone, $assignedTasks);
-        }
+            $taskAnalyses = $this->buildTaskAnalyses(
+                $tasksByMilestone[$milestone->uuid] ?? [],
+                $analysisDate
+            );
 
-        $unassigned = $tasks->filter(fn (TaskModel $task) => empty($task->milestone));
-        if ($unassigned->isNotEmpty() || $segments === []) {
-            $segments[] = $this->createAssignedSegment($project, null, $unassigned);
+            $initialCompletion = $this->calculateAverageCompletion(
+                $taskAnalyses,
+                fn (TaskAnalysisModel $model) => $model->initialCompletion
+            );
+            $endCompletion = $this->calculateAverageCompletion(
+                $taskAnalyses,
+                fn (TaskAnalysisModel $model) => $model->endCompletion
+            );
+
+            $segments[] = new MilestoneAnalysisModel(
+                milestoneUuid: $milestone->uuid,
+                milestoneTitle: $milestone->title,
+                startDate: [
+                    'year' => $milestone->dateYear,
+                    'month' => $milestone->dateMonth,
+                    'week' => $milestone->dateWeek,
+                ],
+                endDate: [
+                    'year' => $milestone->dateYear,
+                    'month' => $milestone->dateMonth,
+                    'week' => $milestone->dateWeek,
+                ],
+                initialCompletion: $initialCompletion,
+                endCompletion: $endCompletion,
+                taskList: $taskAnalyses,
+            );
         }
 
         return $segments;
     }
 
-    private function createAssignedSegment(ProjectModel $project, ?MilestoneModel $milestone, $tasks): MilestoneAnalysisModel
+    /**
+     * @param MilestoneModel[] $milestones
+     */
+    private function resolveTargetMilestone($milestones, TaskModel $task): ?MilestoneModel
     {
-        $taskList = collect($tasks)->map(function (TaskModel $task) {
-            return new TaskAnalysisModel(
+        $taskIndex = $this->dateToIndex($task->startYear, $task->startMonth, $task->startWeek);
+        $lastVisited = null;
+
+        foreach ($milestones as $milestone) {
+            $milestoneIndex = $this->dateToIndex($milestone->dateYear, $milestone->dateMonth, $milestone->dateWeek);
+            if ($milestoneIndex >= $taskIndex) {
+                return $milestone;
+            }
+            $lastVisited = $milestone;
+        }
+
+        return $lastVisited;
+    }
+
+    /**
+     * @param TaskModel[] $tasks
+     * @return TaskAnalysisModel[]
+     */
+    private function buildTaskAnalyses(array $tasks, \DateTimeImmutable $analysisDate): array
+    {
+        if ($tasks === []) {
+            return [];
+        }
+
+        $taskAnalyses = [];
+        foreach ($tasks as $task) {
+            $initialCompletion = $this->calculateTaskCompletion($task, $analysisDate);
+            $deadline = $this->taskEndDate($task);
+            $endCompletion = $this->calculateTaskCompletion($task, $deadline);
+
+            $taskAnalyses[] = new TaskAnalysisModel(
                 taskUuid: $task->uuid,
                 taskTitle: $task->title,
-                initialCompletion: 0.0,
-                endCompletion: $task->status === 'done' ? 1.0 : 0.0,
+                initialCompletion: $initialCompletion,
+                endCompletion: $endCompletion,
             );
-        })->values();
+        }
 
-        $endCompletion = $taskList->isNotEmpty()
-            ? round($taskList->avg(fn (TaskAnalysisModel $model) => $model->endCompletion), 4)
-            : 0.0;
+        return $taskAnalyses;
+    }
 
-        $startDate = $milestone
-            ? ['year' => $milestone->dateYear, 'month' => $milestone->dateMonth, 'week' => $milestone->dateWeek]
-            : ['year' => $project->startYear, 'month' => $project->startMonth, 'week' => $project->startWeek];
+    private function calculateTaskCompletion(TaskModel $task, \DateTimeImmutable $analysisDate): float
+    {
+        $startDate = $this->toDate($task->startYear, $task->startMonth, $task->startWeek);
+        $endDate = $this->taskEndDate($task);
 
-        $endDate = $milestone
-            ? ['year' => $milestone->dateYear, 'month' => $milestone->dateMonth, 'week' => $milestone->dateWeek]
-            : ['year' => $project->endYear, 'month' => $project->endMonth, 'week' => $project->endWeek];
+        if ($analysisDate < $startDate) {
+            return 0.0;
+        }
 
-        $milestoneUuid = $milestone?->uuid ?? sprintf('%s-general', $project->uuid);
-        $milestoneTitle = $milestone?->title ?? 'General';
+        if ($analysisDate >= $endDate) {
+            return 1.0;
+        }
 
-        return new MilestoneAnalysisModel(
-            milestoneUuid: $milestoneUuid,
-            milestoneTitle: $milestoneTitle,
-            startDate: $startDate,
-            endDate: $endDate,
-            initialCompletion: 0.0,
-            endCompletion: $endCompletion,
-            taskList: $taskList->all(),
-        );
+        $totalDays = max(1, (int) $startDate->diff($endDate)->format('%a'));
+        $elapsedDays = max(0, (int) $startDate->diff($analysisDate)->format('%a'));
+        $completion = $elapsedDays / $totalDays;
+
+        return max(0.0, min(1.0, $completion));
+    }
+
+    private function taskEndDate(TaskModel $task): \DateTimeImmutable
+    {
+        $startDate = $this->toDate($task->startYear, $task->startMonth, $task->startWeek);
+        $weeks = max(1, $task->durationWeeks);
+        return $startDate->modify(sprintf('+%d weeks', $weeks));
+    }
+
+    private function calculateAverageCompletion(array $taskAnalyses, callable $extractor): float
+    {
+        if ($taskAnalyses === []) {
+            return 0.0;
+        }
+
+        $sum = 0.0;
+        foreach ($taskAnalyses as $analysis) {
+            $sum += $extractor($analysis);
+        }
+
+        return $sum / count($taskAnalyses);
+    }
+
+    private function toDate(int $year, int $month, int $week): \DateTimeImmutable
+    {
+        $normalizedMonth = $month + 1;
+        $date = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $normalizedMonth));
+        return $date->modify(sprintf('+%d weeks', $week));
     }
 
     private function dateToIndex(int $year, int $month, int $week): int

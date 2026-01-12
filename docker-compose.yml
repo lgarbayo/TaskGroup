@@ -1,23 +1,7 @@
-version: "3.9"
-
 services:
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
-    ports:
-      - "8082:80"
-    depends_on:
-      - postgres
-    networks:
-      - manager_network
-
   postgres:
     image: postgres:15-alpine
-    container_name: postgres_db
+    container_name: taskgroup_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: postgres
@@ -27,49 +11,58 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks:
-      - manager_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"luis.gf\" -d manager"]
+      test: ["CMD-SHELL", "pg_isready -U \"luis.gf\" -d postgres"]
       interval: 30s
       timeout: 10s
       retries: 3
 
   api:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: taskgroup_api
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - ./backend/.env
     environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      APP_KEY: ${APP_KEY}
-      DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: postgres
       DB_USERNAME: luis.gf
       DB_PASSWORD: provisional
+      APP_ENV: local
+      APP_DEBUG: "true"
     ports:
       - "8081:80"
     volumes:
-      - .:/var/www/html
+      - ./backend:/var/www/html
     command: >
       sh -c "
         php artisan config:clear &&
         php artisan migrate --force &&
         apache2-foreground
       "
-    networks:
-      - manager_network
+
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: taskgroup_frontend
+    depends_on:
+      - api
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    command: >
+      npm run start -- --host 0.0.0.0 --port 4200 --proxy-config proxy.docker.conf.json
 
 volumes:
   pgdata:
     driver: local
-
-networks:
-  manager_network:
-    driver: bridge

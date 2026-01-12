@@ -6,9 +6,11 @@ use App\Business\Analysis\Model\ProjectAnalysisModel;
 use App\Business\Analysis\Service\AnalysisService;
 use App\Business\Project\Model\MilestoneModel;
 use App\Business\Project\Model\ProjectModel;
+use App\Business\Project\Model\TaskCommentModel;
 use App\Business\Project\Model\TaskModel;
 use App\Business\Project\Service\MilestoneService;
 use App\Business\Project\Service\ProjectService;
+use App\Business\Project\Service\TaskCommentService;
 use App\Business\Project\Service\TaskService;
 
 class ProjectFacadeImpl implements ProjectFacade
@@ -16,6 +18,7 @@ class ProjectFacadeImpl implements ProjectFacade
     public function __construct(
         private ProjectService $projects,
         private TaskService $tasks,
+        private TaskCommentService $taskComments,
         private MilestoneService $milestones,
         private AnalysisService $analysis,
     ) {
@@ -69,6 +72,26 @@ class ProjectFacadeImpl implements ProjectFacade
     public function deleteTask(string $projectUuid, string $taskUuid, int $userId): void
     {
         $this->tasks->delete($projectUuid, $taskUuid, $userId);
+    }
+
+    public function listTaskComments(string $projectUuid, string $taskUuid, int $userId): iterable
+    {
+        return $this->taskComments->list($projectUuid, $taskUuid, $userId);
+    }
+
+    public function createTaskComment(string $projectUuid, string $taskUuid, int $userId, array $data): TaskCommentModel
+    {
+        return $this->taskComments->create($projectUuid, $taskUuid, $userId, $data);
+    }
+
+    public function updateTaskComment(string $projectUuid, string $taskUuid, int $commentId, int $userId, array $data): TaskCommentModel
+    {
+        return $this->taskComments->update($projectUuid, $taskUuid, $commentId, $userId, $data);
+    }
+
+    public function deleteTaskComment(string $projectUuid, string $taskUuid, int $commentId, int $userId): void
+    {
+        $this->taskComments->delete($projectUuid, $taskUuid, $commentId, $userId);
     }
 
     public function listMilestones(string $projectUuid, int $userId): iterable

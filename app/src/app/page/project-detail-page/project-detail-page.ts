@@ -7,6 +7,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { KeyValuePipe, DecimalPipe } from '@angular/common';
 import { Milestone, UpsertMilestoneCommand } from '../../model/milestone.model';
 import { Task, TaskStatus, UpsertTaskCommand } from '../../model/task.model';
+import { TaskComment } from '../../model/task-comment.model';
 import { MilestoneService } from '../../service/milestone-service';
 import { TaskService } from '../../service/task-service';
 import { ProjectForm } from "../../component/project/project-form/project-form";
@@ -18,9 +19,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CoreService } from '../../service/core-service';
 import { AuthService } from '../../service/auth-service';
 import { AnalysisService } from '../../service/analysis-service';
+import { TaskCommentService } from '../../service/task-comment-service';
 import { MilestoneAnalysis, ProjectAnalysis, TaskAnalysis } from '../../model/analysis.model';
 import { TaskGantt } from '../../component/project/task-gantt/task-gantt';
 import { DateType } from '../../model/core.model';
+import { TranslationService } from '../../i18n/translation.service';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -48,6 +51,8 @@ export class ProjectDetailPage {
   protected core = inject(CoreService);
   private authService = inject(AuthService);
   private analysisService = inject(AnalysisService);
+  private commentService = inject(TaskCommentService);
+  private translation = inject(TranslationService);
 
   @ViewChild('milestoneCreator') milestoneForm?: MilestoneForm;
   @ViewChild('taskCreator') taskForm?: TaskForm;
@@ -82,9 +87,14 @@ export class ProjectDetailPage {
   showMilestoneAnalysisModal = signal(false);
   showTaskAnalysisModal = signal(false);
   showMemberListModal = signal(false);
+  showTaskCommentsModal = signal(false);
 
   memberForm = this.nfb.group({
     email: ['', [Validators.required, Validators.email]],
+  });
+
+  commentForm = this.nfb.group({
+    body: ['', [Validators.required]],
   });
 
   pendingTasks = computed(() => this.tasks().filter((task) => task.status === 'pending'));
@@ -117,6 +127,15 @@ export class ProjectDetailPage {
   projectAnalysis = signal<ProjectAnalysis | null>(null);
   selectedMilestoneAnalysis = signal<MilestoneAnalysis | null>(null);
   selectedTaskAnalysis = signal<TaskAnalysis | null>(null);
+  selectedTaskForComments = signal<Task | null>(null);
+  taskComments = signal<Array<TaskComment>>([]);
+  commentLoading = signal(false);
+  commentError = signal<string | null>(null);
+  editingCommentId = signal<number | null>(null);
+
+  editCommentForm = this.nfb.group({
+    body: ['', [Validators.required]],
+  });
 
   constructor() {
     effect(() => {
@@ -262,6 +281,25 @@ export class ProjectDetailPage {
     this.showTaskModal.set(false);
   }
 
+  openTaskComments(task: Task): void {
+    this.selectedTaskForComments.set(task);
+    this.commentForm.reset({ body: '' });
+    this.editingCommentId.set(null);
+    this.editCommentForm.reset({ body: '' });
+    this.commentError.set(null);
+    this.showTaskCommentsModal.set(true);
+    const projectUuid = this.projectUuid();
+    if (projectUuid) {
+      this.loadTaskComments(projectUuid, task.uuid);
+    }
+  }
+
+  closeTaskComments(): void {
+    this.showTaskCommentsModal.set(false);
+    this.selectedTaskForComments.set(null);
+    this.taskComments.set([]);
+  }
+
   onTaskTimelineChange(change: { task: Task; startDate: Date; durationWeeks: number }): void {
     const projectUuid = this.projectUuid();
     if (!projectUuid) {
@@ -329,6 +367,90 @@ export class ProjectDetailPage {
         this.taskError.set('project.tasks.error');
         this.loadTasks(projectUuid);
       },
+    });
+  }
+
+  addComment(): void {
+    const projectUuid = this.projectUuid();
+    const task = this.selectedTaskForComments();
+    if (!projectUuid || !task) {
+      return;
+    }
+    const body = this.commentForm.controls.body.value?.trim();
+    if (!body) {
+      this.commentForm.markAllAsTouched();
+      return;
+    }
+    this.commentLoading.set(true);
+    this.commentService.create(projectUuid, task.uuid, { body }).subscribe({
+      next: (comment) => {
+        this.taskComments.update((list) => [...list, comment]);
+        this.commentForm.reset({ body: '' });
+        this.commentError.set(null);
+      },
+      error: (error) => {
+        console.error('Error adding comment', error);
+        this.commentError.set('project.tasks.comments.error');
+        this.commentLoading.set(false);
+      },
+      complete: () => this.commentLoading.set(false),
+    });
+  }
+
+  startEditComment(comment: TaskComment): void {
+    this.editingCommentId.set(comment.id);
+    this.editCommentForm.reset({ body: comment.body });
+  }
+
+  cancelEditComment(): void {
+    this.editingCommentId.set(null);
+    this.editCommentForm.reset({ body: '' });
+  }
+
+  saveEditComment(comment: TaskComment): void {
+    const projectUuid = this.projectUuid();
+    const task = this.selectedTaskForComments();
+    if (!projectUuid || !task) {
+      return;
+    }
+    const body = this.editCommentForm.controls.body.value?.trim();
+    if (!body) {
+      return;
+    }
+    this.commentLoading.set(true);
+    this.commentService.update(projectUuid, task.uuid, comment.id, { body }).subscribe({
+      next: (updated) => {
+        this.taskComments.update((list) => list.map((item) => (item.id === updated.id ? updated : item)));
+        this.cancelEditComment();
+        this.commentError.set(null);
+      },
+      error: (error) => {
+        console.error('Error updating comment', error);
+        this.commentError.set('project.tasks.comments.error');
+        this.commentLoading.set(false);
+      },
+      complete: () => this.commentLoading.set(false),
+    });
+  }
+
+  deleteComment(comment: TaskComment): void {
+    const projectUuid = this.projectUuid();
+    const task = this.selectedTaskForComments();
+    if (!projectUuid || !task) {
+      return;
+    }
+    this.commentLoading.set(true);
+    this.commentService.delete(projectUuid, task.uuid, comment.id).subscribe({
+      next: () => {
+        this.taskComments.update((list) => list.filter((item) => item.id !== comment.id));
+        this.commentError.set(null);
+      },
+      error: (error) => {
+        console.error('Error deleting comment', error);
+        this.commentError.set('project.tasks.comments.error');
+        this.commentLoading.set(false);
+      },
+      complete: () => this.commentLoading.set(false),
     });
   }
 
@@ -529,6 +651,19 @@ export class ProjectDetailPage {
     return task.uuid;
   }
 
+  isCommentAuthor(comment: TaskComment): boolean {
+    return comment.author.id === this.currentUserId();
+  }
+
+  formatCommentDate(value: string): string {
+    if (!value) {
+      return '';
+    }
+    const lang = this.translation.language();
+    const locale = lang === 'es' ? 'es-ES' : lang === 'gl' ? 'gl-ES' : 'en-US';
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
+  }
+
   trackMember(_: number, member: { id: number }): number {
     return member.id;
   }
@@ -610,6 +745,23 @@ export class ProjectDetailPage {
         this.taskLoading.set(false);
       },
       complete: () => this.taskLoading.set(false),
+    });
+  }
+
+  private loadTaskComments(projectUuid: string, taskUuid: string): void {
+    this.commentLoading.set(true);
+    this.commentService.list(projectUuid, taskUuid).subscribe({
+      next: (comments) => {
+        this.taskComments.set(comments);
+        this.commentError.set(null);
+      },
+      error: (error) => {
+        console.error('Error loading comments', error);
+        this.taskComments.set([]);
+        this.commentError.set('project.tasks.comments.error');
+        this.commentLoading.set(false);
+      },
+      complete: () => this.commentLoading.set(false),
     });
   }
 

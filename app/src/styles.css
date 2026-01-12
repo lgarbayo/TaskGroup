@@ -2076,6 +2076,45 @@ textarea {
   border-color: #000;
 }
 
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--card);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.comment-body {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.comment-edit textarea {
+  width: 100%;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* Helpers */
 .muted {
   color: var(--muted);

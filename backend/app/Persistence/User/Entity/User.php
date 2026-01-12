@@ -4,6 +4,7 @@ namespace App\Persistence\User\Entity;
 
 use App\Persistence\Project\Entity\Project;
 use App\Persistence\Project\Entity\Task;
+use App\Persistence\Project\Entity\TaskComment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -63,5 +64,10 @@ class User extends Authenticatable
     public function assignedTasks()
     {
         return $this->hasMany(Task::class, 'assignee_id');
+    }
+
+    public function taskComments()
+    {
+        return $this->hasMany(TaskComment::class, 'user_id');
     }
 }

@@ -151,6 +151,7 @@
       (removeTask)="removeTask($event)"
       (updateTaskTimeline)="onTaskTimelineChange($event)"
       (updateTaskStatus)="onTaskStatusChange($event)"
+      (openComments)="openTaskComments($event)"
     ></app-task-gantt>
 
     @if (showMemberListModal() && currentUserId() === projectDetail.ownerId) {
@@ -321,6 +322,77 @@
               (submitted)="saveTask($event)"
               (cancelled)="cancelTaskEdition()"
             ></app-task-form>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (showTaskCommentsModal() && selectedTaskForComments(); as taskDetail) {
+      <div class="modal-backdrop" (click)="closeTaskComments()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="title">{{ 'project.tasks.comments.title' | translate }} · {{ taskDetail.title }}</h2>
+            <button class="btn ghost" type="button" (click)="closeTaskComments()">
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+          <div class="modal-body">
+            @if (commentLoading()) {
+              <p class="note">{{ 'project.tasks.comments.loading' | translate }}</p>
+            }
+            @if (commentError(); as error) {
+              <p class="error">{{ error | translate }}</p>
+            }
+            @if (!commentLoading() && taskComments().length === 0) {
+              <p class="note">{{ 'project.tasks.comments.empty' | translate }}</p>
+            } @else if (taskComments().length > 0) {
+              <ul class="comment-list">
+                @for (comment of taskComments(); track comment.id) {
+                  <li class="comment-item">
+                    <div class="comment-header">
+                      <div>
+                        <strong>{{ comment.author.alias }}</strong>
+                        <span class="note">· {{ formatCommentDate(comment.createdAt) }}</span>
+                      </div>
+                      @if (isCommentAuthor(comment)) {
+                        <div class="row">
+                          <button class="btn ghost sm" type="button" (click)="startEditComment(comment)">
+                            {{ 'project.tasks.comments.edit' | translate }}
+                          </button>
+                          <button class="btn danger sm" type="button" (click)="deleteComment(comment)">
+                            {{ 'project.tasks.comments.delete' | translate }}
+                          </button>
+                        </div>
+                      }
+                    </div>
+                    @if (editingCommentId() === comment.id) {
+                      <div class="comment-edit" [formGroup]="editCommentForm">
+                        <textarea rows="2" formControlName="body"></textarea>
+                        <div class="row">
+                          <button class="btn primary sm" type="button" (click)="saveEditComment(comment)">
+                            {{ 'project.tasks.comments.save' | translate }}
+                          </button>
+                          <button class="btn ghost sm" type="button" (click)="cancelEditComment()">
+                            {{ 'project.tasks.comments.cancel' | translate }}
+                          </button>
+                        </div>
+                      </div>
+                    } @else {
+                      <p class="comment-body">{{ comment.body }}</p>
+                    }
+                  </li>
+                }
+              </ul>
+            }
+            <form [formGroup]="commentForm" (ngSubmit)="addComment()" class="comment-form">
+              <label>{{ 'project.tasks.comments.label' | translate }}</label>
+              <textarea rows="2" formControlName="body" [placeholder]="'project.tasks.comments.placeholder' | translate"></textarea>
+              <div class="row">
+                <button class="btn primary" type="submit">
+                  {{ 'project.tasks.comments.submit' | translate }}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

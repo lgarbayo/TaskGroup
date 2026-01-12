@@ -6,6 +6,7 @@ use App\Rest\Controller\ProjectMemberController;
 use App\Rest\Controller\ProjectInvitationController;
 use App\Rest\Controller\ProjectSummaryController;
 use App\Rest\Controller\AnalysisController;
+use App\Rest\Controller\TaskCommentController;
 use App\Rest\Controller\TaskController;
 use App\Rest\Controller\MilestoneController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects/{project}/tasks/{task}', [TaskController::class, 'show']);
     Route::put('/projects/{project}/tasks/{task}', [TaskController::class, 'update']);
     Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy']);
+    Route::get('/projects/{project}/tasks/{task}/comments', [TaskCommentController::class, 'index']);
+    Route::post('/projects/{project}/tasks/{task}/comments', [TaskCommentController::class, 'store']);
+    Route::put('/projects/{project}/tasks/{task}/comments/{comment}', [TaskCommentController::class, 'update']);
+    Route::delete('/projects/{project}/tasks/{task}/comments/{comment}', [TaskCommentController::class, 'destroy']);
 
     Route::get('/projects/{project}/milestone', [MilestoneController::class, 'index']);
     Route::post('/projects/{project}/milestone', [MilestoneController::class, 'store']);

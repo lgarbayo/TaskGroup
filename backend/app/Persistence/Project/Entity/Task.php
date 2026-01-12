@@ -3,6 +3,7 @@
 namespace App\Persistence\Project\Entity;
 
 use App\Persistence\Project\Entity\Project;
+use App\Persistence\Project\Entity\TaskComment;
 use App\Persistence\User\Entity\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -52,6 +53,11 @@ class Task extends Model
     public function milestone()
     {
         return $this->belongsTo(Milestone::class, 'milestone_uuid', 'uuid');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(TaskComment::class);
     }
 
     public function getRouteKeyName()

@@ -4,6 +4,7 @@ namespace App\Business\Facade;
 
 use App\Business\Analysis\Model\ProjectAnalysisModel;
 use App\Business\Project\Model\ProjectModel;
+use App\Business\Project\Model\TaskCommentModel;
 use App\Business\Project\Model\TaskModel;
 use App\Business\Project\Model\MilestoneModel;
 
@@ -22,6 +23,12 @@ interface ProjectFacade
     public function getTask(string $projectUuid, string $taskUuid, int $userId): TaskModel;
     public function updateTask(string $projectUuid, string $taskUuid, int $userId, array $data): TaskModel;
     public function deleteTask(string $projectUuid, string $taskUuid, int $userId): void;
+
+    /** task comments */
+    public function listTaskComments(string $projectUuid, string $taskUuid, int $userId): iterable;
+    public function createTaskComment(string $projectUuid, string $taskUuid, int $userId, array $data): TaskCommentModel;
+    public function updateTaskComment(string $projectUuid, string $taskUuid, int $commentId, int $userId, array $data): TaskCommentModel;
+    public function deleteTaskComment(string $projectUuid, string $taskUuid, int $commentId, int $userId): void;
 
     /** milestones */
     public function listMilestones(string $projectUuid, int $userId): iterable;

@@ -123,6 +123,9 @@
                     {{ 'form.task.status.done' | translate }}
                   </button>
                 </div>
+                <button class="btn ghost" type="button" (click)="openComments.emit(task)">
+                  {{ 'project.tasks.comments.button' | translate }}
+                </button>
                 <button class="btn ghost" type="button" (click)="analyseTask.emit(task.uuid)">
                   {{ 'project.analysis.button' | translate }}
                 </button>
